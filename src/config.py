@@ -68,7 +68,7 @@ DEFAULTS = {
     "site": {
         "title": "我的专业科技日报",
         "subtitle": "生物医学工程 · 嵌入式 STM32/ESP32 · 3D打印 · 开源项目",
-        "output_dir": str(ROOT / "site"),
+        "output_dir": str(ROOT / "docs"),
     },
 }
 

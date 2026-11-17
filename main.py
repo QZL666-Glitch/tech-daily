@@ -25,7 +25,7 @@ def print_banner() -> None:
 def build_site_only(cfg: dict) -> None:
     site_dir, n = site.build_site(cfg)
     print(f"本地日报网站已生成: {site_dir}")
-    print(f"共 {n} 篇 · 双击 site\\index.html 即可查看")
+    print(f"共 {n} 篇 · 双击 docs\\index.html 即可查看")
 
 
 def run_once(cfg: dict, dry_run: bool = False) -> dict:

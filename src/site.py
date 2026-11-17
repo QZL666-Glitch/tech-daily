@@ -242,7 +242,7 @@ def build_site(cfg: dict):
     site_cfg = cfg.get("site", {})
     site_title = site_cfg.get("title", "我的专业科技日报")
     subtitle = site_cfg.get("subtitle", "")
-    site_dir = Path(site_cfg.get("output_dir", output_dir.parent / "site"))
+    site_dir = Path(site_cfg.get("output_dir", output_dir.parent / "docs"))
     site_dir.mkdir(parents=True, exist_ok=True)
 
     entries = []
