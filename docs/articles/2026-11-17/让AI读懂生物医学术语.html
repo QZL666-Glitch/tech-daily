@@ -5,46 +5,87 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>让AI读懂生物医学术语 · 我的专业科技日报</title>
 <style>
-:root{--bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;--accent:#0a7d3f;--border:#e5e7eb;}
+:root{
+  --bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;
+  --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
+  --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
+  --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+}
+[data-theme="dark"]{
+  --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
+  --accent:#3fb950;--accent2:#58a6ff;--border:#30363d;
+  --header:#010409;--headerfg:#ffffff;--headersub:#8b949e;
+  --chip:#21262d;--chipfg:#c9d1d9;--chipactive:#238636;--chipactivefg:#ffffff;
+  --quote:#12261a;--codebg:#21262d;--codefg:#ff7b72;
+}
 *{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
 a{color:var(--accent);text-decoration:none;}
-.header{background:#0d1117;color:#fff;padding:30px 20px;}
-.header h1{margin:0 0 6px;font-size:26px;}
-.header p{margin:0;color:#9aa4b2;font-size:14px;}
-.wrap{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-.search{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;outline:none;background:#fff;}
-.hint{color:var(--muted);font-size:13px;margin:0 0 18px;}
-.date{font-size:15px;font-weight:700;color:#374151;margin:24px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;}
-.item:hover{border-color:var(--accent);}
-.item .t{font-size:16px;font-weight:600;margin-bottom:4px;}
-.item .s{font-size:13.5px;color:var(--muted);}
-.item .meta{font-size:12px;color:#9aa4b2;margin-top:6px;}
-.empty{color:var(--muted);text-align:center;padding:40px 0;}
-article{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-article .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 22px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 6px;}
-article .meta{color:var(--muted);font-size:13px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-article h2{font-size:19px;margin:26px 0 10px;}
+.header{background:var(--header);color:var(--headerfg);padding:20px 20px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,.18);}
+.header-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.header h1{margin:0 0 4px;font-size:21px;}
+.header p{margin:0;color:var(--headersub);font-size:13px;}
+.themebtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;}
+.themebtn:hover{background:rgba(255,255,255,.16);}
+.wrap{max-width:820px;margin:0 auto;padding:18px 16px 70px;}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);}
+.search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
+.search:focus{border-color:var(--accent2);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
+.chip:hover{border-color:var(--accent);}
+.chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
+.item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
+.item .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.empty{color:var(--muted);text-align:center;padding:44px 0;}
+.footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
+.topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
+.progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
+article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+article .tags{margin-bottom:4px;}
+article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 article h3{font-size:16px;margin:20px 0 8px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
-article blockquote{border-left:3px solid var(--accent);background:#f0f9f4;margin:0 0 14px;padding:10px 14px;color:#4b5563;border-radius:0 8px 8px 0;}
+article blockquote{border-left:3px solid var(--accent);background:var(--quote);margin:0 0 14px;padding:10px 14px;color:var(--muted);border-radius:0 8px 8px 0;}
 article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.6;}
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
-article :not(pre)>code{background:#f0f0f0;color:#c7254e;padding:1px 6px;border-radius:4px;}
+article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.footer{max-width:780px;margin:0 auto;padding:0 16px 40px;color:#9aa4b2;font-size:12px;text-align:center;}
+.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
+.pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
+.navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
+.navlink:hover{border-color:var(--accent);}
+.navlink span{color:var(--muted);font-size:12px;}
+.navlink.next{text-align:right;}
 </style>
 </head>
 <body>
-<div class="header"><div style="max-width:780px;margin:0 auto;"><a href="../../index.html" style="color:#fff;">← 返回目录</a></div></div>
+<div class="progressbar" id="bar"></div>
+<div class="header"><div class="header-inner">
+<a href="../../index.html" style="color:#fff;font-weight:600;">← 返回目录</a>
+<button class="themebtn" id="themeBtn">深色模式</button>
+</div></div>
 <article><div class="card">
 <h1>让AI读懂生物医学术语</h1>
-<div class="meta">2026-11-17</div>
-<p style="color:#9aa4b2;font-size:13px;">来源：GitHub · 2026-11-11</p>
+<div class="meta"><span class="badge">GitHub · 2026-11-11</span><span>2026-11-17</span><span>约 9 分钟</span><button class="copybtn" id="copyBtn">复制链接</button></div>
+<div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div>
+<p style="color:var(--muted);font-size:13px;">来源：GitHub · 2026-11-11</p>
 <p>在生物医学领域，同一个概念往往有十几种叫法：临床医生写“心肌梗死”，数据库里存的是“Myocardial Infarction”，而某个编码系统里可能只认一串标识符。这种术语碎片化，长期困扰着数据整合与AI应用。GitHub 上出现了一个名为 bioportal-term-mcp 的开源项目，试图用 MCP（Model Context Protocol，一种让大模型安全调用外部工具的协议）把这件事标准化——它把 BioPortal 中的本体、类与值集，解析成规范化的“带类型元组”，既支持按已知标识符查询，也支持自由文本检索。项目用 Python 编写，目前关注度不高，但思路值得一看。</p>
 <h2>它到底解决什么问题</h2>
 <p>BioPortal 本身是一个生物医学本体的集合平台，里面存放着大量术语体系。问题在于，这些术语对人和对机器都不算“友好”：人需要理解上下文，机器需要明确的类型与结构。这个 MCP 服务器的做法是充当中间层——你给它一个标识符，或者干脆丢一句自由文本，它返回的是结构化的元组，每个值都带有明确的类型标注。打个比方，它像一位翻译官，把散落在各本体里的“行话”统一翻译成机器能直接消费的格式。</p>
@@ -57,13 +98,13 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <p>bioportal-term-mcp 不是一个功能繁复的大项目，它更像一块小而专的积木：把 BioPortal 的术语资源转成带类型的规范元组，供上层自由拼装。它的价值不在于当下有多成熟，而在于指出了“专业术语 + MCP”这条路径的可行性。如果你正在处理生物医学数据的互操作问题，不妨去仓库看看它的实现方式——据公开资料，项目以 Python 实现，代码结构本身也是理解 MCP 服务端设计的一个轻量样本。</p>
 <hr>
 <h2>AI 解读与知识总结</h2>
-<p style="color:#9aa4b2;font-size:13px;">核心要点</p>
+<p style="color:var(--muted);font-size:13px;">核心要点</p>
 <ul><li><strong>解决的问题</strong>：生物医学领域术语高度碎片化——同一概念在临床、数据库、编码系统里有不同叫法（如“心肌梗死”/“Myocardial Infarction”/编码标识符），导致数据整合和 AI 应用困难。该项目试图把术语解析标准化。</li></ul>
 <ul><li><strong>关键技术</strong>：以 MCP（Model Context Protocol，让大模型安全调用外部工具的协议）为接口层，把 BioPortal 中的本体、类与值集解析成“带类型元组”，并提供双通道查询（按标识符精确解析 + 按自由文本模糊检索）。</li></ul>
 <ul><li><strong>两个关键设计</strong>：一是“领域无关”，只负责解析成元组，映射到具体数据模型交给下游；二是双通道查询最终汇入同一套规范化输出，减少调用方分支处理。</li></ul>
 <ul><li><strong>为什么重要</strong>：MCP 生态多聚焦文件、数据库、网页等通用资源，面向专业术语体系的服务还很少；生物医学对术语准确性要求极高，一词之差可能影响检索与分析结论。该项目示范了“专业术语 + MCP”的可行路径。</li></ul>
 <ul><li><strong>项目定位</strong>：Python 实现、星标数低、尚属早期，更像一块“小而专的积木”，价值在于思路示范而非成熟度。</li></ul>
-<p style="color:#9aa4b2;font-size:13px;">难点概念白话解释</p>
+<p style="color:var(--muted);font-size:13px;">难点概念白话解释</p>
 <ul><li><strong>MCP（Model Context Protocol）</strong> → 一套“让大模型安全调用外部工具”的通用插口标准。</li></ul>
 <ul><li><strong>本体（Ontology）</strong> → 某个专业领域里概念及其关系的“官方词典+关系网”。</li></ul>
 <ul><li><strong>带类型元组</strong> → 每个返回值都标明“这是什么类型”的结构化数据，机器不用猜。</li></ul>
@@ -71,32 +112,56 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <ul><li><strong>领域无关</strong> → 工具本身不预设你是做基因还是临床，只做通用解析。</li></ul>
 <p><strong>说明</strong>：文中未说明该项目的具体性能指标、支持的 BioPortal 本体范围、许可证与版本号；“值集常用于字段取值约束”属合理推断。</p>
 <h2>小白常见问题</h2>
-<p style="color:#9aa4b2;font-size:13px;">Q1：这个项目到底是干什么的？</p>
+<p style="color:var(--muted);font-size:13px;">Q1：这个项目到底是干什么的？</p>
 <p>一句话：它是一个“术语翻译中间层”。你给它一个生物医学术语标识符，或直接输入一段自由文本，它返回结构化、带类型标注的数据，方便机器直接使用。它本身不做数据分析，只负责把 BioPortal 里的术语资源“翻译”成规范格式。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q2：BioPortal 是什么？</p>
+<p style="color:var(--muted);font-size:13px;">Q2：BioPortal 是什么？</p>
 <p>BioPortal 是一个生物医学本体的集合平台，里面存放大量术语体系（各种“专业词典”）。文章没有展开它的具体规模和覆盖范围，如需了解详情以官方最新说明为准。可以把它理解成生物医学术语的“总仓库”，而该项目是访问这个仓库的一个标准化接口。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q3：MCP 和我听过的 API 有什么区别？</p>
+<p style="color:var(--muted);font-size:13px;">Q3：MCP 和我听过的 API 有什么区别？</p>
 <p>普通 API 是给程序调用的接口；MCP 是专门为“大模型调用外部工具”设计的协议，强调安全与标准化。文章把它描述为“让大模型安全调用外部工具的协议”。具体协议细节文中未说明，以官方最新说明为准。可以粗略理解为“给 AI 用的标准插口”。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q4：“带类型元组”为什么重要？</p>
+<p style="color:var(--muted);font-size:13px;">Q4：“带类型元组”为什么重要？</p>
 <p>因为机器最怕“不知道这个值是什么”。带类型标注意味着每个返回值都明确告诉调用方“这是标识符、这是名称、这是某类实体”，下游不用猜、不用写一堆兼容逻辑。文章强调这正是它比原始术语“对机器更友好”的关键。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q5：双通道查询具体指哪两条路？</p>
+<p style="color:var(--muted);font-size:13px;">Q5：双通道查询具体指哪两条路？</p>
 <p>第一条：按已知标识符解析，适合已有编码体系的系统做精确对齐；第二条：按自由文本搜索，适合用户输入不规范、需要模糊匹配的场景。两条路最终输出同一套规范化格式，调用方不必为不同入口写两套处理逻辑。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q6：“领域无关”是不是意味着它很泛、不专业？</p>
+<p style="color:var(--muted);font-size:13px;">Q6：“领域无关”是不是意味着它很泛、不专业？</p>
 <p>不是。它的意思是工具不预设你是做基因、蛋白还是临床数据，只负责把术语解析成元组；怎么映射到你的数据模型，由下游自己决定。好处是解耦、可复用，不必为每个领域重写逻辑。专业性体现在它对接的是 BioPortal 这类专业术语源。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q7：星标数很低，值得用吗？</p>
+<p style="color:var(--muted);font-size:13px;">Q7：星标数很低，值得用吗？</p>
 <p>文章明确说它“尚属早期”“关注度不高”，价值在于思路示范而非成熟度。如果你要做医疗数据平台、科研工具或临床辅助系统，可以去看它的实现方式作为参考；是否用于生产环境，需自行评估维护活跃度与稳定性，文中未说明这些信息。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q8：它和“数据整合”是什么关系？</p>
+<p style="color:var(--muted);font-size:13px;">Q8：它和“数据整合”是什么关系？</p>
 <p>数据整合的难点之一就是同一概念多种叫法对不上。该项目提供规范化输出，让不同来源的术语能对齐到统一结构，从而为后续整合打基础。但它只做“术语解析”这一层，不做完整的数据清洗或映射，映射逻辑仍由下游负责。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q9：非生物医学背景的人看这个项目有什么用？</p>
+<p style="color:var(--muted);font-size:13px;">Q9：非生物医学背景的人看这个项目有什么用？</p>
 <p>可以把它当作理解 MCP 服务端设计的轻量样本——文章说“代码结构本身也是理解 MCP 服务端设计的一个轻量样本”。即使不做医疗，也能从中看到“专业领域知识基础设施如何包装成大模型可调用接口”的通用模式。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q10：用它需要什么基础？</p>
+<p style="color:var(--muted);font-size:13px;">Q10：用它需要什么基础？</p>
 <p>文章提到项目用 Python 编写。要读懂或改造它，至少需要 Python 基础和对“本体/术语”概念的基本理解；要实际接入，还需了解 MCP 的调用方式。具体依赖、安装方式文中未说明，以仓库官方文档为准。</p>
 <p>【事实核查】有原文依据的结论：术语碎片化问题、MCP 定义、BioPortal 平台性质、双通道查询、领域无关设计、Python 实现、星标数低且属早期、“专业术语+MCP”路径可行性。属合理推断：值集用于字段取值约束、下游需自行完成数据模型映射的具体做法。存疑/文中未说明：项目性能、支持的本体范围、许可证、版本号、维护活跃度、实际生产可用性。</p>
 <p>以上解读基于本文与通用知识生成，仅供学习参考，不构成专业医疗或工程结论。</p>
 <hr>
-<p style="color:#9aa4b2;font-size:13px;">参考来源</p>
+<p style="color:var(--muted);font-size:13px;">参考来源</p>
 <ul><li>metadatacenter/bioportal-term-mcp：https://github.com/metadatacenter/bioportal-term-mcp</li></ul>
-</div></article>
+</div><div class="pagenav"><a class="navlink prev" href="articles/2026-11-17/%E7%BB%99%E5%8C%BB%E5%AD%A6%E6%96%87%E7%8C%AE%E5%B7%A5%E5%85%B7%E9%80%A0%E4%B8%AA%E5%85%B1%E7%94%A8%E5%BA%95%E5%BA%A7.html">← 上一篇<br><span>给医学文献工具造个共用底座</span></a></div></article>
 <div class="footer">由 AI 自动生成 · 仅供学习参考</div>
+<script>
+(function(){
+  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
+  var tb = document.getElementById('themeBtn');
+  function sync(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
+  if(tb) tb.addEventListener('click', function(){{
+    var d = document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
+    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
+    sync();
+  }});
+  sync();
+  var bar = document.getElementById('bar');
+  function onScroll(){{ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width = (m>0 ? (h.scrollTop/m*100) : 0) + '%'; }}
+  window.addEventListener('scroll', onScroll); onScroll();
+  var cb = document.getElementById('copyBtn');
+  function fallbackCopy(){{ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{{document.execCommand('copy');}}catch(e){{}} document.body.removeChild(t); }}
+  if(cb) cb.addEventListener('click', function(){{
+    var done = function(){{ cb.textContent='已复制'; setTimeout(function(){{cb.textContent='复制链接';}},1500); }};
+    if (navigator.clipboard && navigator.clipboard.writeText){{ navigator.clipboard.writeText(location.href).then(done, function(){{fallbackCopy();done();}}); }}
+    else {{ fallbackCopy(); done(); }}
+  }});
+}})();
+</script>
 </body>
 </html>

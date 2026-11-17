@@ -5,46 +5,87 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>四个反作用轮，让独轮机器人站稳 · 我的专业科技日报</title>
 <style>
-:root{--bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;--accent:#0a7d3f;--border:#e5e7eb;}
+:root{
+  --bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;
+  --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
+  --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
+  --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+}
+[data-theme="dark"]{
+  --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
+  --accent:#3fb950;--accent2:#58a6ff;--border:#30363d;
+  --header:#010409;--headerfg:#ffffff;--headersub:#8b949e;
+  --chip:#21262d;--chipfg:#c9d1d9;--chipactive:#238636;--chipactivefg:#ffffff;
+  --quote:#12261a;--codebg:#21262d;--codefg:#ff7b72;
+}
 *{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
 a{color:var(--accent);text-decoration:none;}
-.header{background:#0d1117;color:#fff;padding:30px 20px;}
-.header h1{margin:0 0 6px;font-size:26px;}
-.header p{margin:0;color:#9aa4b2;font-size:14px;}
-.wrap{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-.search{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;outline:none;background:#fff;}
-.hint{color:var(--muted);font-size:13px;margin:0 0 18px;}
-.date{font-size:15px;font-weight:700;color:#374151;margin:24px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;}
-.item:hover{border-color:var(--accent);}
-.item .t{font-size:16px;font-weight:600;margin-bottom:4px;}
-.item .s{font-size:13.5px;color:var(--muted);}
-.item .meta{font-size:12px;color:#9aa4b2;margin-top:6px;}
-.empty{color:var(--muted);text-align:center;padding:40px 0;}
-article{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-article .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 22px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 6px;}
-article .meta{color:var(--muted);font-size:13px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-article h2{font-size:19px;margin:26px 0 10px;}
+.header{background:var(--header);color:var(--headerfg);padding:20px 20px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,.18);}
+.header-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.header h1{margin:0 0 4px;font-size:21px;}
+.header p{margin:0;color:var(--headersub);font-size:13px;}
+.themebtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;}
+.themebtn:hover{background:rgba(255,255,255,.16);}
+.wrap{max-width:820px;margin:0 auto;padding:18px 16px 70px;}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);}
+.search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
+.search:focus{border-color:var(--accent2);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
+.chip:hover{border-color:var(--accent);}
+.chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
+.item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
+.item .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.empty{color:var(--muted);text-align:center;padding:44px 0;}
+.footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
+.topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
+.progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
+article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+article .tags{margin-bottom:4px;}
+article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 article h3{font-size:16px;margin:20px 0 8px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
-article blockquote{border-left:3px solid var(--accent);background:#f0f9f4;margin:0 0 14px;padding:10px 14px;color:#4b5563;border-radius:0 8px 8px 0;}
+article blockquote{border-left:3px solid var(--accent);background:var(--quote);margin:0 0 14px;padding:10px 14px;color:var(--muted);border-radius:0 8px 8px 0;}
 article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.6;}
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
-article :not(pre)>code{background:#f0f0f0;color:#c7254e;padding:1px 6px;border-radius:4px;}
+article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.footer{max-width:780px;margin:0 auto;padding:0 16px 40px;color:#9aa4b2;font-size:12px;text-align:center;}
+.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
+.pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
+.navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
+.navlink:hover{border-color:var(--accent);}
+.navlink span{color:var(--muted);font-size:12px;}
+.navlink.next{text-align:right;}
 </style>
 </head>
 <body>
-<div class="header"><div style="max-width:780px;margin:0 auto;"><a href="../../index.html" style="color:#fff;">← 返回目录</a></div></div>
+<div class="progressbar" id="bar"></div>
+<div class="header"><div class="header-inner">
+<a href="../../index.html" style="color:#fff;font-weight:600;">← 返回目录</a>
+<button class="themebtn" id="themeBtn">深色模式</button>
+</div></div>
 <article><div class="card">
 <h1>四个反作用轮，让独轮机器人站稳</h1>
-<div class="meta">2026-11-16</div>
-<p style="color:#9aa4b2;font-size:13px;">来源：GitHub · 2026-11-16</p>
+<div class="meta"><span class="badge">GitHub · 2026-11-16</span><span>2026-11-16</span><span>约 11 分钟</span><button class="copybtn" id="copyBtn">复制链接</button></div>
+<div class="tags"><span class="tag">嵌入式</span></div>
+<p style="color:var(--muted);font-size:13px;">来源：GitHub · 2026-11-16</p>
 <h2>引言</h2>
 <p>独轮机器人天生不稳定：只有一个接地点，前后左右都容易倒。常见的做法是装一个又大又重的反作用轮，靠它加速旋转产生的反力矩把车身"掰"回来。但单个轮子只能对付一个方向的倾斜，侧向怎么办？GitHub 上一个名为 reaction-wheel-monowheel 的开源项目给出了另一种思路：用四个反作用轮，按 45° 角布置，配合数字孪生和硬件在环测试，把"站稳"这件事从仿真一路做到实机。对做机器人控制、嵌入式开发的人来说，这是一个把机械设计、控制理论和嵌入式固件串起来的完整案例。</p>
 <h2>四个轮子，为什么是 45°</h2>
@@ -75,32 +116,56 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <ul><li>MBSE/Capella → 在写代码之前，先把系统架构画清楚、建模好。</li></ul>
 <ul><li><strong>需说明的边界</strong>：文中未说明四个轮子的具体尺寸、转速、车体质量与惯量参数，也未给出控制效果数据（如稳定角度范围、响应时间）；“项目可能在不同层级混用 PID 与观测器控制”属于基于标签的合理推断（推断），文中未说明具体分层方式。</li></ul>
 <h2>小白常见问题</h2>
-<p style="color:#9aa4b2;font-size:13px;">Q1：为什么独轮机器人天生站不稳？</p>
+<p style="color:var(--muted);font-size:13px;">Q1：为什么独轮机器人天生站不稳？</p>
 <p>因为它只有一个接地点，支撑面近似一个点，重心稍有偏移就会绕接地点倾倒，前后左右都没有被动恢复力。必须靠主动控制（比如反作用轮）不断产生纠正力矩，才能维持平衡。这也是它比两轮自平衡车更难的原因。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q2：反作用轮和普通飞轮有什么区别？</p>
+<p style="color:var(--muted);font-size:13px;">Q2：反作用轮和普通飞轮有什么区别？</p>
 <p>反作用轮本质就是一个可正反加速的转子，靠角动量变化产生的反力矩作用于车身。它不靠“陀螺定轴”稳定，而是靠“加速时反拧车身”。所以控制的核心是精确控制轮的角加速度，而不是让它一直高速空转。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q3：一个轮子不够，为什么不用两个，而要四个？</p>
+<p style="color:var(--muted);font-size:13px;">Q3：一个轮子不够，为什么不用两个，而要四个？</p>
 <p>单轮只能产生绕自身轴线的力矩，只能管一个倾斜方向。两个轮子若轴线平行，仍只覆盖一个通道；若正交布置可覆盖两轴，但力矩分配和冗余不如四轮灵活。四轮 45° 布置让每个轮子的力矩都能分解到俯仰和横滚，组合自由度更高（具体选型理由文中未说明，此处为通用原理解释）。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q4：45° 布置到底妙在哪里？</p>
+<p style="color:var(--muted);font-size:13px;">Q4：45° 布置到底妙在哪里？</p>
 <p>每个轮子的力矩轴与俯仰轴、横滚轴都成 45°，所以它同时贡献两个方向的力矩分量。四个轮子成对配合，就能独立或联合地产生俯仰、横滚力矩。相当于用四个“斜着推”的力，合成出前后和左右两个方向的纠正力矩。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q5：什么是“尺寸选型（sizing）”，为什么关键？</p>
+<p style="color:var(--muted);font-size:13px;">Q5：什么是“尺寸选型（sizing）”，为什么关键？</p>
 <p>就是根据车体质量和转动惯量，反推轮子需要多大、多重、能转多快，才能产生足够的纠正力矩。选小了“掰不动”车身，选大了又重又费电。它决定了整套系统有没有足够的控制 authority，是设计的第一步硬约束。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q6：数字孪生为什么要做两套（Simscape 和 Webots）？</p>
+<p style="color:var(--muted);font-size:13px;">Q6：数字孪生为什么要做两套（Simscape 和 Webots）？</p>
 <p>Simscape 偏物理建模与控制律验证，Webots 偏三维场景下的整机行为仿真。两套模型并行，相当于用不同工具交叉验证同一套控制策略，降低“在一种仿真里调通、换环境就失效”的风险。这是工程上常见的冗余验证思路。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q7：观测器控制和 PID 是什么关系？</p>
+<p style="color:var(--muted);font-size:13px;">Q7：观测器控制和 PID 是什么关系？</p>
 <p>PID 直接用误差反馈，简单但依赖可测信号；观测器用数学模型推算测不到的状态量，再把推算值送进控制器。两者不是替代关系，常配合使用：观测器负责“补状态”，PID 或状态反馈负责“出控制量”。文中标签同时出现两者，具体分工文中未说明。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q8：ESP32 做实时控制靠谱吗？FreeRTOS 起什么作用？</p>
+<p style="color:var(--muted);font-size:13px;">Q8：ESP32 做实时控制靠谱吗？FreeRTOS 起什么作用？</p>
 <p>ESP32 是双核 Wi-Fi/蓝牙 MCU，主频和资源足以跑中小型控制循环，但需要合理调度。FreeRTOS 把控制循环、传感器读取、通信拆成不同优先级的任务，保证控制任务按时执行。是否满足具体控制频率要求，以官方最新说明和实测为准。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q9：硬件在环（HIL）测试有什么好处？</p>
+<p style="color:var(--muted);font-size:13px;">Q9：硬件在环（HIL）测试有什么好处？</p>
 <p>把真实 ESP32 接进仿真回路，让固件控制虚拟被控对象。这样可以在不摔坏实机的前提下，测试极限工况、参数摄动和故障场景，提前暴露固件里的调度、溢出、时序问题。它是“台架之后、实机之前”的关键一道关。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q10：我想复现这个项目，应该从哪里入手？</p>
+<p style="color:var(--muted);font-size:13px;">Q10：我想复现这个项目，应该从哪里入手？</p>
 <p>建议按文章链路倒推：先理解反作用轮力矩原理和 45° 力矩分解，再做单轴台架验证一个轮子的控制，然后扩展到两轴、四轮，最后上整机。仿真可先用 Simscape 或 Webots 建简化模型。具体代码、CAD 与参数请以项目仓库和作者官方说明为准。</p>
 <p>【事实核查】本文结论中，“四轮 45° 布置可同时抑制俯仰与横滚”“项目采用 Simscape 与 Webots 双仿真”“控制代码运行于 ESP32，基于 FreeRTOS 与 PlatformIO”“搭建了两轴测试台与 HIL 台架”“CAD 最初由 Python 生成后在 SolidWorks 重建”均有原文依据；“PID 与观测器可能分层混用”“四轮相比两轮在力矩分配上更灵活”属于合理推断；轮子具体尺寸、转速、车体参数、控制效果数据及 PID/观测器的具体分工，文中未说明。</p>
 <p>以上解读基于本文与通用知识生成，仅供学习参考，不构成专业医疗或工程结论。</p>
 <hr>
-<p style="color:#9aa4b2;font-size:13px;">参考来源</p>
+<p style="color:var(--muted);font-size:13px;">参考来源</p>
 <ul><li>vigol2025/reaction-wheel-monowheel：https://github.com/vigol2025/reaction-wheel-monowheel</li></ul>
-</div></article>
+</div><div class="pagenav"><a class="navlink prev" href="articles/2026-11-16/AI%E8%AF%BB%E8%84%91%E7%94%B5%E6%B3%A2%E5%88%A4%E7%9D%A1%E7%9C%A0%EF%BC%8C%E4%B8%BA%E4%BD%95%E5%8C%BB%E7%94%9F%E4%B8%8D%E6%95%A2%E4%BF%A1%EF%BC%9F.html">← 上一篇<br><span>AI读脑电波判睡眠，为何医生不敢信？</span></a><a class="navlink next" href="articles/2026-11-16/%E7%BB%99%E4%BD%B3%E8%83%BDR5%E6%94%B9%E5%9B%BA%E4%BB%B6%EF%BC%8C%E8%83%BD%E7%8E%A9%E5%87%BA%E4%BB%80%E4%B9%88%E8%8A%B1%E6%A0%B7.html">下一篇 →<br><span>给佳能R5改固件，能玩出什么花样</span></a></div></article>
 <div class="footer">由 AI 自动生成 · 仅供学习参考</div>
+<script>
+(function(){
+  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
+  var tb = document.getElementById('themeBtn');
+  function sync(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
+  if(tb) tb.addEventListener('click', function(){{
+    var d = document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
+    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
+    sync();
+  }});
+  sync();
+  var bar = document.getElementById('bar');
+  function onScroll(){{ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width = (m>0 ? (h.scrollTop/m*100) : 0) + '%'; }}
+  window.addEventListener('scroll', onScroll); onScroll();
+  var cb = document.getElementById('copyBtn');
+  function fallbackCopy(){{ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{{document.execCommand('copy');}}catch(e){{}} document.body.removeChild(t); }}
+  if(cb) cb.addEventListener('click', function(){{
+    var done = function(){{ cb.textContent='已复制'; setTimeout(function(){{cb.textContent='复制链接';}},1500); }};
+    if (navigator.clipboard && navigator.clipboard.writeText){{ navigator.clipboard.writeText(location.href).then(done, function(){{fallbackCopy();done();}}); }}
+    else {{ fallbackCopy(); done(); }}
+  }});
+}})();
+</script>
 </body>
 </html>

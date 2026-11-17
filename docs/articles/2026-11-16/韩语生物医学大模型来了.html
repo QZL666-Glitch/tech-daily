@@ -5,46 +5,87 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>韩语生物医学大模型来了 · 我的专业科技日报</title>
 <style>
-:root{--bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;--accent:#0a7d3f;--border:#e5e7eb;}
+:root{
+  --bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;
+  --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
+  --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
+  --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+}
+[data-theme="dark"]{
+  --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
+  --accent:#3fb950;--accent2:#58a6ff;--border:#30363d;
+  --header:#010409;--headerfg:#ffffff;--headersub:#8b949e;
+  --chip:#21262d;--chipfg:#c9d1d9;--chipactive:#238636;--chipactivefg:#ffffff;
+  --quote:#12261a;--codebg:#21262d;--codefg:#ff7b72;
+}
 *{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
 a{color:var(--accent);text-decoration:none;}
-.header{background:#0d1117;color:#fff;padding:30px 20px;}
-.header h1{margin:0 0 6px;font-size:26px;}
-.header p{margin:0;color:#9aa4b2;font-size:14px;}
-.wrap{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-.search{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;outline:none;background:#fff;}
-.hint{color:var(--muted);font-size:13px;margin:0 0 18px;}
-.date{font-size:15px;font-weight:700;color:#374151;margin:24px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;}
-.item:hover{border-color:var(--accent);}
-.item .t{font-size:16px;font-weight:600;margin-bottom:4px;}
-.item .s{font-size:13.5px;color:var(--muted);}
-.item .meta{font-size:12px;color:#9aa4b2;margin-top:6px;}
-.empty{color:var(--muted);text-align:center;padding:40px 0;}
-article{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-article .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 22px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 6px;}
-article .meta{color:var(--muted);font-size:13px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-article h2{font-size:19px;margin:26px 0 10px;}
+.header{background:var(--header);color:var(--headerfg);padding:20px 20px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,.18);}
+.header-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.header h1{margin:0 0 4px;font-size:21px;}
+.header p{margin:0;color:var(--headersub);font-size:13px;}
+.themebtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;}
+.themebtn:hover{background:rgba(255,255,255,.16);}
+.wrap{max-width:820px;margin:0 auto;padding:18px 16px 70px;}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);}
+.search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
+.search:focus{border-color:var(--accent2);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
+.chip:hover{border-color:var(--accent);}
+.chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
+.item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
+.item .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.empty{color:var(--muted);text-align:center;padding:44px 0;}
+.footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
+.topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
+.progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
+article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+article .tags{margin-bottom:4px;}
+article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 article h3{font-size:16px;margin:20px 0 8px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
-article blockquote{border-left:3px solid var(--accent);background:#f0f9f4;margin:0 0 14px;padding:10px 14px;color:#4b5563;border-radius:0 8px 8px 0;}
+article blockquote{border-left:3px solid var(--accent);background:var(--quote);margin:0 0 14px;padding:10px 14px;color:var(--muted);border-radius:0 8px 8px 0;}
 article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.6;}
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
-article :not(pre)>code{background:#f0f0f0;color:#c7254e;padding:1px 6px;border-radius:4px;}
+article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.footer{max-width:780px;margin:0 auto;padding:0 16px 40px;color:#9aa4b2;font-size:12px;text-align:center;}
+.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
+.pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
+.navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
+.navlink:hover{border-color:var(--accent);}
+.navlink span{color:var(--muted);font-size:12px;}
+.navlink.next{text-align:right;}
 </style>
 </head>
 <body>
-<div class="header"><div style="max-width:780px;margin:0 auto;"><a href="../../index.html" style="color:#fff;">← 返回目录</a></div></div>
+<div class="progressbar" id="bar"></div>
+<div class="header"><div class="header-inner">
+<a href="../../index.html" style="color:#fff;font-weight:600;">← 返回目录</a>
+<button class="themebtn" id="themeBtn">深色模式</button>
+</div></div>
 <article><div class="card">
 <h1>韩语生物医学大模型来了</h1>
-<div class="meta">2026-11-16</div>
-<p style="color:#9aa4b2;font-size:13px;">来源：GitHub · 2026-11-11</p>
+<div class="meta"><span class="badge">GitHub · 2026-11-11</span><span>2026-11-16</span><span>约 8 分钟</span><button class="copybtn" id="copyBtn">复制链接</button></div>
+<div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div>
+<p style="color:var(--muted);font-size:13px;">来源：GitHub · 2026-11-11</p>
 <p>生物医学领域的研究者常面临一个尴尬：最新的论文浩如烟海，但真正能"读懂"并回答专业问题的工具却不多，韩语语境下更是稀缺。GitHub 上出现了一个名为 KoBioMed-Llama 的开源项目，试图用大语言模型加检索增强生成（RAG，即让模型先查资料再回答，减少凭空编造）的方式，为生命科学研究提供韩语支持。它目前仍处于活跃开发阶段，值得关注的是它把"韩语"和"生物医学"这两个细分需求叠在了一起。</p>
 <h2>它到底是什么</h2>
 <p>KoBioMed-Llama 是一个韩语生物医学大语言模型项目，代码以 Python 编写，基于 PyTorch 深度学习框架。它的核心思路不是让模型死记硬背医学知识，而是接入 PubMed（生物医学文献数据库）和 PDF 文档，通过检索增强生成的方式，在回答问题时先检索相关文献内容，再组织答案。项目主题标签明确指向 biomedical、korean、llm、pubmed、rag，定位清晰。</p>
@@ -61,38 +102,62 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <ul><li><strong>两条资料入口</strong>：支持 PubMed 在线文献检索与 PDF 本地解析，覆盖在线数据库和本地文献两种常见科研使用场景。</li></ul>
 <ul><li><strong>为什么重要</strong>：生物医学容错率极低，“先查后答”比“凭记忆作答”更符合该领域对证据来源的要求；同时韩语垂直模型是被英文主流模型忽视的角落。</li></ul>
 <ul><li><strong>现状提醒</strong>：项目标注“under active development”，GitHub 星标为 0，尚未经广泛验证，现阶段更适合作为技术原型参考，而非成熟工具。</li></ul>
-<p style="color:#9aa4b2;font-size:13px;">难点概念白话解释</p>
+<p style="color:var(--muted);font-size:13px;">难点概念白话解释</p>
 <ul><li><strong>RAG（检索增强生成）</strong> → 让模型“开卷考试”：先查资料再答题，而不是凭记忆硬答。</li></ul>
 <ul><li><strong>PubMed</strong> → 生物医学领域的权威文献数据库，相当于医学论文的“总图书馆”。</li></ul>
 <ul><li><strong>Llama 系模型</strong> → 一类开源大语言模型底座，项目在其上做韩语生物医学适配。</li></ul>
 <ul><li><strong>垂直领域模型</strong> → 只专注某一专业方向的模型，好比“专科医生”而非“全科医生”。</li></ul>
 <ul><li><strong>星标数（Star）</strong> → GitHub 上的收藏/点赞数，可粗略反映项目受关注程度（推断：星标低不等于技术差，但说明社区验证少）。</li></ul>
 <h2>小白常见问题</h2>
-<p style="color:#9aa4b2;font-size:13px;">1. KoBioMed-Llama 是什么？</p>
+<p style="color:var(--muted);font-size:13px;">1. KoBioMed-Llama 是什么？</p>
 <p>它是一个开源的韩语生物医学大语言模型项目，代码用 Python 编写、基于 PyTorch。核心做法是让模型在回答前先检索 PubMed 文献或本地 PDF，再组织答案。定位是服务韩语生命科学研究场景，目前仍在活跃开发中。</p>
-<p style="color:#9aa4b2;font-size:13px;">2. RAG 到底是什么意思？</p>
+<p style="color:var(--muted);font-size:13px;">2. RAG 到底是什么意思？</p>
 <p>RAG 即检索增强生成。普通模型像凭记忆答题的学生，记错就“胡说”；RAG 像开卷考试，先从资料库找到相关段落再作答。对生物医学这种容错率低的领域，能提升答案的可追溯性，减少编造。</p>
-<p style="color:#9aa4b2;font-size:13px;">3. 它和 ChatGPT 这类通用模型有什么区别？</p>
+<p style="color:var(--muted);font-size:13px;">3. 它和 ChatGPT 这类通用模型有什么区别？</p>
 <p>通用模型面向广泛话题，韩语生物医学专业内容未必精准；该项目专门接入 PubMed 和 PDF 做检索增强，并聚焦韩语。不过它尚处开发早期，成熟度和通用产品不可直接比较，具体能力以官方最新说明为准。</p>
-<p style="color:#9aa4b2;font-size:13px;">4. 它支持中文或英文吗？</p>
+<p style="color:var(--muted);font-size:13px;">4. 它支持中文或英文吗？</p>
 <p>文章明确定位是韩语生物医学场景，主题标签含 korean。是否支持中文或英文问答，文中未说明，需以官方最新说明为准。</p>
-<p style="color:#9aa4b2;font-size:13px;">5. 普通研究者现在能直接用它查文献吗？</p>
+<p style="color:var(--muted);font-size:13px;">5. 普通研究者现在能直接用它查文献吗？</p>
 <p>不建议当作成熟工具。文章明确说它“under active development”、星标为 0，功能和稳定性都可能变化。现阶段更适合开发者参考技术原型，研究者可先观察，待其稳定后再评估。</p>
-<p style="color:#9aa4b2;font-size:13px;">6. 为什么生物医学特别需要 RAG？</p>
+<p style="color:var(--muted);font-size:13px;">6. 为什么生物医学特别需要 RAG？</p>
 <p>生物医学容错率极低，错误答案可能带来严重后果。RAG 让答案有文献出处可追溯，比模型凭参数记忆作答更可靠。这也是该项目选择 RAG 而非纯微调路线的主要原因。</p>
-<p style="color:#9aa4b2;font-size:13px;">7. PubMed 和 PDF 两条入口分别适合什么场景？</p>
+<p style="color:var(--muted);font-size:13px;">7. PubMed 和 PDF 两条入口分别适合什么场景？</p>
 <p>PubMed 适合检索在线公开文献，覆盖最新研究；PDF 解析适合本地已有论文或资料。两者结合覆盖了在线数据库与本地文献两种常见科研使用习惯。具体解析能力文中未说明。</p>
-<p style="color:#9aa4b2;font-size:13px;">8. 星标为 0 是不是说明项目不好？</p>
+<p style="color:var(--muted);font-size:13px;">8. 星标为 0 是不是说明项目不好？</p>
 <p>不能简单等同。星标低说明社区关注和验证少，项目较新或推广不足都可能是原因（推断）。文章的态度是“技术路线合理但尚未验证”，建议放进观察列表持续跟踪，而非据此否定。</p>
-<p style="color:#9aa4b2;font-size:13px;">9. 我想跟进这个项目该怎么做？</p>
+<p style="color:var(--muted);font-size:13px;">9. 我想跟进这个项目该怎么做？</p>
 <p>文章建议通过 GitHub 仓库持续跟踪代码与进展。关注其更新频率、issue 讨论和文档完善程度，是判断项目是否走向可用的实用方式。具体仓库地址以官方最新说明为准。</p>
-<p style="color:#9aa4b2;font-size:13px;">10. 它用了什么模型和框架？</p>
+<p style="color:var(--muted);font-size:13px;">10. 它用了什么模型和框架？</p>
 <p>文章称其“用 Llama 系模型打底”，代码为 Python、基于 PyTorch。具体模型版本、参数量和训练细节，文中未说明，需以官方最新说明为准。</p>
 <p>【事实核查】有原文依据的结论：项目为韩语生物医学 LLM、Python/PyTorch 实现、采用 RAG、支持 PubMed 与 PDF 两条入口、星标为 0、标注“under active development”、以 Llama 系模型打底。合理推断：星标低可能因项目新或推广不足；“适合作为技术原型参考”属文章观点延伸。存疑/文中未说明：具体模型版本与参数量、是否支持中英文、PDF 解析能力细节、实际问答效果评测。</p>
 <hr>
-<p style="color:#9aa4b2;font-size:13px;">参考来源</p>
+<p style="color:var(--muted);font-size:13px;">参考来源</p>
 <ul><li>insulin01/KoBioMed-Llama：https://github.com/insulin01/KoBioMed-Llama</li></ul>
-</div></article>
+</div><div class="pagenav"><a class="navlink prev" href="articles/2026-11-16/%E9%9B%B7%E8%BE%BE%E2%80%9C%E6%8C%87%E7%BA%B9%E2%80%9D%E8%AF%86%E5%88%AB%EF%BC%8C%E6%9C%89%E4%BA%86%E6%96%B0%E6%95%B0%E6%8D%AE%E9%9B%86.html">← 上一篇<br><span>雷达“指纹”识别，有了新数据集</span></a><a class="navlink next" href="articles/2026-11-17/12%E6%98%9F%E7%9A%84%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE%EF%BC%8C%E8%AE%A9AI%E5%B8%AE%E4%BD%A0%E8%AF%BB%E5%8C%BB%E5%AD%A6%E8%AE%BA%E6%96%87.html">下一篇 →<br><span>12星的开源项目，让AI帮你读医学论文</span></a></div></article>
 <div class="footer">由 AI 自动生成 · 仅供学习参考</div>
+<script>
+(function(){
+  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
+  var tb = document.getElementById('themeBtn');
+  function sync(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
+  if(tb) tb.addEventListener('click', function(){{
+    var d = document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
+    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
+    sync();
+  }});
+  sync();
+  var bar = document.getElementById('bar');
+  function onScroll(){{ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width = (m>0 ? (h.scrollTop/m*100) : 0) + '%'; }}
+  window.addEventListener('scroll', onScroll); onScroll();
+  var cb = document.getElementById('copyBtn');
+  function fallbackCopy(){{ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{{document.execCommand('copy');}}catch(e){{}} document.body.removeChild(t); }}
+  if(cb) cb.addEventListener('click', function(){{
+    var done = function(){{ cb.textContent='已复制'; setTimeout(function(){{cb.textContent='复制链接';}},1500); }};
+    if (navigator.clipboard && navigator.clipboard.writeText){{ navigator.clipboard.writeText(location.href).then(done, function(){{fallbackCopy();done();}}); }}
+    else {{ fallbackCopy(); done(); }}
+  }});
+}})();
+</script>
 </body>
 </html>

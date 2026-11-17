@@ -5,46 +5,87 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>给医学文献工具造个共用底座 · 我的专业科技日报</title>
 <style>
-:root{--bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;--accent:#0a7d3f;--border:#e5e7eb;}
+:root{
+  --bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;
+  --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
+  --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
+  --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+}
+[data-theme="dark"]{
+  --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
+  --accent:#3fb950;--accent2:#58a6ff;--border:#30363d;
+  --header:#010409;--headerfg:#ffffff;--headersub:#8b949e;
+  --chip:#21262d;--chipfg:#c9d1d9;--chipactive:#238636;--chipactivefg:#ffffff;
+  --quote:#12261a;--codebg:#21262d;--codefg:#ff7b72;
+}
 *{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
 a{color:var(--accent);text-decoration:none;}
-.header{background:#0d1117;color:#fff;padding:30px 20px;}
-.header h1{margin:0 0 6px;font-size:26px;}
-.header p{margin:0;color:#9aa4b2;font-size:14px;}
-.wrap{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-.search{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;outline:none;background:#fff;}
-.hint{color:var(--muted);font-size:13px;margin:0 0 18px;}
-.date{font-size:15px;font-weight:700;color:#374151;margin:24px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;}
-.item:hover{border-color:var(--accent);}
-.item .t{font-size:16px;font-weight:600;margin-bottom:4px;}
-.item .s{font-size:13.5px;color:var(--muted);}
-.item .meta{font-size:12px;color:#9aa4b2;margin-top:6px;}
-.empty{color:var(--muted);text-align:center;padding:40px 0;}
-article{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-article .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 22px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 6px;}
-article .meta{color:var(--muted);font-size:13px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-article h2{font-size:19px;margin:26px 0 10px;}
+.header{background:var(--header);color:var(--headerfg);padding:20px 20px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,.18);}
+.header-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.header h1{margin:0 0 4px;font-size:21px;}
+.header p{margin:0;color:var(--headersub);font-size:13px;}
+.themebtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;}
+.themebtn:hover{background:rgba(255,255,255,.16);}
+.wrap{max-width:820px;margin:0 auto;padding:18px 16px 70px;}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);}
+.search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
+.search:focus{border-color:var(--accent2);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
+.chip:hover{border-color:var(--accent);}
+.chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
+.item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
+.item .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.empty{color:var(--muted);text-align:center;padding:44px 0;}
+.footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
+.topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
+.progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
+article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+article .tags{margin-bottom:4px;}
+article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 article h3{font-size:16px;margin:20px 0 8px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
-article blockquote{border-left:3px solid var(--accent);background:#f0f9f4;margin:0 0 14px;padding:10px 14px;color:#4b5563;border-radius:0 8px 8px 0;}
+article blockquote{border-left:3px solid var(--accent);background:var(--quote);margin:0 0 14px;padding:10px 14px;color:var(--muted);border-radius:0 8px 8px 0;}
 article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.6;}
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
-article :not(pre)>code{background:#f0f0f0;color:#c7254e;padding:1px 6px;border-radius:4px;}
+article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.footer{max-width:780px;margin:0 auto;padding:0 16px 40px;color:#9aa4b2;font-size:12px;text-align:center;}
+.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
+.pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
+.navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
+.navlink:hover{border-color:var(--accent);}
+.navlink span{color:var(--muted);font-size:12px;}
+.navlink.next{text-align:right;}
 </style>
 </head>
 <body>
-<div class="header"><div style="max-width:780px;margin:0 auto;"><a href="../../index.html" style="color:#fff;">← 返回目录</a></div></div>
+<div class="progressbar" id="bar"></div>
+<div class="header"><div class="header-inner">
+<a href="../../index.html" style="color:#fff;font-weight:600;">← 返回目录</a>
+<button class="themebtn" id="themeBtn">深色模式</button>
+</div></div>
 <article><div class="card">
 <h1>给医学文献工具造个共用底座</h1>
-<div class="meta">2026-11-17</div>
-<p style="color:#9aa4b2;font-size:13px;">来源：GitHub · 2026-11-12</p>
+<div class="meta"><span class="badge">GitHub · 2026-11-12</span><span>2026-11-17</span><span>约 8 分钟</span><button class="copybtn" id="copyBtn">复制链接</button></div>
+<div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div>
+<p style="color:var(--muted);font-size:13px;">来源：GitHub · 2026-11-12</p>
 <h2>引言</h2>
 <p>做生物医学文献相关工具的人，大概都遇到过这样的麻烦：想接入大模型做摘要或问答，得自己封装一套调用层；想判断一篇论文质量高不高、透明度够不够，又得从头写规则；想抓全文、入库、去重，还得再搭一套管道。GitHub 上的 hherb/bmlib 就是冲着这个痛点来的——一个面向生物医学文献工具的共享库，同时提供 Python 和 Rust 版本，把大模型抽象、质量评估、透明度分析、全文检索、出版物入库和数据库工具打包在一起。项目目前星标数不高（2 颗），语言以 Python 为主，主题标签覆盖 biomedical、pubmed、europepmc、medrxiv 等。它值得关注的地方不在于“又一个文献爬虫”，而在于试图把散落在各处的重复劳动收敛成一个可复用的底座。</p>
 <h2>它到底提供什么</h2>
@@ -67,32 +108,56 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <ul><li>透明度分析 → 检查论文有没有把方法、数据、利益冲突等关键信息讲清楚。</li></ul>
 <ul><li>双实现 → 同一套逻辑有两种语言版本，原型用 Python，追求吞吐量时切 Rust。</li></ul>
 <h2>小白常见问题</h2>
-<p style="color:#9aa4b2;font-size:13px;">1. bmlib 是做什么的？</p>
+<p style="color:var(--muted);font-size:13px;">1. bmlib 是做什么的？</p>
 <p>它是一个面向生物医学文献工具的共享库，把大模型调用、质量评估、透明度分析、全文检索、出版物入库和数据库工具打包在一起，目标是让开发者不用每个环节都从头造轮子。文章称其同时提供 Python 和 Rust 版本，但具体 API 和功能边界需以仓库代码为准。</p>
-<p style="color:#9aa4b2;font-size:13px;">2. 它和普通文献爬虫有什么区别？</p>
+<p style="color:var(--muted);font-size:13px;">2. 它和普通文献爬虫有什么区别？</p>
 <p>文章强调它不只是“又一个文献爬虫”，而是试图做可复用底座：除了抓取 PubMed、Europe PMC、medRxiv 等来源，还叠加 LLM 抽象、质量与透明度评估、入库管理等能力。是否真正覆盖这些能力，文中未给出代码级验证，建议读仓库确认。</p>
-<p style="color:#9aa4b2;font-size:13px;">3. “LLM 抽象层”对我有什么用？</p>
+<p style="color:var(--muted);font-size:13px;">3. “LLM 抽象层”对我有什么用？</p>
 <p>它把不同大模型的调用方式统一起来，上层工具不用为每家模型写适配代码。白话就是“通用充电插口”，换模型时少改代码。文章未说明具体支持哪些模型或厂商，需以官方最新说明为准。</p>
-<p style="color:#9aa4b2;font-size:13px;">4. 为什么同时做 Python 和 Rust 两个版本？</p>
+<p style="color:var(--muted);font-size:13px;">4. 为什么同时做 Python 和 Rust 两个版本？</p>
 <p>Python 在生物医学和数据科学圈通用，适合写脚本、做实验、调模型；Rust 性能和内存安全更好，适合大批量文献解析和全文索引。双实现让原型和性能敏感环节共用同一套设计，减少重写成本。</p>
-<p style="color:#9aa4b2;font-size:13px;">5. 质量评估和透明度分析是自动判断论文好坏吗？</p>
+<p style="color:var(--muted);font-size:13px;">5. 质量评估和透明度分析是自动判断论文好坏吗？</p>
 <p>文章说它提供判断研究质量和分析报告透明度的能力，透明度指检查方法、数据、利益冲突等是否讲清楚。但具体规则、准确率和输出形式文中未说明，不能理解为能替代同行评审或人工判断。</p>
-<p style="color:#9aa4b2;font-size:13px;">6. 这个项目成熟吗？能直接用于生产吗？</p>
+<p style="color:var(--muted);font-size:13px;">6. 这个项目成熟吗？能直接用于生产吗？</p>
 <p>文章明确说星标仅 2 颗，属于早期项目，成熟度和社区支持有限。是否用于生产应先读仓库代码，确认功能覆盖和边界情况；文中未说明版本号、测试覆盖或维护活跃度，以官方最新说明为准。</p>
-<p style="color:#9aa4b2;font-size:13px;">7. 它支持哪些文献来源？</p>
+<p style="color:var(--muted);font-size:13px;">7. 它支持哪些文献来源？</p>
 <p>文章提到主题标签覆盖 PubMed、Europe PMC、medRxiv 等，并称可对接这些来源做全文检索和入库。是否支持其他数据库、抓取频率和授权限制，文中未说明，需查仓库文档。</p>
-<p style="color:#9aa4b2;font-size:13px;">8. 我不会 Rust，只用 Python 可以吗？</p>
+<p style="color:var(--muted);font-size:13px;">8. 我不会 Rust，只用 Python 可以吗？</p>
 <p>文章说项目同时提供 Python 和 Rust 库，Python 适合快速验证和常规脚本开发。只使用 Python 版本在逻辑上是可行的（推断），但两版功能是否完全对齐、Python 版性能如何，文中未说明。</p>
-<p style="color:#9aa4b2;font-size:13px;">9. 适合用来做医学问答系统吗？</p>
+<p style="color:var(--muted);font-size:13px;">9. 适合用来做医学问答系统吗？</p>
 <p>文章把“医学问答系统后端”列为适用场景之一，因为它有 LLM 抽象和文献检索入库能力。但问答质量取决于模型、检索策略和评估规则，文中未给出端到端案例或评测数据，建议先做小规模验证。</p>
-<p style="color:#9aa4b2;font-size:13px;">10. 我该不该采用它？</p>
+<p style="color:var(--muted);font-size:13px;">10. 我该不该采用它？</p>
 <p>文章建议先读仓库代码，确认功能与需求对得上。若你只是想快速起一个医学文献工具原型，它可作为起点参考；若要求成熟稳定或社区支持，需谨慎评估。具体采用决策应结合代码质量、维护状态和许可证，以官方最新说明为准。</p>
 <p>【事实核查】本文结论均有原文依据的部分：项目定位、四块能力、Python+Rust 双实现理由、星标 2 颗及早期项目定位、适用场景。属于合理推断的部分：仅用 Python 版本可行的判断、双版本功能可能不完全对齐的提醒。存疑或文中未说明的部分：具体支持的模型厂商、质量评估规则与准确率、版本号与测试覆盖、许可证与维护活跃度、端到端问答效果。</p>
 <p>以上解读基于本文与通用知识生成，仅供学习参考，不构成专业医疗或工程结论。</p>
 <hr>
-<p style="color:#9aa4b2;font-size:13px;">参考来源</p>
+<p style="color:var(--muted);font-size:13px;">参考来源</p>
 <ul><li>hherb/bmlib：https://github.com/hherb/bmlib</li></ul>
-</div></article>
+</div><div class="pagenav"><a class="navlink prev" href="articles/2026-11-17/%E4%B8%80%E5%9D%97Arduino%E6%9D%BF%EF%BC%8C%E8%83%BD%E6%B5%8B%E5%93%AA%E4%BA%9B%E5%81%A5%E5%BA%B7%E6%8C%87%E6%A0%87%EF%BC%9F.html">← 上一篇<br><span>一块Arduino板，能测哪些健康指标？</span></a><a class="navlink next" href="articles/2026-11-17/%E8%AE%A9AI%E8%AF%BB%E6%87%82%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E6%9C%AF%E8%AF%AD.html">下一篇 →<br><span>让AI读懂生物医学术语</span></a></div></article>
 <div class="footer">由 AI 自动生成 · 仅供学习参考</div>
+<script>
+(function(){
+  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
+  var tb = document.getElementById('themeBtn');
+  function sync(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
+  if(tb) tb.addEventListener('click', function(){{
+    var d = document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
+    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
+    sync();
+  }});
+  sync();
+  var bar = document.getElementById('bar');
+  function onScroll(){{ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width = (m>0 ? (h.scrollTop/m*100) : 0) + '%'; }}
+  window.addEventListener('scroll', onScroll); onScroll();
+  var cb = document.getElementById('copyBtn');
+  function fallbackCopy(){{ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{{document.execCommand('copy');}}catch(e){{}} document.body.removeChild(t); }}
+  if(cb) cb.addEventListener('click', function(){{
+    var done = function(){{ cb.textContent='已复制'; setTimeout(function(){{cb.textContent='复制链接';}},1500); }};
+    if (navigator.clipboard && navigator.clipboard.writeText){{ navigator.clipboard.writeText(location.href).then(done, function(){{fallbackCopy();done();}}); }}
+    else {{ fallbackCopy(); done(); }}
+  }});
+}})();
+</script>
 </body>
 </html>

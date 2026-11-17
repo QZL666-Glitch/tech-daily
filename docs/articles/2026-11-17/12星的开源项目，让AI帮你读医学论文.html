@@ -5,46 +5,87 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>12星的开源项目，让AI帮你读医学论文 · 我的专业科技日报</title>
 <style>
-:root{--bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;--accent:#0a7d3f;--border:#e5e7eb;}
+:root{
+  --bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;
+  --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
+  --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
+  --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+}
+[data-theme="dark"]{
+  --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
+  --accent:#3fb950;--accent2:#58a6ff;--border:#30363d;
+  --header:#010409;--headerfg:#ffffff;--headersub:#8b949e;
+  --chip:#21262d;--chipfg:#c9d1d9;--chipactive:#238636;--chipactivefg:#ffffff;
+  --quote:#12261a;--codebg:#21262d;--codefg:#ff7b72;
+}
 *{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
 a{color:var(--accent);text-decoration:none;}
-.header{background:#0d1117;color:#fff;padding:30px 20px;}
-.header h1{margin:0 0 6px;font-size:26px;}
-.header p{margin:0;color:#9aa4b2;font-size:14px;}
-.wrap{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-.search{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;outline:none;background:#fff;}
-.hint{color:var(--muted);font-size:13px;margin:0 0 18px;}
-.date{font-size:15px;font-weight:700;color:#374151;margin:24px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;}
-.item:hover{border-color:var(--accent);}
-.item .t{font-size:16px;font-weight:600;margin-bottom:4px;}
-.item .s{font-size:13.5px;color:var(--muted);}
-.item .meta{font-size:12px;color:#9aa4b2;margin-top:6px;}
-.empty{color:var(--muted);text-align:center;padding:40px 0;}
-article{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-article .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 22px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 6px;}
-article .meta{color:var(--muted);font-size:13px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-article h2{font-size:19px;margin:26px 0 10px;}
+.header{background:var(--header);color:var(--headerfg);padding:20px 20px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,.18);}
+.header-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.header h1{margin:0 0 4px;font-size:21px;}
+.header p{margin:0;color:var(--headersub);font-size:13px;}
+.themebtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;}
+.themebtn:hover{background:rgba(255,255,255,.16);}
+.wrap{max-width:820px;margin:0 auto;padding:18px 16px 70px;}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);}
+.search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
+.search:focus{border-color:var(--accent2);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
+.chip:hover{border-color:var(--accent);}
+.chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
+.item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
+.item .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.empty{color:var(--muted);text-align:center;padding:44px 0;}
+.footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
+.topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
+.progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
+article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+article .tags{margin-bottom:4px;}
+article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 article h3{font-size:16px;margin:20px 0 8px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
-article blockquote{border-left:3px solid var(--accent);background:#f0f9f4;margin:0 0 14px;padding:10px 14px;color:#4b5563;border-radius:0 8px 8px 0;}
+article blockquote{border-left:3px solid var(--accent);background:var(--quote);margin:0 0 14px;padding:10px 14px;color:var(--muted);border-radius:0 8px 8px 0;}
 article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.6;}
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
-article :not(pre)>code{background:#f0f0f0;color:#c7254e;padding:1px 6px;border-radius:4px;}
+article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.footer{max-width:780px;margin:0 auto;padding:0 16px 40px;color:#9aa4b2;font-size:12px;text-align:center;}
+.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
+.pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
+.navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
+.navlink:hover{border-color:var(--accent);}
+.navlink span{color:var(--muted);font-size:12px;}
+.navlink.next{text-align:right;}
 </style>
 </head>
 <body>
-<div class="header"><div style="max-width:780px;margin:0 auto;"><a href="../../index.html" style="color:#fff;">← 返回目录</a></div></div>
+<div class="progressbar" id="bar"></div>
+<div class="header"><div class="header-inner">
+<a href="../../index.html" style="color:#fff;font-weight:600;">← 返回目录</a>
+<button class="themebtn" id="themeBtn">深色模式</button>
+</div></div>
 <article><div class="card">
 <h1>12星的开源项目，让AI帮你读医学论文</h1>
-<div class="meta">2026-11-17</div>
-<p style="color:#9aa4b2;font-size:13px;">来源：GitHub · 2026-11-11</p>
+<div class="meta"><span class="badge">GitHub · 2026-11-11</span><span>2026-11-17</span><span>约 10 分钟</span><button class="copybtn" id="copyBtn">复制链接</button></div>
+<div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div>
+<p style="color:var(--muted);font-size:13px;">来源：GitHub · 2026-11-11</p>
 <h2>引言</h2>
 <p>做医学研究的人大概都有过这种体验：在 PubMed 上搜一个关键词，出来几百上千篇文献，光是筛标题就要花掉一整个下午。更麻烦的是，读完之后你还得判断这些结论到底靠不靠谱——样本量够不够、对照组设得对不对、有没有把相关性说成因果性。GitHub 上有个叫 bmlibrarian 的开源项目，想用多智能体（multi-agent，即让多个分工不同的 AI 程序协作完成一件事）的方式把这件事自动化，而且特别强调了两点：反事实分析和引用体系。项目目前 12 颗星，用 Python 写，体量不大，但思路值得一看。</p>
 <h2>它到底在做什么</h2>
@@ -66,7 +107,7 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <ul><li><strong>为什么重要</strong>：医学场景对“结论有出处”和“数据不外传”要求极高。完整引用链让每条结论可追溯到具体文献段落，本地模型则避免敏感资料上传第三方；反事实分析则针对“人容易记结论、忘前提”的阅读偏差。</li></ul>
 <ul><li><strong>项目成熟度</strong>：仅 12 星、Python 编写、体量小、社区小，文档与踩坑记录大概率不完整，属于早期探索性项目，未经大规模检验。</li></ul>
 <ul><li><strong>定位判断</strong>：适合有 Python 基础、愿意自己搭环境的研究者/医学生，不是开箱即用产品；AI 输出不能替代人工核对与方法学判断。</li></ul>
-<p style="color:#9aa4b2;font-size:13px;">难点概念白话解释</p>
+<p style="color:var(--muted);font-size:13px;">难点概念白话解释</p>
 <ul><li><strong>多智能体（multi-agent）</strong> → 让几个分工不同的 AI 程序像流水线工人一样协作完成一件事。</li></ul>
 <ul><li><strong>反事实分析（counterfactual analysis）</strong> → 追问“如果当初没有这个干预/对照组换个设法，结论还成立吗”，相当于给论文配一个爱抬杠的审稿人。</li></ul>
 <ul><li><strong>Unpaywall</strong> → 一个帮你查找论文合法开放获取（免费全文）版本的接口。</li></ul>
@@ -74,32 +115,56 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <ul><li><strong>预印本平台（如 medRxiv）</strong> → 论文还没正式同行评审就先公开出来的平台（推断：文中未展开说明其质量差异）。</li></ul>
 <p><strong>说明</strong>：文中未披露具体智能体分工细节、未给出反事实分析的评测数据；“至少有一个环节专门追踪结论对应文献段落”是作者基于“广泛引用系统”的合理推断。</p>
 <h2>小白常见问题</h2>
-<p style="color:#9aa4b2;font-size:13px;">Q1：这个项目是免费的吗？我能直接下载用吗？</p>
+<p style="color:var(--muted);font-size:13px;">Q1：这个项目是免费的吗？我能直接下载用吗？</p>
 <p>它是 GitHub 上的开源项目，代码公开可获取（具体许可证以项目仓库说明为准）。但它不是装好就能用的成品软件，需要自己配置 Python 环境、接数据源和模型，零基础用户上手门槛较高。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q2：它和 ChatGPT 直接问“帮我总结这篇论文”有什么区别？</p>
+<p style="color:var(--muted);font-size:13px;">Q2：它和 ChatGPT 直接问“帮我总结这篇论文”有什么区别？</p>
 <p>普通对话模型通常只基于你贴进去的内容作答，不保证出处。bmlibrarian 强调“广泛引用系统”，试图追踪每条结论对应哪篇文献、哪个段落，并串联检索与全文获取，思路上更接近可追溯的文献研究流程。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q3：12 颗星是不是说明它不靠谱？</p>
+<p style="color:var(--muted);font-size:13px;">Q3：12 颗星是不是说明它不靠谱？</p>
 <p>星数少主要说明社区小、曝光低、未经大规模使用检验，不等于代码无价值。早期项目往往文档不全、bug 较多，适合愿意读代码、自己排错的人；追求稳定工具的人应谨慎。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q4：什么是“反事实分析”，它真的能判断论文靠不靠谱？</p>
+<p style="color:var(--muted);font-size:13px;">Q4：什么是“反事实分析”，它真的能判断论文靠不靠谱？</p>
 <p>它指系统化地提出“如果对照组不同、如果样本更小，结论还成立吗”这类质疑。它能帮你发现疑点、提供线索，但不能替你下方法学结论——文中明确说实际效果依赖模型能力和提示设计，且无评测数据。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q5：本地运行大模型是什么意思？对我的电脑要求高吗？</p>
+<p style="color:var(--muted);font-size:13px;">Q5：本地运行大模型是什么意思？对我的电脑要求高吗？</p>
 <p>指模型部署在你自己的机器上，文献数据不出本地，适合涉及敏感信息的场景。但本地模型通常需要一定显存/内存，具体硬件要求文中未说明，以项目文档和所选模型官方说明为准。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q6：它覆盖哪些文献来源？能拿到全文吗？</p>
+<p style="color:var(--muted);font-size:13px;">Q6：它覆盖哪些文献来源？能拿到全文吗？</p>
 <p>文中提到覆盖 PubMed、medRxiv 等预印本平台，以及 Unpaywall 开放获取接口，试图把“找文献”和“拿全文”串起来，而非只停留在摘要。但并非所有论文都有开放获取版本，拿不到全文的情况应仍存在（推断）。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q7：AI 生成的综述能直接写进我的论文吗？</p>
+<p style="color:var(--muted);font-size:13px;">Q7：AI 生成的综述能直接写进我的论文吗？</p>
 <p>不能。文中明确提醒：引用是否准确对应原文必须抽查，AI 输出不能替代人工核对；反事实质疑只是线索而非结论。最终的方法学判断和责任仍在研究者本人。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q8：我是医学生、不会编程，适合用吗？</p>
+<p style="color:var(--muted);font-size:13px;">Q8：我是医学生、不会编程，适合用吗？</p>
 <p>文中判断它更适合有 Python 基础、愿意自己搭环境的研究者。不会编程的话，学习和排错成本会很高；可以关注同类更成熟的产品，或等社区文档完善后再尝试。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q9：医学数据上传到 AI 工具安全吗？</p>
+<p style="color:var(--muted);font-size:13px;">Q9：医学数据上传到 AI 工具安全吗？</p>
 <p>这正是它支持 local-llm 的意义：本地部署可避免未发表数据、患者相关信息上传第三方服务器。但本地部署本身的安全配置仍需自己负责，文中未给出具体安全机制说明。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q10：多智能体一定比单个 AI 更准吗？</p>
+<p style="color:var(--muted);font-size:13px;">Q10：多智能体一定比单个 AI 更准吗？</p>
 <p>不一定。多智能体是把任务拆给不同角色协作，理论上利于分工与交叉核对，但效果取决于分工设计、模型能力和提示质量。文中未披露具体分工与评测数据，不能默认它更准确。</p>
 <p>【事实核查】有原文依据的结论：项目 12 星、Python 编写、覆盖 PubMed/medRxiv/Unpaywall、支持 local-llm、强调反事实分析与引用体系、无评测数据、不适合开箱即用、AI 输出需人工核对。属于合理推断：至少一个环节专门追踪引用段落、部分论文拿不到开放全文、早期项目文档不完整。存疑/文中未说明：具体智能体分工、许可证类型、硬件要求、实际准确率。</p>
 <p>以上解读基于本文与通用知识生成，仅供学习参考，不构成专业医疗或工程结论。</p>
 <hr>
-<p style="color:#9aa4b2;font-size:13px;">参考来源</p>
+<p style="color:var(--muted);font-size:13px;">参考来源</p>
 <ul><li>hherb/bmlibrarian：https://github.com/hherb/bmlibrarian</li></ul>
-</div></article>
+</div><div class="pagenav"><a class="navlink prev" href="articles/2026-11-16/%E9%9F%A9%E8%AF%AD%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%9D%A5%E4%BA%86.html">← 上一篇<br><span>韩语生物医学大模型来了</span></a><a class="navlink next" href="articles/2026-11-17/%E4%B8%80%E5%9D%97Arduino%E6%9D%BF%EF%BC%8C%E8%83%BD%E6%B5%8B%E5%93%AA%E4%BA%9B%E5%81%A5%E5%BA%B7%E6%8C%87%E6%A0%87%EF%BC%9F.html">下一篇 →<br><span>一块Arduino板，能测哪些健康指标？</span></a></div></article>
 <div class="footer">由 AI 自动生成 · 仅供学习参考</div>
+<script>
+(function(){
+  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
+  var tb = document.getElementById('themeBtn');
+  function sync(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
+  if(tb) tb.addEventListener('click', function(){{
+    var d = document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
+    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
+    sync();
+  }});
+  sync();
+  var bar = document.getElementById('bar');
+  function onScroll(){{ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width = (m>0 ? (h.scrollTop/m*100) : 0) + '%'; }}
+  window.addEventListener('scroll', onScroll); onScroll();
+  var cb = document.getElementById('copyBtn');
+  function fallbackCopy(){{ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{{document.execCommand('copy');}}catch(e){{}} document.body.removeChild(t); }}
+  if(cb) cb.addEventListener('click', function(){{
+    var done = function(){{ cb.textContent='已复制'; setTimeout(function(){{cb.textContent='复制链接';}},1500); }};
+    if (navigator.clipboard && navigator.clipboard.writeText){{ navigator.clipboard.writeText(location.href).then(done, function(){{fallbackCopy();done();}}); }}
+    else {{ fallbackCopy(); done(); }}
+  }});
+}})();
+</script>
 </body>
 </html>

@@ -1,8 +1,8 @@
 """本地 / 公网「个人日报网站」生成器。
 
-把 output/ 下的 Markdown 文章渲染成一个可浏览、可搜索的静态网站：
-- site/index.html              首页（按日期归档 + 实时搜索）
-- site/articles/日期/xxx.html  每篇文章独立页面
+把 output/ 下的 Markdown 文章渲染成一个可浏览、可搜索、可分类的静态网站：
+- docs/index.html              首页（归档 + 实时搜索 + 分类标签 + 深色模式 + 统计）
+- docs/articles/日期/xxx.html  每篇文章独立页面（阅读进度 + 上一篇/下一篇 + 复制链接）
 """
 import html as _html
 import json
@@ -12,39 +12,88 @@ from pathlib import Path
 from urllib.parse import quote
 
 CSS = """
-:root{--bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;--accent:#0a7d3f;--border:#e5e7eb;}
+:root{
+  --bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;
+  --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
+  --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
+  --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+}
+[data-theme="dark"]{
+  --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
+  --accent:#3fb950;--accent2:#58a6ff;--border:#30363d;
+  --header:#010409;--headerfg:#ffffff;--headersub:#8b949e;
+  --chip:#21262d;--chipfg:#c9d1d9;--chipactive:#238636;--chipactivefg:#ffffff;
+  --quote:#12261a;--codebg:#21262d;--codefg:#ff7b72;
+}
 *{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
 a{color:var(--accent);text-decoration:none;}
-.header{background:#0d1117;color:#fff;padding:30px 20px;}
-.header h1{margin:0 0 6px;font-size:26px;}
-.header p{margin:0;color:#9aa4b2;font-size:14px;}
-.wrap{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-.search{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;outline:none;background:#fff;}
-.hint{color:var(--muted);font-size:13px;margin:0 0 18px;}
-.date{font-size:15px;font-weight:700;color:#374151;margin:24px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;}
-.item:hover{border-color:var(--accent);}
-.item .t{font-size:16px;font-weight:600;margin-bottom:4px;}
-.item .s{font-size:13.5px;color:var(--muted);}
-.item .meta{font-size:12px;color:#9aa4b2;margin-top:6px;}
-.empty{color:var(--muted);text-align:center;padding:40px 0;}
-article{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-article .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 22px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 6px;}
-article .meta{color:var(--muted);font-size:13px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-article h2{font-size:19px;margin:26px 0 10px;}
+.header{background:var(--header);color:var(--headerfg);padding:20px 20px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,.18);}
+.header-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.header h1{margin:0 0 4px;font-size:21px;}
+.header p{margin:0;color:var(--headersub);font-size:13px;}
+.themebtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;}
+.themebtn:hover{background:rgba(255,255,255,.16);}
+.wrap{max-width:820px;margin:0 auto;padding:18px 16px 70px;}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);}
+.search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
+.search:focus{border-color:var(--accent2);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
+.chip:hover{border-color:var(--accent);}
+.chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
+.item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
+.item .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.empty{color:var(--muted);text-align:center;padding:44px 0;}
+.footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
+.topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
+.progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
+article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+article .tags{margin-bottom:4px;}
+article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 article h3{font-size:16px;margin:20px 0 8px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
-article blockquote{border-left:3px solid var(--accent);background:#f0f9f4;margin:0 0 14px;padding:10px 14px;color:#4b5563;border-radius:0 8px 8px 0;}
+article blockquote{border-left:3px solid var(--accent);background:var(--quote);margin:0 0 14px;padding:10px 14px;color:var(--muted);border-radius:0 8px 8px 0;}
 article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.6;}
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
-article :not(pre)>code{background:#f0f0f0;color:#c7254e;padding:1px 6px;border-radius:4px;}
+article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.footer{max-width:780px;margin:0 auto;padding:0 16px 40px;color:#9aa4b2;font-size:12px;text-align:center;}
+.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
+.pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
+.navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
+.navlink:hover{border-color:var(--accent);}
+.navlink span{color:var(--muted);font-size:12px;}
+.navlink.next{text-align:right;}
 """
+
+TAG_ORDER = ["生物医学", "嵌入式", "AI/大模型", "通信/信号", "3D打印", "开源工具"]
+
+TAG_RULES = {
+    "生物医学": ["生物医学", "医学", "医疗", "脑电", "睡眠", "健康", "论文", "文献", "术语",
+                 "biomed", "medical", "eeg", "ecg", "mri", "医生", "疾病", "临床", "药"],
+    "嵌入式": ["stm32", "esp32", "arduino", "单片机", "mcu", "嵌入式", "固件", "机器人",
+               "反作用轮", "独轮", "板", "传感器", "gpio", "rtos", "firmware", "arm"],
+    "AI/大模型": ["ai", "大模型", "模型", "算法", "深度学习", "llm", "神经网络", "transformer", "智能"],
+    "通信/信号": ["雷达", "太赫兹", "通信", "频谱", "信号", "接收机", "6g", "电磁", "无线", "指纹识别"],
+    "3D打印": ["3d打印", "3d 打印", "增材制造", "打印", "3d printing", "fdm", "sla"],
+    "开源工具": ["github", "开源", "工具", "项目", "库", "lib", "mcp", "固件"],
+}
 
 ARTICLE_TEMPLATE = """<!DOCTYPE html>
 <html lang="zh-CN">
@@ -55,13 +104,42 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
 <style>{__CSS__}</style>
 </head>
 <body>
-<div class="header"><div style="max-width:780px;margin:0 auto;"><a href="../../index.html" style="color:#fff;">← 返回目录</a></div></div>
+<div class="progressbar" id="bar"></div>
+<div class="header"><div class="header-inner">
+<a href="../../index.html" style="color:#fff;font-weight:600;">← 返回目录</a>
+<button class="themebtn" id="themeBtn">深色模式</button>
+</div></div>
 <article><div class="card">
 <h1>{__TITLE__}</h1>
-<div class="meta">{__DATE__}</div>
+<div class="meta">{__META__}<button class="copybtn" id="copyBtn">复制链接</button></div>
+<div class="tags">{__TAGS__}</div>
 {__BODY__}
-</div></article>
+</div>{__NAV__}</article>
 <div class="footer">由 AI 自动生成 · 仅供学习参考</div>
+<script>
+(function(){
+  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
+  var tb = document.getElementById('themeBtn');
+  function sync(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
+  if(tb) tb.addEventListener('click', function(){{
+    var d = document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
+    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
+    sync();
+  }});
+  sync();
+  var bar = document.getElementById('bar');
+  function onScroll(){{ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width = (m>0 ? (h.scrollTop/m*100) : 0) + '%'; }}
+  window.addEventListener('scroll', onScroll); onScroll();
+  var cb = document.getElementById('copyBtn');
+  function fallbackCopy(){{ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{{document.execCommand('copy');}}catch(e){{}} document.body.removeChild(t); }}
+  if(cb) cb.addEventListener('click', function(){{
+    var done = function(){{ cb.textContent='已复制'; setTimeout(function(){{cb.textContent='复制链接';}},1500); }};
+    if (navigator.clipboard && navigator.clipboard.writeText){{ navigator.clipboard.writeText(location.href).then(done, function(){{fallbackCopy();done();}}); }}
+    else {{ fallbackCopy(); done(); }}
+  }});
+}})();
+</script>
 </body>
 </html>"""
 
@@ -74,36 +152,65 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 <style>{__CSS__}</style>
 </head>
 <body>
-<div class="header">
-<div style="max-width:780px;margin:0 auto;">
-<h1>{__TITLE__}</h1>
-<p>{__SUBTITLE__}</p>
-</div>
-</div>
+<div class="header"><div class="header-inner">
+<div><h1>{__TITLE__}</h1><p>{__SUBTITLE__}</p></div>
+<button class="themebtn" id="themeBtn">深色模式</button>
+</div></div>
 <div class="wrap">
+<div class="stats">{__STATS__}</div>
 <input class="search" id="q" placeholder="搜索文章标题 / 关键词…">
-<p class="hint">共 {__COUNT__} 篇 · 输入关键词实时筛选</p>
-<div id="list">
-{__BODY__}
+<div class="chips">{__CHIPS__}</div>
+<div id="list">{__BODY__}</div>
+<div class="empty" id="empty" style="display:none;">没有匹配的内容</div>
 </div>
-</div>
+<button class="topbtn" id="topBtn" title="回到顶部">↑</button>
 <div class="footer">每天自动更新 · 由 AI 生成，仅供学习参考</div>
 <script>
-const DATA = {__DATA__};
-const q = document.getElementById('q');
-q.addEventListener('input', function(){
-  var kw = q.value.trim().toLowerCase();
-  var items = document.querySelectorAll('.item,.date');
-  for (var i=0;i<items.length;i++){ items[i].style.display = ''; }
-  if (!kw) return;
-  DATA.forEach(function(e){
-    var hit = (e.t||'').toLowerCase().indexOf(kw) >= 0 || (e.s||'').toLowerCase().indexOf(kw) >= 0;
-    if (!hit){
-      var a = document.querySelector('a[href="'+e.u+'"]');
-      if (a) a.style.display = 'none';
-    }
-  });
-});
+(function(){{
+  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
+  var tb = document.getElementById('themeBtn');
+  function syncTheme(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
+  if(tb) tb.addEventListener('click', function(){{
+    var d = document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
+    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
+    syncTheme();
+  }});
+  syncTheme();
+  var topBtn = document.getElementById('topBtn');
+  window.addEventListener('scroll', function(){{ topBtn.style.display = (window.scrollY>400) ? 'block' : 'none'; }});
+  topBtn.addEventListener('click', function(){{ window.scrollTo({{top:0,behavior:'smooth'}}); }});
+
+  var DATA = {__DATA__};
+  var q = document.getElementById('q');
+  var activeTag = '全部';
+  var visible = {{}};
+  function apply(){{
+    var kw = (q.value||'').trim().toLowerCase();
+    visible = {{}};
+    DATA.forEach(function(e){{
+      var tagHit = (activeTag==='全部') || (e.tags||[]).indexOf(activeTag)>=0;
+      var kwHit = !kw || (e.t||'').toLowerCase().indexOf(kw)>=0 || (e.s||'').toLowerCase().indexOf(kw)>=0;
+      visible[e.u] = tagHit && kwHit;
+      var a = document.querySelector('.item[data-url="'+e.u+'"]');
+      if(a) a.style.display = visible[e.u] ? '' : 'none';
+    }});
+    document.querySelectorAll('.date').forEach(function(d){{
+      var g = d.getAttribute('data-date'); var any = false;
+      DATA.forEach(function(e){{ if(e.d===g && visible[e.u]) any = true; }});
+      d.style.display = any ? '' : 'none';
+    }});
+    var has = false; DATA.forEach(function(e){{ if(visible[e.u]) has = true; }});
+    document.getElementById('empty').style.display = has ? 'none' : '';
+  }}
+  q.addEventListener('input', apply);
+  document.querySelectorAll('.chip').forEach(function(c){{
+    c.addEventListener('click', function(){{
+      document.querySelectorAll('.chip').forEach(function(x){{ x.classList.remove('active'); }});
+      c.classList.add('active'); activeTag = c.getAttribute('data-tag'); apply();
+    }});
+  }});
+}})();
 </script>
 </body>
 </html>"""
@@ -153,7 +260,7 @@ def md_to_html(md: str) -> str:
         elif s == "---":
             out.append("<hr>")
         elif s.startswith("*") and s.endswith("*") and len(s) > 2:
-            out.append(f'<p style="color:#9aa4b2;font-size:13px;">{_inline(s.strip("*"))}</p>')
+            out.append(f'<p style="color:var(--muted);font-size:13px;">{_inline(s.strip("*"))}</p>')
         else:
             out.append(f"<p>{_inline(s)}</p>")
     if in_code and code_buf:
@@ -199,12 +306,43 @@ def _extract_summary(rest: str) -> str:
     return ""
 
 
-def render_article_page(title: str, date_str: str, body_html: str, site_title: str) -> str:
+def _classify(title: str, summary: str) -> list:
+    text = (title + " " + summary).lower()
+    tags = []
+    for tag in TAG_ORDER:
+        if any(kw in text for kw in TAG_RULES[tag]):
+            tags.append(tag)
+    if not tags:
+        tags = ["综合"]
+    return tags[:3]
+
+
+def _read_minutes(rest: str) -> int:
+    return max(1, round(len(rest) / 400))
+
+
+def render_article_page(e: dict, site_title: str, older, newer) -> str:
+    tags_html = "".join(f'<span class="tag">{_html.escape(t)}</span>' for t in e["tags"])
+    meta = (
+        f'<span class="badge">{_html.escape(e.get("source") or "来源")}</span>'
+        f'<span>{_html.escape(e["date"])}</span>'
+        f'<span>约 {e["read_minutes"]} 分钟</span>'
+    )
+    nav = []
+    if older:
+        u = quote(older["url"], safe="/")
+        nav.append(f'<a class="navlink prev" href="{_html.escape(u)}">← 上一篇<br><span>{_html.escape(older["title"])}</span></a>')
+    if newer:
+        u = quote(newer["url"], safe="/")
+        nav.append(f'<a class="navlink next" href="{_html.escape(u)}">下一篇 →<br><span>{_html.escape(newer["title"])}</span></a>')
+    nav_html = f'<div class="pagenav">{"".join(nav)}</div>' if nav else ""
     return (ARTICLE_TEMPLATE
-            .replace("{__TITLE__}", _html.escape(title))
+            .replace("{__TITLE__}", _html.escape(e["title"]))
             .replace("{__SITE__}", _html.escape(site_title))
-            .replace("{__DATE__}", _html.escape(date_str))
-            .replace("{__BODY__}", body_html)
+            .replace("{__META__}", meta)
+            .replace("{__TAGS__}", tags_html)
+            .replace("{__BODY__}", e["body_html"])
+            .replace("{__NAV__}", nav_html)
             .replace("{__CSS__}", CSS))
 
 
@@ -214,26 +352,54 @@ def render_index(site_title: str, subtitle: str, entries: list) -> str:
         groups.setdefault(e["date"], []).append(e)
 
     parts = []
-    for date, es in groups.items():
-        parts.append(f'<div class="date">{_html.escape(date)}</div>')
+    for date_str, es in groups.items():
+        parts.append(f'<div class="date" data-date="{_html.escape(date_str)}">{_html.escape(date_str)}</div>')
         for e in es:
-            u = quote(e["url"], safe="/")  # 中文路径做 URL 编码，file:// 与 http 下都能正确跳转
+            u = quote(e["url"], safe="/")
+            tags_html = "".join(f'<span class="tag">{_html.escape(t)}</span>' for t in e["tags"])
+            source = e.get("source") or "来源"
             parts.append(
-                f'<a class="item" href="{_html.escape(u)}">'
+                f'<a class="item" data-url="{_html.escape(u)}" href="{_html.escape(u)}">'
                 f'<div class="t">{_html.escape(e["title"])}</div>'
                 + (f'<div class="s">{_html.escape(e["summary"])}</div>' if e["summary"] else "")
-                + f'<div class="meta">{_html.escape(e["source"] or "")}</div>'
+                + f'<div class="meta"><span class="badge">{_html.escape(source)}</span>'
+                f'<span>{_html.escape(e["date"])}</span><span>约 {e["read_minutes"]} 分钟</span></div>'
+                f'<div class="tags">{tags_html}</div>'
                 f'</a>'
             )
     body = "\n".join(parts) if parts else '<div class="empty">暂无文章，先运行一次生成</div>'
-    data = [{"t": e["title"], "d": e["date"], "u": quote(e["url"], safe="/"), "s": e["summary"]} for e in entries]
+
+    tag_counts = {}
+    for e in entries:
+        for t in e["tags"]:
+            tag_counts[t] = tag_counts.get(t, 0) + 1
+    ordered_tags = [t for t in TAG_ORDER if t in tag_counts]
+    ordered_tags += [t for t in sorted(tag_counts) if t not in ordered_tags]
+    chips = ['<button class="chip active" data-tag="全部">全部</button>']
+    chips += [f'<button class="chip" data-tag="{_html.escape(t)}">{_html.escape(t)}</button>' for t in ordered_tags]
+    chips_html = "".join(chips)
+
+    total = len(entries)
+    latest = entries[0]["date"] if entries else ""
+    today_count = sum(1 for e in entries if e["date"] == latest) if entries else 0
+    stat_html = (
+        f'<span class="stat">共 <b>{total}</b> 篇</span>'
+        f'<span class="stat">最新 <b>{_html.escape(latest)}</b></span>'
+        f'<span class="stat">当日新增 <b>{today_count}</b> 篇</span>'
+        f'<span class="stat">覆盖 <b>{len(ordered_tags)}</b> 个方向</span>'
+    )
+
+    data = [{"t": e["title"], "d": e["date"], "u": quote(e["url"], safe="/"),
+             "s": e["summary"], "tags": e["tags"]} for e in entries]
+    data_json = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c")
 
     return (INDEX_TEMPLATE
             .replace("{__TITLE__}", _html.escape(site_title))
             .replace("{__SUBTITLE__}", _html.escape(subtitle))
-            .replace("{__COUNT__}", str(len(entries)))
+            .replace("{__STATS__}", stat_html)
+            .replace("{__CHIPS__}", chips_html)
             .replace("{__BODY__}", body)
-            .replace("{__DATA__}", json.dumps(data, ensure_ascii=False))
+            .replace("{__DATA__}", data_json)
             .replace("{__CSS__}", CSS))
 
 
@@ -245,7 +411,7 @@ def build_site(cfg: dict):
     site_dir = Path(site_cfg.get("output_dir", output_dir.parent / "docs"))
     site_dir.mkdir(parents=True, exist_ok=True)
 
-    entries = []
+    raw = []
     for md_file in sorted(output_dir.rglob("*.md"), reverse=True):
         try:
             rel = md_file.relative_to(output_dir)
@@ -254,26 +420,32 @@ def build_site(cfg: dict):
         except Exception as e:
             print(f"[site] 跳过 {md_file}: {e}")
             continue
-
         title, rest = parse_article(md_text)
-        body_html = md_to_html(rest)
-        source = _extract_source(rest)
         summary = _extract_summary(rest)
-        slug = _safe_filename(title)
-
-        art_dir = site_dir / "articles" / date_str
-        art_dir.mkdir(parents=True, exist_ok=True)
-        art_path = art_dir / f"{slug}.html"
-        art_path.write_text(render_article_page(title, date_str, body_html, site_title), encoding="utf-8")
-
-        entries.append({
+        raw.append({
             "title": title,
             "date": date_str,
-            "source": source,
+            "source": _extract_source(rest),
             "summary": summary,
-            "url": f"articles/{date_str}/{slug}.html",
+            "slug": _safe_filename(title),
+            "tags": _classify(title, summary),
+            "read_minutes": _read_minutes(rest),
+            "body_html": md_to_html(rest),
         })
 
-    entries.sort(key=lambda e: e["date"], reverse=True)
+    raw.sort(key=lambda e: (e["date"], e["title"]), reverse=True)
+    entries = []
+    for e in raw:
+        e["url"] = f"articles/{e['date']}/{e['slug']}.html"
+        entries.append(e)
+
+    for i, e in enumerate(entries):
+        older = entries[i + 1] if i + 1 < len(entries) else None
+        newer = entries[i - 1] if i > 0 else None
+        art_dir = site_dir / "articles" / e["date"]
+        art_dir.mkdir(parents=True, exist_ok=True)
+        (art_dir / f"{e['slug']}.html").write_text(
+            render_article_page(e, site_title, older, newer), encoding="utf-8")
+
     (site_dir / "index.html").write_text(render_index(site_title, subtitle, entries), encoding="utf-8")
     return str(site_dir), len(entries)

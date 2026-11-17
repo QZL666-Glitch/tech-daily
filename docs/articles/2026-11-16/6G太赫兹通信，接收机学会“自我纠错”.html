@@ -5,46 +5,87 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>6G太赫兹通信，接收机学会“自我纠错” · 我的专业科技日报</title>
 <style>
-:root{--bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;--accent:#0a7d3f;--border:#e5e7eb;}
+:root{
+  --bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;
+  --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
+  --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
+  --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+}
+[data-theme="dark"]{
+  --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
+  --accent:#3fb950;--accent2:#58a6ff;--border:#30363d;
+  --header:#010409;--headerfg:#ffffff;--headersub:#8b949e;
+  --chip:#21262d;--chipfg:#c9d1d9;--chipactive:#238636;--chipactivefg:#ffffff;
+  --quote:#12261a;--codebg:#21262d;--codefg:#ff7b72;
+}
 *{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
 a{color:var(--accent);text-decoration:none;}
-.header{background:#0d1117;color:#fff;padding:30px 20px;}
-.header h1{margin:0 0 6px;font-size:26px;}
-.header p{margin:0;color:#9aa4b2;font-size:14px;}
-.wrap{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-.search{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;outline:none;background:#fff;}
-.hint{color:var(--muted);font-size:13px;margin:0 0 18px;}
-.date{font-size:15px;font-weight:700;color:#374151;margin:24px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;}
-.item:hover{border-color:var(--accent);}
-.item .t{font-size:16px;font-weight:600;margin-bottom:4px;}
-.item .s{font-size:13.5px;color:var(--muted);}
-.item .meta{font-size:12px;color:#9aa4b2;margin-top:6px;}
-.empty{color:var(--muted);text-align:center;padding:40px 0;}
-article{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-article .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 22px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 6px;}
-article .meta{color:var(--muted);font-size:13px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-article h2{font-size:19px;margin:26px 0 10px;}
+.header{background:var(--header);color:var(--headerfg);padding:20px 20px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,.18);}
+.header-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.header h1{margin:0 0 4px;font-size:21px;}
+.header p{margin:0;color:var(--headersub);font-size:13px;}
+.themebtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;}
+.themebtn:hover{background:rgba(255,255,255,.16);}
+.wrap{max-width:820px;margin:0 auto;padding:18px 16px 70px;}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);}
+.search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
+.search:focus{border-color:var(--accent2);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
+.chip:hover{border-color:var(--accent);}
+.chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
+.item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
+.item .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.empty{color:var(--muted);text-align:center;padding:44px 0;}
+.footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
+.topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
+.progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
+article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+article .tags{margin-bottom:4px;}
+article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 article h3{font-size:16px;margin:20px 0 8px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
-article blockquote{border-left:3px solid var(--accent);background:#f0f9f4;margin:0 0 14px;padding:10px 14px;color:#4b5563;border-radius:0 8px 8px 0;}
+article blockquote{border-left:3px solid var(--accent);background:var(--quote);margin:0 0 14px;padding:10px 14px;color:var(--muted);border-radius:0 8px 8px 0;}
 article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.6;}
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
-article :not(pre)>code{background:#f0f0f0;color:#c7254e;padding:1px 6px;border-radius:4px;}
+article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.footer{max-width:780px;margin:0 auto;padding:0 16px 40px;color:#9aa4b2;font-size:12px;text-align:center;}
+.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
+.pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
+.navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
+.navlink:hover{border-color:var(--accent);}
+.navlink span{color:var(--muted);font-size:12px;}
+.navlink.next{text-align:right;}
 </style>
 </head>
 <body>
-<div class="header"><div style="max-width:780px;margin:0 auto;"><a href="../../index.html" style="color:#fff;">← 返回目录</a></div></div>
+<div class="progressbar" id="bar"></div>
+<div class="header"><div class="header-inner">
+<a href="../../index.html" style="color:#fff;font-weight:600;">← 返回目录</a>
+<button class="themebtn" id="themeBtn">深色模式</button>
+</div></div>
 <article><div class="card">
 <h1>6G太赫兹通信，接收机学会“自我纠错”</h1>
-<div class="meta">2026-11-16</div>
-<p style="color:#9aa4b2;font-size:13px;">来源：arXiv · 2026-11-13</p>
+<div class="meta"><span class="badge">arXiv · 2026-11-13</span><span>2026-11-16</span><span>约 10 分钟</span><button class="copybtn" id="copyBtn">复制链接</button></div>
+<div class="tags"><span class="tag">通信/信号</span></div>
+<p style="color:var(--muted);font-size:13px;">来源：arXiv · 2026-11-13</p>
 <h2>引言</h2>
 <p>6G研究里，太赫兹频段（0.1～0.3 THz，俗称“亚太赫兹”）被视为实现超高速率的关键。但频率越高，麻烦越大：信号在传输中会经历频率选择性衰落，同时振荡器还会引入相位噪声——简单说，就是载波相位会随机抖动，让解调变得困难。这两类损伤叠加在一起，会让编码OFDM接收机的性能明显下降。arXiv上的一篇论文提出了一种叫PACT的接收机方案，核心思路是让解码器“反过来”帮助信道估计：第一轮先粗估，第二轮用解码器输出的置信度做精细修正。在30 dB信噪比下，它的码块错误率比最好的学习型基线低约七成。</p>
 <h2>问题：两种损伤叠加，传统方案顾此失彼</h2>
@@ -70,32 +111,56 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <ul><li><strong>冻结权重测试</strong> → 模型训练完就“锁死”参数，直接换场景用，考验泛化而非过拟合。</li></ul>
 <ul><li><strong>边界说明</strong>：文中给出的是<strong>仿真基准结果</strong>；实际硬件部署的计算开销与实时性，文中明确说“有待进一步验证”。（推断）两轮迭代会带来额外推理时延，具体量级文中未说明。</li></ul>
 <h2>小白常见问题</h2>
-<p style="color:#9aa4b2;font-size:13px;">Q1：太赫兹通信为什么被看作 6G 的关键？</p>
+<p style="color:var(--muted);font-size:13px;">Q1：太赫兹通信为什么被看作 6G 的关键？</p>
 <p>太赫兹频段（0.1～0.3 THz）可用带宽远大于毫米波，理论上能支撑超高速率传输，因此被视为 6G 实现极致速率的关键候选频段。但频率越高，器件与信道挑战也越大，本文讨论的正是接收端如何应对这些损伤。具体频段规划与标准归属以官方最新说明为准。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q2：相位噪声到底是怎么产生的？</p>
+<p style="color:var(--muted);font-size:13px;">Q2：相位噪声到底是怎么产生的？</p>
 <p>它主要来自振荡器（本振）的不理想：载波相位会随时间随机抖动，表现为公共相位漂移和载波间干扰。对 OFDM 来说，前者让整块符号“转角度”，后者破坏子载波正交性。频率越高，相位噪声的相对影响通常越显著，这也是太赫兹接收机难做的原因之一。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q3：为什么信道估计和相位噪声要“联合”做，不能分开？</p>
+<p style="color:var(--muted);font-size:13px;">Q3：为什么信道估计和相位噪声要“联合”做，不能分开？</p>
 <p>因为二者相互耦合：信道估不准，相位噪声就难分离；相位噪声没补好，信道估计也会被带偏。分步处理容易“顾此失彼”，误差来回放大。PACT 用复数域 Transformer 的两条分支同时输出频域信道和等效时域相位噪声，正是为了打破这个循环。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q4：让解码器“反过来”帮信道估计，逻辑上不会循环论证吗？</p>
+<p style="color:var(--muted);font-size:13px;">Q4：让解码器“反过来”帮信道估计，逻辑上不会循环论证吗？</p>
 <p>第一轮是独立粗估，不依赖译码结果；第二轮才用译码器输出的比特置信度作为“软信息”引导精修。置信度不是硬判决，而是带把握程度的概率信息，相当于给估计器提供额外观测。两轮共享参数、只迭代两次，属于轻量修正而非无限自证。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q5：码块错误率低 70% 是什么概念？是不是“性能提升 70%”？</p>
+<p style="color:var(--muted);font-size:13px;">Q5：码块错误率低 70% 是什么概念？是不是“性能提升 70%”？</p>
 <p>文中说的是在 Eb/N0=30 dB 时，码块错误率（BLER）比最好的学习型基线<strong>低约 70%</strong>，即错误率数值降到基线的约三成，而不是速率或信噪比提升 70%。这是仿真基准下的相对比较，换场景、换基线结论可能不同。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q6：“冻结权重”测试说明了什么？</p>
+<p style="color:var(--muted);font-size:13px;">Q6：“冻结权重”测试说明了什么？</p>
 <p>模型训练好后不再更新参数，直接用于不同信道模型、不同相位噪声模型、不同载波频率、不同 FFT 长度和带宽配置，仍表现可用。这说明它学到的不是某个场景的“死记硬背”，而是有一定泛化能力的估计策略。但泛化范围仍以论文测试配置为限。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q7：这套方案能直接上硬件吗？</p>
+<p style="color:var(--muted);font-size:13px;">Q7：这套方案能直接上硬件吗？</p>
 <p>文中明确说目前展示的是<strong>仿真基准结果</strong>，实际硬件部署中的计算开销和实时性还有待验证。Transformer 加两轮迭代的推理成本、定点化损失、时延是否满足 6G 帧结构，都是工程化要过的关。因此现在谈落地为时尚早。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q8：复数域网络和普通实数网络差别大吗？</p>
+<p style="color:var(--muted);font-size:13px;">Q8：复数域网络和普通实数网络差别大吗？</p>
 <p>通信信号本质是 I/Q 两路构成的复数，普通做法拆成实数分别处理，会丢失两路之间的相位关联。复数域网络直接对复数做运算，更贴合信号物理特性。（推断）这有助于更自然地建模相位旋转类损伤，但具体增益幅度文中未单独量化。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q9：LMMSE 均衡器前面的“带状”是什么意思？</p>
+<p style="color:var(--muted);font-size:13px;">Q9：LMMSE 均衡器前面的“带状”是什么意思？</p>
 <p>“带状”指均衡器利用的协方差/信道矩阵被近似为带状稀疏结构，只保留邻近子载波间的相关性，从而降低计算复杂度。频域信道与相位噪声引起的干扰通常集中在局部子载波附近，这种近似在复杂度与性能间取折中。具体带宽参数文中未说明。</p>
-<p style="color:#9aa4b2;font-size:13px;">Q10：这篇论文的结论可信度如何？</p>
+<p style="color:var(--muted);font-size:13px;">Q10：这篇论文的结论可信度如何？</p>
 <p>它来自 arXiv 预印本，给出的是仿真对比与消融式测试，方向合理、指标明确；但尚未经过同行评审与硬件验证，基线选择、信道模型设定都会影响结论外推。建议把它看作“有前景的技术路线”，而非已定论的工程方案。</p>
 <p>【事实核查】有原文依据：太赫兹频段范围与两类损伤、PACT 三部分组成、两轮迭代与解码置信度反馈、参数共享、30 dB 下 BLER 低约 70%/57%、冻结权重跨场景测试、仿真结果与硬件实时性待验证。合理推断：两轮迭代带来额外时延、复数域网络对相位类损伤的建模优势。存疑/文中未说明：具体计算开销量级、带状近似的带宽参数、复数域相对实数域的具体增益、是否经同行评审。</p>
 <p>以上解读基于本文与通用知识生成，仅供学习参考，不构成专业医疗或工程结论。</p>
 <hr>
-<p style="color:#9aa4b2;font-size:13px;">参考来源</p>
+<p style="color:var(--muted);font-size:13px;">参考来源</p>
 <ul><li>PACT: A Decoder-Confidence-Guided Two-Round Receiver for Joint Channel and Phase-Noise Estimation in Sub-THz OFDM：http://arxiv.org/abs/2611.18450v1</li></ul>
-</div></article>
+</div><div class="pagenav"><a class="navlink next" href="articles/2026-11-16/AI%E8%AF%BB%E8%84%91%E7%94%B5%E6%B3%A2%E5%88%A4%E7%9D%A1%E7%9C%A0%EF%BC%8C%E4%B8%BA%E4%BD%95%E5%8C%BB%E7%94%9F%E4%B8%8D%E6%95%A2%E4%BF%A1%EF%BC%9F.html">下一篇 →<br><span>AI读脑电波判睡眠，为何医生不敢信？</span></a></div></article>
 <div class="footer">由 AI 自动生成 · 仅供学习参考</div>
+<script>
+(function(){
+  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
+  var tb = document.getElementById('themeBtn');
+  function sync(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
+  if(tb) tb.addEventListener('click', function(){{
+    var d = document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
+    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
+    sync();
+  }});
+  sync();
+  var bar = document.getElementById('bar');
+  function onScroll(){{ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width = (m>0 ? (h.scrollTop/m*100) : 0) + '%'; }}
+  window.addEventListener('scroll', onScroll); onScroll();
+  var cb = document.getElementById('copyBtn');
+  function fallbackCopy(){{ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{{document.execCommand('copy');}}catch(e){{}} document.body.removeChild(t); }}
+  if(cb) cb.addEventListener('click', function(){{
+    var done = function(){{ cb.textContent='已复制'; setTimeout(function(){{cb.textContent='复制链接';}},1500); }};
+    if (navigator.clipboard && navigator.clipboard.writeText){{ navigator.clipboard.writeText(location.href).then(done, function(){{fallbackCopy();done();}}); }}
+    else {{ fallbackCopy(); done(); }}
+  }});
+}})();
+</script>
 </body>
 </html>

@@ -5,46 +5,87 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>一块Arduino板，能测哪些健康指标？ · 我的专业科技日报</title>
 <style>
-:root{--bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;--accent:#0a7d3f;--border:#e5e7eb;}
+:root{
+  --bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;
+  --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
+  --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
+  --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+}
+[data-theme="dark"]{
+  --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
+  --accent:#3fb950;--accent2:#58a6ff;--border:#30363d;
+  --header:#010409;--headerfg:#ffffff;--headersub:#8b949e;
+  --chip:#21262d;--chipfg:#c9d1d9;--chipactive:#238636;--chipactivefg:#ffffff;
+  --quote:#12261a;--codebg:#21262d;--codefg:#ff7b72;
+}
 *{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
 a{color:var(--accent);text-decoration:none;}
-.header{background:#0d1117;color:#fff;padding:30px 20px;}
-.header h1{margin:0 0 6px;font-size:26px;}
-.header p{margin:0;color:#9aa4b2;font-size:14px;}
-.wrap{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-.search{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;outline:none;background:#fff;}
-.hint{color:var(--muted);font-size:13px;margin:0 0 18px;}
-.date{font-size:15px;font-weight:700;color:#374151;margin:24px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;}
-.item:hover{border-color:var(--accent);}
-.item .t{font-size:16px;font-weight:600;margin-bottom:4px;}
-.item .s{font-size:13.5px;color:var(--muted);}
-.item .meta{font-size:12px;color:#9aa4b2;margin-top:6px;}
-.empty{color:var(--muted);text-align:center;padding:40px 0;}
-article{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-article .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 22px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 6px;}
-article .meta{color:var(--muted);font-size:13px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-article h2{font-size:19px;margin:26px 0 10px;}
+.header{background:var(--header);color:var(--headerfg);padding:20px 20px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,.18);}
+.header-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.header h1{margin:0 0 4px;font-size:21px;}
+.header p{margin:0;color:var(--headersub);font-size:13px;}
+.themebtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;}
+.themebtn:hover{background:rgba(255,255,255,.16);}
+.wrap{max-width:820px;margin:0 auto;padding:18px 16px 70px;}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);}
+.search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
+.search:focus{border-color:var(--accent2);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
+.chip:hover{border-color:var(--accent);}
+.chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
+.item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
+.item .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.empty{color:var(--muted);text-align:center;padding:44px 0;}
+.footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
+.topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
+.progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
+article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+article .tags{margin-bottom:4px;}
+article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 article h3{font-size:16px;margin:20px 0 8px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
-article blockquote{border-left:3px solid var(--accent);background:#f0f9f4;margin:0 0 14px;padding:10px 14px;color:#4b5563;border-radius:0 8px 8px 0;}
+article blockquote{border-left:3px solid var(--accent);background:var(--quote);margin:0 0 14px;padding:10px 14px;color:var(--muted);border-radius:0 8px 8px 0;}
 article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.6;}
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
-article :not(pre)>code{background:#f0f0f0;color:#c7254e;padding:1px 6px;border-radius:4px;}
+article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.footer{max-width:780px;margin:0 auto;padding:0 16px 40px;color:#9aa4b2;font-size:12px;text-align:center;}
+.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
+.pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
+.navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
+.navlink:hover{border-color:var(--accent);}
+.navlink span{color:var(--muted);font-size:12px;}
+.navlink.next{text-align:right;}
 </style>
 </head>
 <body>
-<div class="header"><div style="max-width:780px;margin:0 auto;"><a href="../../index.html" style="color:#fff;">← 返回目录</a></div></div>
+<div class="progressbar" id="bar"></div>
+<div class="header"><div class="header-inner">
+<a href="../../index.html" style="color:#fff;font-weight:600;">← 返回目录</a>
+<button class="themebtn" id="themeBtn">深色模式</button>
+</div></div>
 <article><div class="card">
 <h1>一块Arduino板，能测哪些健康指标？</h1>
-<div class="meta">2026-11-17</div>
-<p style="color:#9aa4b2;font-size:13px;">来源：GitHub · 2026-06-30</p>
+<div class="meta"><span class="badge">GitHub · 2026-06-30</span><span>2026-11-17</span><span>约 9 分钟</span><button class="copybtn" id="copyBtn">复制链接</button></div>
+<div class="tags"><span class="tag">生物医学</span><span class="tag">嵌入式</span><span class="tag">开源工具</span></div>
+<p style="color:var(--muted);font-size:13px;">来源：GitHub · 2026-06-30</p>
 <h2>引言</h2>
 <p>在GitHub上，一个名为“Embedded-Biomedical-Monitoring-System-for-Health-Biomarkers”的开源项目引起了不少嵌入式爱好者的注意。项目作者xAsmodeus用C++在Arduino Uno上搭建了一套健康生物标志物监测系统，并在Wokwi仿真平台上完成了验证。它算不上什么颠覆性产品，但恰好踩中了两个趋势的交汇点：一是开源硬件门槛持续走低，二是人们对“把健康数据握在自己手里”的兴趣越来越浓。对于想入门生物医学工程的学生、想练手的嵌入式开发者，这类项目提供了一个成本极低、逻辑完整的起点。</p>
 <h2>它到底是什么</h2>
@@ -70,32 +111,56 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <ul><li>模拟前端 → 传感器和单片机之间的“信号调理电路”，质量好坏直接影响读数（推断：文章只提到它限制精度，未展开细节）。</li></ul>
 <ul><li><strong>需要说明的边界</strong>：文章<strong>未说明</strong>具体采集哪几项指标、传感器型号、采样率、分辨率、校准方法与验证数据；因此“能测多准”在文中没有依据。⭐1 收藏量说明项目很小众，属于“可复现学习样本”而非成熟产品。</li></ul>
 <h2>小白常见问题</h2>
-<p style="color:#9aa4b2;font-size:13px;">1. 这个项目到底能测哪些健康指标？</p>
+<p style="color:var(--muted);font-size:13px;">1. 这个项目到底能测哪些健康指标？</p>
 <p>文中没有披露具体指标和传感器型号，只确认定位是“检查健康生物标志物”，并举例心率、体温这类信号。所以不能据此认定它一定能测某几项。想确认请直接看仓库代码与接线说明，以官方最新说明为准。</p>
-<p style="color:#9aa4b2;font-size:13px;">2. 没有硬件，真的能玩吗？</p>
+<p style="color:var(--muted);font-size:13px;">2. 没有硬件，真的能玩吗？</p>
 <p>可以。项目在 Wokwi 上验证，Wokwi 是浏览器里的在线硬件仿真平台，能跑 Arduino 代码、连虚拟传感器。你先在仿真里改参数、看输出，逻辑通了再决定买不买零件，起步成本几乎为零。</p>
-<p style="color:#9aa4b2;font-size:13px;">3. Arduino Uno 性能那么低，为什么还够用？</p>
+<p style="color:var(--muted);font-size:13px;">3. Arduino Uno 性能那么低，为什么还够用？</p>
 <p>Uno 是 8 位 AVR 微控制器，主频和内存不高，但自带多路模拟输入，正好读传感器输出的连续电压。生理信号监测在入门阶段重在“跑通链路”，不是拼算力，所以“够用就好”。（推断：更高采样率需求会超出 Uno 能力，文中未展开。）</p>
-<p style="color:#9aa4b2;font-size:13px;">4. 仿真跑通了，接上真传感器就能用吗？</p>
+<p style="color:var(--muted);font-size:13px;">4. 仿真跑通了，接上真传感器就能用吗？</p>
 <p>不一定。仿真验证的是代码逻辑，真实电路还涉及接线、供电、信号调理和噪声。文章也提醒接错一根线就可能读数全乱。仿真适合“先跑通”，真机仍需调试与校准。</p>
-<p style="color:#9aa4b2;font-size:13px;">5. 它测的数据能用来判断健康状况吗？</p>
+<p style="color:var(--muted);font-size:13px;">5. 它测的数据能用来判断健康状况吗？</p>
 <p>不建议。文章明确说 Uno 级别平台受采样率、分辨率和模拟前端质量限制，做趋势观察和教学演示可以，离临床级测量有相当距离，且未给出精度与校准数据。把它当学习工具，而不是健康决策工具。</p>
-<p style="color:#9aa4b2;font-size:13px;">6. 学这个项目需要什么基础？</p>
+<p style="color:var(--muted);font-size:13px;">6. 学这个项目需要什么基础？</p>
 <p>需要一点 C++ 和 Arduino 基础（会用库、看得懂 loop 与 analogRead 之类），以及基本的电路常识。完全零基础也能跟，但建议先做几个点亮 LED、读电位器的小实验，再读这个仓库会顺很多。</p>
-<p style="color:#9aa4b2;font-size:13px;">7. 为什么用 C++ 而不是 Python？</p>
+<p style="color:var(--muted);font-size:13px;">7. 为什么用 C++ 而不是 Python？</p>
 <p>Arduino 生态的标准语言就是 C++，配合成熟库函数，采集、滤波、阈值判断这条链路可以写得很紧凑，编译后直接跑在单片机上。Python 通常需要额外运行环境，不适合 Uno 这类资源受限的板子。</p>
-<p style="color:#9aa4b2;font-size:13px;">8. 这个项目适合做课程设计吗？</p>
+<p style="color:var(--muted);font-size:13px;">8. 这个项目适合做课程设计吗？</p>
 <p>比较适合。它有仿真验证、代码结构清晰、覆盖生物医学嵌入式核心流程，成本低、可复现。但要注意它很小众（⭐1），文档可能不完善，建议把它当骨架，自己补传感器与校准部分。</p>
-<p style="color:#9aa4b2;font-size:13px;">9. “生物标志物”和“生理信号”是一回事吗？</p>
+<p style="color:var(--muted);font-size:13px;">9. “生物标志物”和“生理信号”是一回事吗？</p>
 <p>不完全一样。生物标志物是能反映身体状况的可测量指标（如心率、体温），生理信号是这些指标随时间变化的电信号形式。前者是“测什么”，后者是“怎么测”，项目中两者是目标与手段的关系。</p>
-<p style="color:#9aa4b2;font-size:13px;">10. 想进一步提高精度，该往哪走？</p>
+<p style="color:var(--muted);font-size:13px;">10. 想进一步提高精度，该往哪走？</p>
 <p>文章没给具体方案，只说要看你接什么传感器、做多少校准。通用思路是换更高分辨率的 ADC、加信号调理与滤波、做系统校准，并保证采样率满足信号带宽——这些属于合理推断，具体选型以官方最新说明为准。</p>
 <p>【事实核查】有原文依据的结论：项目使用 Arduino Uno、C++、Wokwi 仿真；定位为健康生物标志物监测；未披露具体指标与传感器型号；Uno 受采样率/分辨率/模拟前端限制，非临床级；⭐1 收藏量。属于合理推断的：更高采样率需求超出 Uno 能力、提高精度的通用路径、零基础学习路径建议。存疑/文中未说明：具体测量精度、校准方法、验证数据、可测指标清单。</p>
 <p>以上解读基于本文与通用知识生成，仅供学习参考，不构成专业医疗或工程结论。</p>
 <hr>
-<p style="color:#9aa4b2;font-size:13px;">参考来源</p>
+<p style="color:var(--muted);font-size:13px;">参考来源</p>
 <ul><li>xAsmodeus/Embedded-Biomedical-Monitoring-System-for-Health-Biomarkers：https://github.com/xAsmodeus/Embedded-Biomedical-Monitoring-System-for-Health-Biomarkers</li></ul>
-</div></article>
+</div><div class="pagenav"><a class="navlink prev" href="articles/2026-11-17/12%E6%98%9F%E7%9A%84%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE%EF%BC%8C%E8%AE%A9AI%E5%B8%AE%E4%BD%A0%E8%AF%BB%E5%8C%BB%E5%AD%A6%E8%AE%BA%E6%96%87.html">← 上一篇<br><span>12星的开源项目，让AI帮你读医学论文</span></a><a class="navlink next" href="articles/2026-11-17/%E7%BB%99%E5%8C%BB%E5%AD%A6%E6%96%87%E7%8C%AE%E5%B7%A5%E5%85%B7%E9%80%A0%E4%B8%AA%E5%85%B1%E7%94%A8%E5%BA%95%E5%BA%A7.html">下一篇 →<br><span>给医学文献工具造个共用底座</span></a></div></article>
 <div class="footer">由 AI 自动生成 · 仅供学习参考</div>
+<script>
+(function(){
+  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
+  var tb = document.getElementById('themeBtn');
+  function sync(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
+  if(tb) tb.addEventListener('click', function(){{
+    var d = document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
+    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
+    sync();
+  }});
+  sync();
+  var bar = document.getElementById('bar');
+  function onScroll(){{ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width = (m>0 ? (h.scrollTop/m*100) : 0) + '%'; }}
+  window.addEventListener('scroll', onScroll); onScroll();
+  var cb = document.getElementById('copyBtn');
+  function fallbackCopy(){{ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{{document.execCommand('copy');}}catch(e){{}} document.body.removeChild(t); }}
+  if(cb) cb.addEventListener('click', function(){{
+    var done = function(){{ cb.textContent='已复制'; setTimeout(function(){{cb.textContent='复制链接';}},1500); }};
+    if (navigator.clipboard && navigator.clipboard.writeText){{ navigator.clipboard.writeText(location.href).then(done, function(){{fallbackCopy();done();}}); }}
+    else {{ fallbackCopy(); done(); }}
+  }});
+}})();
+</script>
 </body>
 </html>

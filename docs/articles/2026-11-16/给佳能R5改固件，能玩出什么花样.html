@@ -5,46 +5,87 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>给佳能R5改固件，能玩出什么花样 · 我的专业科技日报</title>
 <style>
-:root{--bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;--accent:#0a7d3f;--border:#e5e7eb;}
+:root{
+  --bg:#f5f6f8;--card:#ffffff;--text:#1f2328;--muted:#6b7280;
+  --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
+  --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
+  --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+}
+[data-theme="dark"]{
+  --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
+  --accent:#3fb950;--accent2:#58a6ff;--border:#30363d;
+  --header:#010409;--headerfg:#ffffff;--headersub:#8b949e;
+  --chip:#21262d;--chipfg:#c9d1d9;--chipactive:#238636;--chipactivefg:#ffffff;
+  --quote:#12261a;--codebg:#21262d;--codefg:#ff7b72;
+}
 *{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
 a{color:var(--accent);text-decoration:none;}
-.header{background:#0d1117;color:#fff;padding:30px 20px;}
-.header h1{margin:0 0 6px;font-size:26px;}
-.header p{margin:0;color:#9aa4b2;font-size:14px;}
-.wrap{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-.search{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;outline:none;background:#fff;}
-.hint{color:var(--muted);font-size:13px;margin:0 0 18px;}
-.date{font-size:15px;font-weight:700;color:#374151;margin:24px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;}
-.item:hover{border-color:var(--accent);}
-.item .t{font-size:16px;font-weight:600;margin-bottom:4px;}
-.item .s{font-size:13.5px;color:var(--muted);}
-.item .meta{font-size:12px;color:#9aa4b2;margin-top:6px;}
-.empty{color:var(--muted);text-align:center;padding:40px 0;}
-article{max-width:780px;margin:0 auto;padding:20px 16px 60px;}
-article .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 22px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 6px;}
-article .meta{color:var(--muted);font-size:13px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-article h2{font-size:19px;margin:26px 0 10px;}
+.header{background:var(--header);color:var(--headerfg);padding:20px 20px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,.18);}
+.header-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.header h1{margin:0 0 4px;font-size:21px;}
+.header p{margin:0;color:var(--headersub);font-size:13px;}
+.themebtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;}
+.themebtn:hover{background:rgba(255,255,255,.16);}
+.wrap{max-width:820px;margin:0 auto;padding:18px 16px 70px;}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);}
+.search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
+.search:focus{border-color:var(--accent2);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
+.chip:hover{border-color:var(--accent);}
+.chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
+.item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
+.item .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.empty{color:var(--muted);text-align:center;padding:44px 0;}
+.footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
+.topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
+.progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
+article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+article .tags{margin-bottom:4px;}
+article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 article h3{font-size:16px;margin:20px 0 8px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
-article blockquote{border-left:3px solid var(--accent);background:#f0f9f4;margin:0 0 14px;padding:10px 14px;color:#4b5563;border-radius:0 8px 8px 0;}
+article blockquote{border-left:3px solid var(--accent);background:var(--quote);margin:0 0 14px;padding:10px 14px;color:var(--muted);border-radius:0 8px 8px 0;}
 article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.6;}
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
-article :not(pre)>code{background:#f0f0f0;color:#c7254e;padding:1px 6px;border-radius:4px;}
+article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.footer{max-width:780px;margin:0 auto;padding:0 16px 40px;color:#9aa4b2;font-size:12px;text-align:center;}
+.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
+.pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
+.navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
+.navlink:hover{border-color:var(--accent);}
+.navlink span{color:var(--muted);font-size:12px;}
+.navlink.next{text-align:right;}
 </style>
 </head>
 <body>
-<div class="header"><div style="max-width:780px;margin:0 auto;"><a href="../../index.html" style="color:#fff;">← 返回目录</a></div></div>
+<div class="progressbar" id="bar"></div>
+<div class="header"><div class="header-inner">
+<a href="../../index.html" style="color:#fff;font-weight:600;">← 返回目录</a>
+<button class="themebtn" id="themeBtn">深色模式</button>
+</div></div>
 <article><div class="card">
 <h1>给佳能R5改固件，能玩出什么花样</h1>
-<div class="meta">2026-11-16</div>
-<p style="color:#9aa4b2;font-size:13px;">来源：GitHub · 2026-11-16</p>
+<div class="meta"><span class="badge">GitHub · 2026-11-16</span><span>2026-11-16</span><span>约 9 分钟</span><button class="copybtn" id="copyBtn">复制链接</button></div>
+<div class="tags"><span class="tag">嵌入式</span><span class="tag">开源工具</span></div>
+<p style="color:var(--muted);font-size:13px;">来源：GitHub · 2026-11-16</p>
 <h2>引言</h2>
 <p>在摄影圈，佳能EOS R5是一台口碑不错的全画幅无反相机。而GitHub上出现了一个名为canon-r5-mod的开源项目，尝试对这台相机的官方固件2.2.1版本做实验性修改，目标是加入两项原厂没有的功能：静音的XPan宽幅裁切，以及自定义开机与快门音效。项目目前只提供源码形式的开发者预览，属于典型的“极客自娱自乐”式探索，但它触及了一个有意思的话题——当我们买下一台相机，究竟能不能按自己的意愿去改造它。</p>
 <h2>这个项目在做什么</h2>
@@ -65,38 +106,62 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <ul><li><strong>关键技术</strong>：本质是固件层面的“逆向工程 + 打补丁”。通用流程是解包固件、定位代码或资源段、替换或注入内容、重新打包并通过校验。音频替换相对直观（找到音效资源并替换文件），裁切与静音则涉及图像处理流程与快门行为的配合，难度更高。项目标签涉及 Python、嵌入式、逆向工程和音频处理。</li></ul>
 <ul><li><strong>为什么重要</strong>：它的价值更多在于展示“设备所有权”态度——用户希望对自己购买的硬件拥有更多控制权，社区探索可能催生厂商没想到的用法。但项目星标数很低、仅提供源码形式的开发者预览，属于早期个人实验，距离成熟可用还有距离。</li></ul>
 <ul><li><strong>风险提示</strong>：非官方固件修改可能导致相机异常，且很可能影响保修；文章未给出成功率或兼容性数据，不宜过度期待。</li></ul>
-<p style="color:#9aa4b2;font-size:13px;">难点概念白话解释</p>
+<p style="color:var(--muted);font-size:13px;">难点概念白话解释</p>
 <ul><li><strong>固件</strong> → 相机内部运行的系统软件，相当于相机的“操作系统”。</li></ul>
 <ul><li><strong>逆向工程</strong> → 把厂商打包好的东西拆开，弄清它内部是怎么运作的。</li></ul>
 <ul><li><strong>XPan 裁切</strong> → 把画面裁成接近 65:24 的超宽长条比例，模仿哈苏/富士 XPan 宽幅胶片相机的电影感画幅。</li></ul>
 <ul><li><strong>开发者预览（仅源码）</strong> → 只给懂编程的人看的半成品代码，普通用户不能直接刷入使用。</li></ul>
 <ul><li><strong>校验</strong> → 相机升级前会检查固件是否“原装正版”，改过的包要骗过这道检查才能刷入（推断，文章只提到“保证校验通过”）。</li></ul>
 <h2>小白常见问题</h2>
-<p style="color:#9aa4b2;font-size:13px;">1. 这个项目能让我直接给 R5 刷机吗？</p>
+<p style="color:var(--muted);font-size:13px;">1. 这个项目能让我直接给 R5 刷机吗？</p>
 <p>不能。文章明确说项目仅提供源码形式的开发者预览，不是开箱即用的工具，普通用户无法直接刷入使用。它更像给开发者看的实验样本，需要自己具备编译、逆向和刷机能力才可能尝试，且风险自负。</p>
-<p style="color:#9aa4b2;font-size:13px;">2. 什么是 XPan 宽幅裁切？</p>
+<p style="color:var(--muted);font-size:13px;">2. 什么是 XPan 宽幅裁切？</p>
 <p>XPan 原是哈苏与富士合作的宽幅胶片相机，画幅比例接近 65:24，拍出来是很有电影感的长条画面。数码相机上通常靠机内裁切模拟这种效果。该项目想实现的是“静音版”裁切，适合街拍、纪实等需要安静的场合。</p>
-<p style="color:#9aa4b2;font-size:13px;">3. 改固件会不会把相机弄坏？</p>
+<p style="color:var(--muted);font-size:13px;">3. 改固件会不会把相机弄坏？</p>
 <p>存在风险。文章提醒，非官方固件修改操作不当可能导致相机异常，且很可能影响保修。文中没有给出成功率或兼容性数据，所以无法判断风险具体有多高。建议普通用户不要轻易尝试，围观思路即可。</p>
-<p style="color:#9aa4b2;font-size:13px;">4. 为什么相机厂商不开放固件？</p>
+<p style="color:var(--muted);font-size:13px;">4. 为什么相机厂商不开放固件？</p>
 <p>文章解释，厂商出于稳定性与安全考虑普遍封闭固件，这是可以理解的。开放固件可能带来系统崩溃、安全漏洞、保修纠纷等问题。但社区自发探索往往能催生厂商没想到的用法，这也是这类项目的意义所在。</p>
-<p style="color:#9aa4b2;font-size:13px;">5. 自定义快门音效是怎么实现的？</p>
+<p style="color:var(--muted);font-size:13px;">5. 自定义快门音效是怎么实现的？</p>
 <p>按文章介绍的通用逻辑，音频替换相对直观：本质是找到固件中音效资源的存放位置，替换成用户自定义的音频文件，再重新打包。具体到这个项目怎么做的，文中未说明实现细节，只能确认它属于项目目标之一。</p>
-<p style="color:#9aa4b2;font-size:13px;">6. 这个项目现在成熟吗？能日常用吗？</p>
+<p style="color:var(--muted);font-size:13px;">6. 这个项目现在成熟吗？能日常用吗？</p>
 <p>不成熟。文章说它在 GitHub 上星标数很低，属于早期个人实验，距离成熟可用还有距离，应把它看作观察窗口而非实用工具。项目自我标注为“实验性”和“仅源码的开发者预览”，也说明它不适合日常使用。</p>
-<p style="color:#9aa4b2;font-size:13px;">7. 刷第三方固件会影响保修吗？</p>
+<p style="color:var(--muted);font-size:13px;">7. 刷第三方固件会影响保修吗？</p>
 <p>文章说“很可能影响保修”。这是合理判断：厂商通常把非官方修改视为失去保修资格的情形。具体保修政策以佳能官方最新说明为准，文中未提供细则。</p>
-<p style="color:#9aa4b2;font-size:13px;">8. 为什么静音裁切比换音效难？</p>
+<p style="color:var(--muted);font-size:13px;">8. 为什么静音裁切比换音效难？</p>
 <p>因为换音效只是替换资源文件，而裁切与静音涉及图像处理流程和机械/电子快门行为的配合，牵涉的代码环节更多、耦合更深。文章用“难度更高”来描述，但没有展开具体技术障碍。</p>
-<p style="color:#9aa4b2;font-size:13px;">9. 我需要会什么才能看懂这个项目？</p>
+<p style="color:var(--muted);font-size:13px;">9. 我需要会什么才能看懂这个项目？</p>
 <p>从项目标签看，涉及 Python、嵌入式、逆向工程和音频处理。零基础读者不必强求看懂代码，理解“解包—定位—替换—重打包—过校验”的通用逻辑即可。文章也强调素材未披露具体实现路径，只能谈通用逻辑。</p>
-<p style="color:#9aa4b2;font-size:13px;">10. 这类项目对普通摄影爱好者有什么意义？</p>
+<p style="color:var(--muted);font-size:13px;">10. 这类项目对普通摄影爱好者有什么意义？</p>
 <p>意义在于观念层面：它展示了用户对“设备所有权”的态度，即希望对自己花钱买的硬件拥有更多控制权。即使功能小众、项目早期，它也是观察开源精神向封闭相机生态渗透的一个窗口。</p>
 <p>【事实核查】有原文依据的结论：项目名称与目标功能、基于固件 2.2.1、仅源码开发者预览、星标数低、存在变砖与保修风险、音频替换相对直观而裁切静音难度更高、厂商封闭固件出于稳定性与安全考虑。属于合理推断的内容：固件“校验”的具体机制、保修失效的具体判定。存疑或文中未说明的内容：项目具体实现路径、成功率与兼容性数据、佳能官方保修细则。</p>
 <hr>
-<p style="color:#9aa4b2;font-size:13px;">参考来源</p>
+<p style="color:var(--muted);font-size:13px;">参考来源</p>
 <ul><li>WhiteAvocad0/canon-r5-mod：https://github.com/WhiteAvocad0/canon-r5-mod</li></ul>
-</div></article>
+</div><div class="pagenav"><a class="navlink prev" href="articles/2026-11-16/%E5%9B%9B%E4%B8%AA%E5%8F%8D%E4%BD%9C%E7%94%A8%E8%BD%AE%EF%BC%8C%E8%AE%A9%E7%8B%AC%E8%BD%AE%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%AB%99%E7%A8%B3.html">← 上一篇<br><span>四个反作用轮，让独轮机器人站稳</span></a><a class="navlink next" href="articles/2026-11-16/%E9%9B%B7%E8%BE%BE%E2%80%9C%E6%8C%87%E7%BA%B9%E2%80%9D%E8%AF%86%E5%88%AB%EF%BC%8C%E6%9C%89%E4%BA%86%E6%96%B0%E6%95%B0%E6%8D%AE%E9%9B%86.html">下一篇 →<br><span>雷达“指纹”识别，有了新数据集</span></a></div></article>
 <div class="footer">由 AI 自动生成 · 仅供学习参考</div>
+<script>
+(function(){
+  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
+  var tb = document.getElementById('themeBtn');
+  function sync(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
+  if(tb) tb.addEventListener('click', function(){{
+    var d = document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
+    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
+    sync();
+  }});
+  sync();
+  var bar = document.getElementById('bar');
+  function onScroll(){{ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width = (m>0 ? (h.scrollTop/m*100) : 0) + '%'; }}
+  window.addEventListener('scroll', onScroll); onScroll();
+  var cb = document.getElementById('copyBtn');
+  function fallbackCopy(){{ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{{document.execCommand('copy');}}catch(e){{}} document.body.removeChild(t); }}
+  if(cb) cb.addEventListener('click', function(){{
+    var done = function(){{ cb.textContent='已复制'; setTimeout(function(){{cb.textContent='复制链接';}},1500); }};
+    if (navigator.clipboard && navigator.clipboard.writeText){{ navigator.clipboard.writeText(location.href).then(done, function(){{fallbackCopy();done();}}); }}
+    else {{ fallbackCopy(); done(); }}
+  }});
+}})();
+</script>
 </body>
 </html>
