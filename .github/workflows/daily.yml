@@ -8,15 +8,9 @@ on:
 
 permissions:
   contents: write   # 提交去重状态 / 文章 / 网站
-  pages: write      # 部署 GitHub Pages
-  id-token: write   # Pages 部署所需的 OIDC 认证
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
-  generate-and-deploy:
+  generate:
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
@@ -43,15 +37,3 @@ jobs:
           git add -A
           git commit -m "chore: 每日更新 $(date -u +%F)" || echo "无新增内容，跳过提交"
           git push
-
-      - name: 配置 Pages
-        uses: actions/configure-pages@v5
-
-      - name: 上传网站
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
-
-      - name: 部署到 Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
