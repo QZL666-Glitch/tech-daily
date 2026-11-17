@@ -59,8 +59,8 @@ a{color:var(--accent);text-decoration:none;}
 .badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
 .tags{display:flex;flex-wrap:wrap;gap:6px;}
 .tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
-.star{color:var(--muted);cursor:pointer;font-size:17px;line-height:1;margin-left:auto;user-select:none;}
-.star:hover{color:#f5a623;}
+.star{color:var(--muted);cursor:pointer;font-size:16px;line-height:1;margin-left:auto;user-select:none;padding:4px 7px;border-radius:6px;}
+.star:hover{color:#f5a623;background:var(--chip);}
 .star.on{color:#f5a623;}
 .readmark{display:none;color:var(--muted);font-size:11px;border:1px solid var(--border);border-radius:6px;padding:0 6px;}
 .read .readmark{display:inline-block;}
@@ -379,7 +379,8 @@ def parse_article(md_text: str):
 def _extract_source(rest: str) -> str:
     m = re.search(r"^\*来源[:：]\s*(.+?)\*?\s*$", rest, flags=re.M)
     if m:
-        return m.group(1).strip()
+        src = re.sub(r"\s*[·|]\s*\d{4}-\d{2}-\d{2}\s*$", "", m.group(1).strip()).strip()
+        return src
     return ""
 
 
@@ -437,10 +438,10 @@ def render_article_page(e: dict, site_title: str, older, newer) -> str:
 
     nav = []
     if older:
-        u = quote(older["url"], safe="/")
+        u = "../../" + quote(older["url"], safe="/")
         nav.append(f'<a class="navlink prev" href="{_html.escape(u)}">← 上一篇<br><span>{_html.escape(older["title"])}</span></a>')
     if newer:
-        u = quote(newer["url"], safe="/")
+        u = "../../" + quote(newer["url"], safe="/")
         nav.append(f'<a class="navlink next" href="{_html.escape(u)}">下一篇 →<br><span>{_html.escape(newer["title"])}</span></a>')
     nav_html = f'<div class="pagenav">{"".join(nav)}</div>' if nav else ""
 
