@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a7d3f'/%3E%3Cpath d='M12 38l10-10 8 8 14-14 8 8' stroke='%23ffffff' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <title>12星的开源项目，让AI帮你读医学论文 · 我的专业科技日报</title>
 <style>
 :root{
@@ -23,29 +24,41 @@
 html{scroll-behavior:smooth;}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
 a{color:var(--accent);text-decoration:none;}
-.header{background:var(--header);color:var(--headerfg);padding:20px 20px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,.18);}
-.header-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.header h1{margin:0 0 4px;font-size:21px;}
-.header p{margin:0;color:var(--headersub);font-size:13px;}
-.themebtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;}
+.header{background:var(--header);color:var(--headerfg);padding:12px 20px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,.18);}
+.header-inner{max-width:880px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.brand{color:#fff;font-weight:700;font-size:15px;}
+.hbtns{display:flex;align-items:center;gap:8px;}
+.rsslink{color:#9aa4b2;font-size:13px;border:1px solid rgba(255,255,255,.22);border-radius:8px;padding:5px 10px;}
+.rsslink:hover{color:#fff;background:rgba(255,255,255,.1);}
+.themebtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;}
 .themebtn:hover{background:rgba(255,255,255,.16);}
-.wrap{max-width:820px;margin:0 auto;padding:18px 16px 70px;}
-.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12.5px;color:var(--muted);}
-.stat b{color:var(--text);}
+.hero{position:relative;background:#0a1419 url('assets/hero.jpg') center/cover;color:#fff;padding:44px 20px 42px;}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,12,16,.62),rgba(4,12,16,.82));}
+.hero-inner{position:relative;max-width:880px;margin:0 auto;}
+.hero h1{font-size:27px;margin:0 0 8px;font-weight:800;letter-spacing:.5px;}
+.hero p{color:#c9d6dd;font-size:14px;margin:0 0 16px;max-width:640px;}
+.hstats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.hstat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:5px 12px;font-size:12.5px;color:#e6edf3;backdrop-filter:blur(4px);}
+.hstat b{color:#fff;font-size:14px;}
+.randbtn{display:inline-block;background:linear-gradient(135deg,#1f6feb,#00c2a8);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:14px;cursor:pointer;font-weight:600;box-shadow:0 6px 16px rgba(31,111,235,.35);}
+.randbtn:hover{filter:brightness(1.08);}
+.wrap{max-width:880px;margin:0 auto;padding:18px 16px 70px;}
 .search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
 .search:focus{border-color:var(--accent2);}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
-.chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
+.chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;}
 .chip:hover{border-color:var(--accent);}
 .chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.chip em{font-style:normal;opacity:.65;font-size:11px;margin-left:3px;}
 .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
 .toggle{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 11px;font-size:12.5px;cursor:pointer;}
 .toggle:hover{border-color:var(--accent);color:var(--text);}
 .toggle.active{background:var(--accent);border-color:var(--accent);color:#fff;}
 .date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s,opacity .15s;}
+.item{display:flex;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s,opacity .15s;}
 .item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.cover{flex:none;width:46px;height:46px;border-radius:10px;margin-right:12px;}
+.item .body{flex:1;min-width:0;}
 .item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
 .item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
 .item .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px;}
@@ -59,11 +72,13 @@ a{color:var(--accent);text-decoration:none;}
 .read .readmark{display:inline-block;}
 .read{opacity:.5;}
 .read:hover{opacity:.85;}
+mark{background:#fde047;color:#111;padding:0 2px;border-radius:3px;}
 .empty{color:var(--muted);text-align:center;padding:44px 0;}
-.footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
+.footer{max-width:880px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
+.footer a{color:var(--muted);text-decoration:underline;}
 .topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
 .progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
-article{max-width:820px;margin:0 auto;padding:20px 16px 56px;font-size:var(--fs,16px);}
+article{max-width:880px;margin:0 auto;padding:20px 16px 56px;font-size:var(--fs,16px);}
 article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
 article h1{font-size:1.6em;line-height:1.4;margin:0 0 8px;}
 article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
@@ -92,17 +107,23 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 .navlink:hover{border-color:var(--accent);}
 .navlink span{color:var(--muted);font-size:12px;}
 .navlink.next{text-align:right;}
+@media print{
+  .header,.hero,.search,.chips,.filters,.tools,.pagenav,.progressbar,.topbtn,.footer,.toc{display:none!important;}
+  body{background:#fff;color:#000;}
+  article .card{border:none;padding:0;}
+  a{color:#000;}
+}
 </style>
 </head>
 <body>
 <div class="progressbar" id="bar"></div>
 <div class="header"><div class="header-inner">
 <a href="../../index.html" style="color:#fff;font-weight:600;">← 返回目录</a>
-<button class="themebtn" id="themeBtn">深色模式</button>
+<button class="themebtn" type="button" id="themeBtn">深色模式</button>
 </div></div>
 <article><div class="card">
 <h1>12星的开源项目，让AI帮你读医学论文</h1>
-<div class="meta"><span class="badge">GitHub</span><span>2026-11-17</span><span>约 10 分钟</span><span class="tools"><button class="favbtn" id="favBtn" data-key="12星的开源项目，让AI帮你读医学论文" title="收藏">☆ 收藏</button><button class="fsbtn" id="dec" title="缩小字号">A−</button><button class="fsbtn" id="inc" title="放大字号">A＋</button><button class="copybtn" id="copyBtn">复制链接</button></span></div>
+<div class="meta"><span class="badge">GitHub</span><span>2026-11-17</span><span>约 10 分钟</span><span>2756 字</span><span class="tools"><button class="favbtn" type="button" id="favBtn" data-key="12星的开源项目，让AI帮你读医学论文" title="收藏">☆ 收藏</button><button class="fsbtn" type="button" id="dec" title="缩小字号">A−</button><button class="fsbtn" type="button" id="inc" title="放大字号">A＋</button><button class="copybtn" type="button" id="copyBtn">分享链接</button></span></div>
 <div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div>
 <details class="toc" open><summary>目录</summary><ul><li><a href="#h-2">引言</a></li><li><a href="#h-4">它到底在做什么</a></li><li><a href="#h-8">反事实分析：为什么这个词出现在医学文献工具里</a></li><li><a href="#h-11">谁适合用，以及要注意什么</a></li><li><a href="#h-14">小结</a></li><li><a href="#h-17">AI 解读与知识总结</a></li><li><a href="#h-30">小白常见问题</a></li></ul></details>
 <p style="color:var(--muted);font-size:13px;">来源：GitHub · 2026-11-11</p>
@@ -161,16 +182,16 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <p style="color:var(--muted);font-size:13px;">参考来源</p>
 <ul><li>hherb/bmlibrarian：https://github.com/hherb/bmlibrarian</li></ul>
 </div><div class="pagenav"><a class="navlink prev" href="../../articles/2026-11-16/%E9%9F%A9%E8%AF%AD%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%9D%A5%E4%BA%86.html">← 上一篇<br><span>韩语生物医学大模型来了</span></a><a class="navlink next" href="../../articles/2026-11-17/%E4%B8%80%E5%9D%97Arduino%E6%9D%BF%EF%BC%8C%E8%83%BD%E6%B5%8B%E5%93%AA%E4%BA%9B%E5%81%A5%E5%BA%B7%E6%8C%87%E6%A0%87%EF%BC%9F.html">下一篇 →<br><span>一块Arduino板，能测哪些健康指标？</span></a></div></article>
-<div class="footer">由 AI 自动生成 · 仅供学习参考</div>
+<div class="footer">由 AI 自动生成 · 仅供学习参考 · 快捷键 ←/→ 切换上/下一篇</div>
 <script>
 (function(){
-  try{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }catch(e){}
+  function setTheme(d){ if(d) document.documentElement.setAttribute('data-theme','dark'); else document.documentElement.removeAttribute('data-theme'); }
+  try{ var saved=localStorage.getItem('theme'); if(saved==='dark'){ setTheme(true); } else if(saved==='light'){ setTheme(false); } else if(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches){ setTheme(true); } }catch(e){}
   var tb=document.getElementById('themeBtn');
   function syncTheme(){ var d=document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent=d?'浅色模式':'深色模式'; }
   if(tb) tb.addEventListener('click',function(){
     var d=document.documentElement.getAttribute('data-theme')==='dark';
-    if(d){ document.documentElement.removeAttribute('data-theme'); try{localStorage.setItem('theme','light');}catch(e){} }
-    else { document.documentElement.setAttribute('data-theme','dark'); try{localStorage.setItem('theme','dark');}catch(e){} }
+    setTheme(!d); try{localStorage.setItem('theme', d?'light':'dark');}catch(e){}
     syncTheme();
   });
   syncTheme();
@@ -200,12 +221,20 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
   function onScroll(){ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width=(m>0?(h.scrollTop/m*100):0)+'%'; }
   window.addEventListener('scroll',onScroll); onScroll();
 
+  function copyText(t, done){
+    function fallback(){ var x=document.createElement('textarea'); x.value=t; document.body.appendChild(x); x.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(x); }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done,function(){ fallback(); done(); }); } else { fallback(); done(); }
+  }
   var cb=document.getElementById('copyBtn');
-  function fallbackCopy(){ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(t); }
   cb.addEventListener('click',function(){
-    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='复制链接'; },1500); };
-    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(location.href).then(done,function(){ fallbackCopy(); done(); }); }
-    else { fallbackCopy(); done(); }
+    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='分享链接'; },1500); };
+    if(navigator.share){ navigator.share({title:document.title,url:location.href}).then(function(){},function(){ copyText(location.href, done); }); }
+    else { copyText(location.href, done); }
+  });
+
+  document.addEventListener('keydown',function(ev){
+    if(ev.key==='ArrowLeft'){ var p=document.querySelector('.navlink.prev'); if(p){ location.href=p.getAttribute('href'); } }
+    else if(ev.key==='ArrowRight'){ var n=document.querySelector('.navlink.next'); if(n){ location.href=n.getAttribute('href'); } }
   });
 })();
 </script>

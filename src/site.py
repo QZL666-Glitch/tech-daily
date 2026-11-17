@@ -1,13 +1,16 @@
 """本地 / 公网「个人日报网站」生成器。
 
 把 output/ 下的 Markdown 文章渲染成一个可浏览、可搜索、可分类、可收藏的静态网站：
-- docs/index.html              首页（归档 + 实时搜索 + 分类标签 + 收藏/已读 + 深色模式 + 统计）
-- docs/articles/日期/xxx.html  每篇文章独立页面（目录 TOC + 阅读进度 + 字号调节 + 收藏 + 复制链接 + 上下篇）
+- docs/index.html              首页（Hero 横幅 + 标签云 + 搜索高亮 + 收藏/已读 + 随机一篇 + 深色模式）
+- docs/articles/日期/xxx.html  每篇文章独立页面（目录 TOC + 阅读进度 + 字号调节 + 收藏 + 分享 + 上下篇 + 键盘翻页）
+- docs/feed.xml                RSS 订阅源
+- docs/assets/                 图片等静态资源
 """
 import html as _html
 import json
 import re
 from collections import OrderedDict
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from urllib.parse import quote
 
@@ -30,29 +33,41 @@ CSS = """
 html{scroll-behavior:smooth;}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;}
 a{color:var(--accent);text-decoration:none;}
-.header{background:var(--header);color:var(--headerfg);padding:20px 20px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,.18);}
-.header-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.header h1{margin:0 0 4px;font-size:21px;}
-.header p{margin:0;color:var(--headersub);font-size:13px;}
-.themebtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;}
+.header{background:var(--header);color:var(--headerfg);padding:12px 20px;position:sticky;top:0;z-index:20;box-shadow:0 1px 8px rgba(0,0,0,.18);}
+.header-inner{max-width:880px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.brand{color:#fff;font-weight:700;font-size:15px;}
+.hbtns{display:flex;align-items:center;gap:8px;}
+.rsslink{color:#9aa4b2;font-size:13px;border:1px solid rgba(255,255,255,.22);border-radius:8px;padding:5px 10px;}
+.rsslink:hover{color:#fff;background:rgba(255,255,255,.1);}
+.themebtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;}
 .themebtn:hover{background:rgba(255,255,255,.16);}
-.wrap{max-width:820px;margin:0 auto;padding:18px 16px 70px;}
-.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12.5px;color:var(--muted);}
-.stat b{color:var(--text);}
+.hero{position:relative;background:#0a1419 url('assets/hero.jpg') center/cover;color:#fff;padding:44px 20px 42px;}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,12,16,.62),rgba(4,12,16,.82));}
+.hero-inner{position:relative;max-width:880px;margin:0 auto;}
+.hero h1{font-size:27px;margin:0 0 8px;font-weight:800;letter-spacing:.5px;}
+.hero p{color:#c9d6dd;font-size:14px;margin:0 0 16px;max-width:640px;}
+.hstats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.hstat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:5px 12px;font-size:12.5px;color:#e6edf3;backdrop-filter:blur(4px);}
+.hstat b{color:#fff;font-size:14px;}
+.randbtn{display:inline-block;background:linear-gradient(135deg,#1f6feb,#00c2a8);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:14px;cursor:pointer;font-weight:600;box-shadow:0 6px 16px rgba(31,111,235,.35);}
+.randbtn:hover{filter:brightness(1.08);}
+.wrap{max-width:880px;margin:0 auto;padding:18px 16px 70px;}
 .search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
 .search:focus{border-color:var(--accent2);}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
-.chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
+.chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;}
 .chip:hover{border-color:var(--accent);}
 .chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.chip em{font-style:normal;opacity:.65;font-size:11px;margin-left:3px;}
 .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
 .toggle{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 11px;font-size:12.5px;cursor:pointer;}
 .toggle:hover{border-color:var(--accent);color:var(--text);}
 .toggle.active{background:var(--accent);border-color:var(--accent);color:#fff;}
 .date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s,opacity .15s;}
+.item{display:flex;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s,opacity .15s;}
 .item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
+.cover{flex:none;width:46px;height:46px;border-radius:10px;margin-right:12px;}
+.item .body{flex:1;min-width:0;}
 .item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
 .item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
 .item .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px;}
@@ -66,11 +81,13 @@ a{color:var(--accent);text-decoration:none;}
 .read .readmark{display:inline-block;}
 .read{opacity:.5;}
 .read:hover{opacity:.85;}
+mark{background:#fde047;color:#111;padding:0 2px;border-radius:3px;}
 .empty{color:var(--muted);text-align:center;padding:44px 0;}
-.footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
+.footer{max-width:880px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
+.footer a{color:var(--muted);text-decoration:underline;}
 .topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
 .progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
-article{max-width:820px;margin:0 auto;padding:20px 16px 56px;font-size:var(--fs,16px);}
+article{max-width:880px;margin:0 auto;padding:20px 16px 56px;font-size:var(--fs,16px);}
 article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
 article h1{font-size:1.6em;line-height:1.4;margin:0 0 8px;}
 article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
@@ -99,7 +116,15 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 .navlink:hover{border-color:var(--accent);}
 .navlink span{color:var(--muted);font-size:12px;}
 .navlink.next{text-align:right;}
+@media print{
+  .header,.hero,.search,.chips,.filters,.tools,.pagenav,.progressbar,.topbtn,.footer,.toc{display:none!important;}
+  body{background:#fff;color:#000;}
+  article .card{border:none;padding:0;}
+  a{color:#000;}
+}
 """
+
+FAVICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a7d3f'/%3E%3Cpath d='M12 38l10-10 8 8 14-14 8 8' stroke='%23ffffff' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
 
 TAG_ORDER = ["生物医学", "嵌入式", "AI/大模型", "通信/信号", "3D打印", "开源工具"]
 
@@ -114,11 +139,22 @@ TAG_RULES = {
     "开源工具": ["github", "开源", "工具", "项目", "库", "lib", "mcp", "固件"],
 }
 
+TAG_COLORS = {
+    "生物医学": "linear-gradient(135deg,#0a7d3f,#34d399)",
+    "嵌入式": "linear-gradient(135deg,#1f6feb,#22d3ee)",
+    "AI/大模型": "linear-gradient(135deg,#7c3aed,#60a5fa)",
+    "通信/信号": "linear-gradient(135deg,#ea580c,#fbbf24)",
+    "3D打印": "linear-gradient(135deg,#db2777,#fb7185)",
+    "开源工具": "linear-gradient(135deg,#475569,#94a3b8)",
+    "综合": "linear-gradient(135deg,#0ea5e9,#34d399)",
+}
+
 ARTICLE_TEMPLATE = """<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="{__FAVICON__}">
 <title>{__TITLE__} · {__SITE__}</title>
 <style>{__CSS__}</style>
 </head>
@@ -126,7 +162,7 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
 <div class="progressbar" id="bar"></div>
 <div class="header"><div class="header-inner">
 <a href="../../index.html" style="color:#fff;font-weight:600;">← 返回目录</a>
-<button class="themebtn" id="themeBtn">深色模式</button>
+<button class="themebtn" type="button" id="themeBtn">深色模式</button>
 </div></div>
 <article><div class="card">
 <h1>{__TITLE__}</h1>
@@ -135,16 +171,16 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
 {__TOC__}
 {__BODY__}
 </div>{__NAV__}</article>
-<div class="footer">由 AI 自动生成 · 仅供学习参考</div>
+<div class="footer">由 AI 自动生成 · 仅供学习参考 · 快捷键 ←/→ 切换上/下一篇</div>
 <script>
 (function(){
-  try{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }catch(e){}
+  function setTheme(d){ if(d) document.documentElement.setAttribute('data-theme','dark'); else document.documentElement.removeAttribute('data-theme'); }
+  try{ var saved=localStorage.getItem('theme'); if(saved==='dark'){ setTheme(true); } else if(saved==='light'){ setTheme(false); } else if(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches){ setTheme(true); } }catch(e){}
   var tb=document.getElementById('themeBtn');
   function syncTheme(){ var d=document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent=d?'浅色模式':'深色模式'; }
   if(tb) tb.addEventListener('click',function(){
     var d=document.documentElement.getAttribute('data-theme')==='dark';
-    if(d){ document.documentElement.removeAttribute('data-theme'); try{localStorage.setItem('theme','light');}catch(e){} }
-    else { document.documentElement.setAttribute('data-theme','dark'); try{localStorage.setItem('theme','dark');}catch(e){} }
+    setTheme(!d); try{localStorage.setItem('theme', d?'light':'dark');}catch(e){}
     syncTheme();
   });
   syncTheme();
@@ -174,53 +210,67 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
   function onScroll(){ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width=(m>0?(h.scrollTop/m*100):0)+'%'; }
   window.addEventListener('scroll',onScroll); onScroll();
 
+  function copyText(t, done){
+    function fallback(){ var x=document.createElement('textarea'); x.value=t; document.body.appendChild(x); x.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(x); }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done,function(){ fallback(); done(); }); } else { fallback(); done(); }
+  }
   var cb=document.getElementById('copyBtn');
-  function fallbackCopy(){ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(t); }
   cb.addEventListener('click',function(){
-    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='复制链接'; },1500); };
-    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(location.href).then(done,function(){ fallbackCopy(); done(); }); }
-    else { fallbackCopy(); done(); }
+    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='分享链接'; },1500); };
+    if(navigator.share){ navigator.share({title:document.title,url:location.href}).then(function(){},function(){ copyText(location.href, done); }); }
+    else { copyText(location.href, done); }
+  });
+
+  document.addEventListener('keydown',function(ev){
+    if(ev.key==='ArrowLeft'){ var p=document.querySelector('.navlink.prev'); if(p){ location.href=p.getAttribute('href'); } }
+    else if(ev.key==='ArrowRight'){ var n=document.querySelector('.navlink.next'); if(n){ location.href=n.getAttribute('href'); } }
   });
 })();
 </script>
 </body>
 </html>"""
 
-INDEX_TEMPLATE = """<!DOCTYPE html>
+INDEX_TEMPLATE = r"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="{__FAVICON__}">
 <title>{__TITLE__}</title>
 <style>{__CSS__}</style>
 </head>
 <body>
 <div class="header"><div class="header-inner">
-<div><h1>{__TITLE__}</h1><p>{__SUBTITLE__}</p></div>
-<button class="themebtn" id="themeBtn">深色模式</button>
+<a class="brand" href="index.html">{__TITLE__}</a>
+<div class="hbtns"><a class="rsslink" href="feed.xml">RSS 订阅</a><button class="themebtn" type="button" id="themeBtn">深色模式</button></div>
+</div></div>
+<div class="hero"><div class="hero-inner">
+<h1>{__TITLE__}</h1>
+<p>{__SUBTITLE__}</p>
+<div class="hstats">{__HSTATS__}</div>
+<button class="randbtn" type="button" id="randBtn">随机读一篇 →</button>
 </div></div>
 <div class="wrap">
-<div class="stats">{__STATS__}</div>
-<input class="search" id="q" placeholder="搜索文章标题 / 关键词…">
+<input class="search" id="q" placeholder="搜索标题 / 关键词（按 / 快速聚焦）">
 <div class="chips">{__CHIPS__}</div>
 <div class="filters">
-<button class="toggle" id="favOnlyBtn">☆ 只看收藏</button>
-<button class="toggle" id="unreadOnlyBtn">只看未读</button>
+<button class="toggle" type="button" id="favOnlyBtn">☆ 只看收藏</button>
+<button class="toggle" type="button" id="unreadOnlyBtn">只看未读</button>
 </div>
 <div id="list">{__BODY__}</div>
 <div class="empty" id="empty" style="display:none;">没有匹配的内容</div>
 </div>
 <button class="topbtn" id="topBtn" title="回到顶部">↑</button>
-<div class="footer">每天自动更新 · 由 AI 生成，仅供学习参考</div>
+<div class="footer">每天自动更新 · <a href="feed.xml">RSS 订阅</a> · 快捷键：/ 搜索 · R 随机一篇</div>
 <script>
 (function(){
-  try{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }catch(e){}
+  function setTheme(d){ if(d) document.documentElement.setAttribute('data-theme','dark'); else document.documentElement.removeAttribute('data-theme'); }
+  try{ var saved=localStorage.getItem('theme'); if(saved==='dark'){ setTheme(true); } else if(saved==='light'){ setTheme(false); } else if(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches){ setTheme(true); } }catch(e){}
   var tb=document.getElementById('themeBtn');
   function syncTheme(){ var d=document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent=d?'浅色模式':'深色模式'; }
   if(tb) tb.addEventListener('click',function(){
     var d=document.documentElement.getAttribute('data-theme')==='dark';
-    if(d){ document.documentElement.removeAttribute('data-theme'); try{localStorage.setItem('theme','light');}catch(e){} }
-    else { document.documentElement.setAttribute('data-theme','dark'); try{localStorage.setItem('theme','dark');}catch(e){} }
+    setTheme(!d); try{localStorage.setItem('theme', d?'light':'dark');}catch(e){}
     syncTheme();
   });
   syncTheme();
@@ -232,12 +282,17 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
   function loadSet(k){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):[]; }catch(e){ return []; } }
   function saveSet(k,a){ try{ localStorage.setItem(k,JSON.stringify(a)); }catch(e){} }
   function has(a,x){ return a.indexOf(x)>=0; }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function escRe(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+  function hl(t,kw){ var x=esc(t); if(!kw) return x; var re=new RegExp(escRe(kw),'gi'); return x.replace(re,function(m){ return '<mark>'+m+'</mark>'; }); }
 
   var DATA={__DATA__};
   var favs=loadSet('favs'), reads=loadSet('read');
   var nodeMap={};
-  var favOnly=false, unreadOnly=false, activeTag='全部';
+  var favOnly=false, unreadOnly=false;
   var visible={};
+  var activeTag='全部';
+  try{ var h=location.hash; if(h && h.length>1){ var tt=decodeURIComponent(h.slice(1)); if(tt==='全部' || DATA.some(function(e){return (e.tags||[]).indexOf(tt)>=0;})){ activeTag=tt; } } }catch(e){}
 
   document.querySelectorAll('.item').forEach(function(a){
     var k=a.getAttribute('data-key'); nodeMap[k]=a;
@@ -264,7 +319,12 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
       var favHit=!favOnly||has(favs,e.t);
       var readHit=!unreadOnly||!has(reads,e.t);
       visible[e.t]=tagHit&&kwHit&&favHit&&readHit;
-      var a=nodeMap[e.t]; if(a) a.style.display=visible[e.t]?'':'none';
+      var a=nodeMap[e.t];
+      if(a){
+        a.style.display=visible[e.t]?'':'none';
+        var tEl=a.querySelector('.t'); if(tEl) tEl.innerHTML=hl(e.t,kw);
+        var sEl=a.querySelector('.s'); if(sEl) sEl.innerHTML=hl(e.s,kw);
+      }
     });
     document.querySelectorAll('.date').forEach(function(d){
       var g=d.getAttribute('data-date'); var any=false;
@@ -275,11 +335,14 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
     document.getElementById('empty').style.display=hasAny?'none':'';
   }
   q.addEventListener('input',apply);
+  function setTag(tag){
+    activeTag=tag;
+    document.querySelectorAll('.chip').forEach(function(x){ x.classList.toggle('active', x.getAttribute('data-tag')===tag); });
+    try{ if(history.replaceState) history.replaceState(null,'','#'+encodeURIComponent(tag)); }catch(e){}
+    apply();
+  }
   document.querySelectorAll('.chip').forEach(function(c){
-    c.addEventListener('click',function(){
-      document.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('active'); });
-      c.classList.add('active'); activeTag=c.getAttribute('data-tag'); apply();
-    });
+    c.addEventListener('click',function(){ setTag(c.getAttribute('data-tag')); });
   });
   document.getElementById('favOnlyBtn').addEventListener('click',function(){
     favOnly=!favOnly; this.classList.toggle('active',favOnly); apply();
@@ -287,6 +350,19 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
   document.getElementById('unreadOnlyBtn').addEventListener('click',function(){
     unreadOnly=!unreadOnly; this.classList.toggle('active',unreadOnly); apply();
   });
+  document.getElementById('randBtn').addEventListener('click',function(){
+    if(!DATA.length) return;
+    var e=DATA[Math.floor(Math.random()*DATA.length)];
+    location.href=e.u;
+  });
+  document.addEventListener('keydown',function(ev){
+    if(ev.key==='/' && document.activeElement!==q){ ev.preventDefault(); q.focus(); }
+    else if((ev.ctrlKey||ev.metaKey) && ev.key.toLowerCase()==='k'){ ev.preventDefault(); q.focus(); }
+    else if(ev.key.toLowerCase()==='r' && document.activeElement!==q){ document.getElementById('randBtn').click(); }
+  });
+
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('active', c.getAttribute('data-tag')===activeTag); });
+  apply();
 })();
 </script>
 </body>
@@ -412,6 +488,30 @@ def _read_minutes(rest: str) -> int:
     return max(1, round(len(rest) / 400))
 
 
+def _word_count(rest: str) -> int:
+    cjk = len(re.findall(r"[\u4e00-\u9fff]", rest))
+    latin = len(re.findall(r"[A-Za-z0-9]+", rest))
+    return cjk + latin
+
+
+def _cover_style(tags: list) -> str:
+    t = tags[0] if tags else "综合"
+    return TAG_COLORS.get(t, TAG_COLORS["综合"])
+
+
+def _xml_escape(s: str) -> str:
+    return (s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+             .replace('"', "&quot;").replace("'", "&apos;"))
+
+
+def _rfc2822(date_str: str) -> str:
+    try:
+        dt = datetime.strptime(date_str, "%Y-%m-%d").replace(hour=8, tzinfo=timezone(timedelta(hours=8)))
+        return dt.strftime("%a, %d %b %Y %H:%M:%S %z")
+    except Exception:
+        return date_str
+
+
 def render_article_page(e: dict, site_title: str, older, newer) -> str:
     tags_html = "".join(f'<span class="tag">{_html.escape(t)}</span>' for t in e["tags"])
     toc_items = _extract_toc(e["body_html"])
@@ -428,11 +528,12 @@ def render_article_page(e: dict, site_title: str, older, newer) -> str:
         f'<span class="badge">{_html.escape(e.get("source") or "来源")}</span>'
         f'<span>{_html.escape(e["date"])}</span>'
         f'<span>约 {e["read_minutes"]} 分钟</span>'
+        f'<span>{e["word_count"]} 字</span>'
         f'<span class="tools">'
-        f'<button class="favbtn" id="favBtn" data-key="{_html.escape(e["title"])}" title="收藏">☆ 收藏</button>'
-        f'<button class="fsbtn" id="dec" title="缩小字号">A−</button>'
-        f'<button class="fsbtn" id="inc" title="放大字号">A＋</button>'
-        f'<button class="copybtn" id="copyBtn">复制链接</button>'
+        f'<button class="favbtn" type="button" id="favBtn" data-key="{_html.escape(e["title"])}" title="收藏">☆ 收藏</button>'
+        f'<button class="fsbtn" type="button" id="dec" title="缩小字号">A−</button>'
+        f'<button class="fsbtn" type="button" id="inc" title="放大字号">A＋</button>'
+        f'<button class="copybtn" type="button" id="copyBtn">分享链接</button>'
         f'</span>'
     )
 
@@ -453,7 +554,8 @@ def render_article_page(e: dict, site_title: str, older, newer) -> str:
             .replace("{__TOC__}", toc_html)
             .replace("{__BODY__}", e["body_html"])
             .replace("{__NAV__}", nav_html)
-            .replace("{__CSS__}", CSS))
+            .replace("{__CSS__}", CSS)
+            .replace("{__FAVICON__}", FAVICON))
 
 
 def render_index(site_title: str, subtitle: str, entries: list) -> str:
@@ -471,14 +573,16 @@ def render_index(site_title: str, subtitle: str, entries: list) -> str:
             source = e.get("source") or "来源"
             parts.append(
                 f'<a class="item" data-key="{key}" href="{_html.escape(u)}">'
+                f'<div class="cover" style="background:{_cover_style(e["tags"])}"></div>'
+                f'<div class="body">'
                 f'<div class="t">{key}</div>'
                 + (f'<div class="s">{_html.escape(e["summary"])}</div>' if e["summary"] else "")
                 + f'<div class="meta"><span class="badge">{_html.escape(source)}</span>'
-                f'<span>{_html.escape(e["date"])}</span><span>约 {e["read_minutes"]} 分钟</span>'
+                f'<span>{_html.escape(e["date"])}</span><span>约 {e["read_minutes"]} 分钟</span><span>{e["word_count"]} 字</span>'
                 f'<span class="readmark">已读</span>'
                 f'<span class="star" data-key="{key}" title="收藏">☆</span></div>'
                 f'<div class="tags">{tags_html}</div>'
-                f'</a>'
+                f'</div></a>'
             )
     body = "\n".join(parts) if parts else '<div class="empty">暂无文章，先运行一次生成</div>'
 
@@ -488,18 +592,18 @@ def render_index(site_title: str, subtitle: str, entries: list) -> str:
             tag_counts[t] = tag_counts.get(t, 0) + 1
     ordered_tags = [t for t in TAG_ORDER if t in tag_counts]
     ordered_tags += [t for t in sorted(tag_counts) if t not in ordered_tags]
-    chips = ['<button class="chip active" data-tag="全部">全部</button>']
-    chips += [f'<button class="chip" data-tag="{_html.escape(t)}">{_html.escape(t)}</button>' for t in ordered_tags]
+    chips = [f'<button class="chip" type="button" data-tag="全部">全部<em>{len(entries)}</em></button>']
+    chips += [f'<button class="chip" type="button" data-tag="{_html.escape(t)}">{_html.escape(t)}<em>{tag_counts[t]}</em></button>' for t in ordered_tags]
     chips_html = "".join(chips)
 
     total = len(entries)
     latest = entries[0]["date"] if entries else ""
     today_count = sum(1 for e in entries if e["date"] == latest) if entries else 0
-    stat_html = (
-        f'<span class="stat">共 <b>{total}</b> 篇</span>'
-        f'<span class="stat">最新 <b>{_html.escape(latest)}</b></span>'
-        f'<span class="stat">当日新增 <b>{today_count}</b> 篇</span>'
-        f'<span class="stat">覆盖 <b>{len(ordered_tags)}</b> 个方向</span>'
+    hstat_html = (
+        f'<span class="hstat">累计 <b>{total}</b> 篇</span>'
+        f'<span class="hstat">最新 <b>{_html.escape(latest)}</b></span>'
+        f'<span class="hstat">当日新增 <b>{today_count}</b> 篇</span>'
+        f'<span class="hstat">覆盖 <b>{len(ordered_tags)}</b> 个方向</span>'
     )
 
     data = [{"t": e["title"], "d": e["date"], "u": quote(e["url"], safe="/"),
@@ -509,11 +613,38 @@ def render_index(site_title: str, subtitle: str, entries: list) -> str:
     return (INDEX_TEMPLATE
             .replace("{__TITLE__}", _html.escape(site_title))
             .replace("{__SUBTITLE__}", _html.escape(subtitle))
-            .replace("{__STATS__}", stat_html)
+            .replace("{__HSTATS__}", hstat_html)
             .replace("{__CHIPS__}", chips_html)
             .replace("{__BODY__}", body)
             .replace("{__DATA__}", data_json)
-            .replace("{__CSS__}", CSS))
+            .replace("{__CSS__}", CSS)
+            .replace("{__FAVICON__}", FAVICON))
+
+
+def render_feed(site_title: str, subtitle: str, site_url: str, entries: list) -> str:
+    base = site_url.rstrip("/") + "/"
+    items = []
+    for e in entries:
+        link = base + quote(e["url"], safe="/")
+        items.append(
+            "<item>"
+            f"<title>{_xml_escape(e['title'])}</title>"
+            f"<link>{link}</link>"
+            f"<guid isPermaLink=\"true\">{link}</guid>"
+            f"<pubDate>{_rfc2822(e['date'])}</pubDate>"
+            f"<description>{_xml_escape(e.get('summary') or '')}</description>"
+            "</item>"
+        )
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0"><channel>'
+        f"<title>{_xml_escape(site_title)}</title>"
+        f"<link>{base}</link>"
+        f"<description>{_xml_escape(subtitle)}</description>"
+        f"<lastBuildDate>{_rfc2822(entries[0]['date']) if entries else ''}</lastBuildDate>"
+        + "".join(items)
+        + "</channel></rss>"
+    )
 
 
 def build_site(cfg: dict):
@@ -521,6 +652,7 @@ def build_site(cfg: dict):
     site_cfg = cfg.get("site", {})
     site_title = site_cfg.get("title", "我的专业科技日报")
     subtitle = site_cfg.get("subtitle", "")
+    site_url = site_cfg.get("url") or "https://qzl666-glitch.github.io/tech-daily/"
     site_dir = Path(site_cfg.get("output_dir", output_dir.parent / "docs"))
     site_dir.mkdir(parents=True, exist_ok=True)
 
@@ -543,6 +675,7 @@ def build_site(cfg: dict):
             "slug": _safe_filename(title),
             "tags": _classify(title, summary),
             "read_minutes": _read_minutes(rest),
+            "word_count": _word_count(rest),
             "body_html": md_to_html(rest),
         })
 
@@ -561,4 +694,5 @@ def build_site(cfg: dict):
             render_article_page(e, site_title, older, newer), encoding="utf-8")
 
     (site_dir / "index.html").write_text(render_index(site_title, subtitle, entries), encoding="utf-8")
+    (site_dir / "feed.xml").write_text(render_feed(site_title, subtitle, site_url, entries), encoding="utf-8")
     return str(site_dir), len(entries)
