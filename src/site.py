@@ -64,7 +64,7 @@ a{color:var(--accent);text-decoration:none;}
 .toggle:hover{border-color:var(--accent);color:var(--text);}
 .toggle.active{background:var(--accent);border-color:var(--accent);color:#fff;}
 .date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:flex;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s,opacity .15s;}
+.item{display:flex;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;cursor:pointer;transition:border-color .15s,box-shadow .15s,opacity .15s;}
 .item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
 .cover{flex:none;width:46px;height:46px;border-radius:10px;margin-right:12px;}
 .item .body{flex:1;min-width:0;}
@@ -77,6 +77,8 @@ a{color:var(--accent);text-decoration:none;}
 .star{color:var(--muted);cursor:pointer;font-size:16px;line-height:1;margin-left:auto;user-select:none;padding:4px 7px;border-radius:6px;}
 .star:hover{color:#f5a623;background:var(--chip);}
 .star.on{color:#f5a623;}
+.srclink{color:var(--accent2);font-size:12px;white-space:nowrap;}
+.srclink:hover{text-decoration:underline;}
 .readmark{display:none;color:var(--muted);font-size:11px;border:1px solid var(--border);border-radius:6px;padding:0 6px;}
 .read .readmark{display:inline-block;}
 .read{opacity:.5;}
@@ -87,7 +89,14 @@ mark{background:#fde047;color:#111;padding:0 2px;border-radius:3px;}
 .footer a{color:var(--muted);text-decoration:underline;}
 .topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
 .progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
-article{max-width:880px;margin:0 auto;padding:20px 16px 56px;font-size:var(--fs,16px);}
+article{max-width:1180px;margin:0 auto;padding:0;font-size:var(--fs,16px);}
+.article-layout{display:flex;gap:22px;align-items:flex-start;padding:20px 16px 56px;}
+.article-main{flex:1;min-width:0;}
+.tocside{flex:none;width:260px;display:none;}
+.toc-mobile{display:block;}
+.tocside .toc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0;}
+.toctitle{font-weight:600;font-size:14px;margin-bottom:8px;}
+@media(min-width:1120px){.toc-mobile{display:none;}.tocside{display:block;position:sticky;top:70px;max-height:calc(100vh - 88px);overflow:auto;}}
 article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
 article h1{font-size:1.6em;line-height:1.4;margin:0 0 8px;}
 article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
@@ -137,7 +146,8 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 .relcard .rm{color:var(--muted);font-size:12px;margin-left:8px;}
 .toc a.active{color:var(--accent);font-weight:700;}
 @media print{
-  .header,.hero,.search,.chips,.filters,.tools,.pagenav,.progressbar,.topbtn,.footer,.toc,.helpwrap,.related,.archpanel{display:none!important;}
+  .header,.hero,.search,.chips,.filters,.tools,.pagenav,.progressbar,.topbtn,.footer,.toc,.tocside,.toc-mobile,.helpwrap,.related,.archpanel{display:none!important;}
+  .article-layout{display:block;padding:0;}
   body{background:#fff;color:#000;}
   article .card{border:none;padding:0;}
   a{color:#000;}
@@ -184,13 +194,22 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
 <a href="../../index.html" style="color:#fff;font-weight:600;">← 返回目录</a>
 <button class="themebtn" type="button" id="themeBtn">深色模式</button>
 </div></div>
-<article><div class="card">
+<article>
+<div class="article-layout">
+<div class="article-main">
+<div class="card">
 <h1>{__TITLE__}</h1>
 <div class="meta">{__META__}</div>
 <div class="tags">{__TAGS__}</div>
-{__TOC__}
+{__TOCMOBILE__}
 {__BODY__}
-</div>{__NAV__}{__RELATED__}</article>
+</div>
+{__NAV__}
+{__RELATED__}
+</div>
+{__TOCSIDE__}
+</div>
+</article>
 <button class="topbtn" id="topBtn" title="回到顶部">↑</button>
 <div class="footer">由 AI 自动生成 · 仅供学习参考 · 快捷键 ←/→ 切换上/下一篇</div>
 <script>
@@ -343,11 +362,19 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
   var activeTag='全部';
   try{ var h=location.hash; if(h && h.length>1){ var tt=decodeURIComponent(h.slice(1)); if(tt==='全部' || DATA.some(function(e){return (e.tags||[]).indexOf(tt)>=0;})){ activeTag=tt; } } }catch(e){}
 
+  var dateNodes={};
+  document.querySelectorAll('.date').forEach(function(d){ dateNodes[d.getAttribute('data-date')]=d; });
   document.querySelectorAll('.item').forEach(function(a){
     var k=a.getAttribute('data-key'); nodeMap[k]=a;
     if(has(reads,k)) a.classList.add('read');
     var s=a.querySelector('.star'); if(s && has(favs,k)) s.classList.add('on');
-    a.addEventListener('click',function(){ if(!has(reads,k)){ reads.push(k); saveSet('read',reads); } a.classList.add('read'); });
+    a.addEventListener('click',function(ev){
+      if(ev.target.closest && (ev.target.closest('.star')||ev.target.closest('.srclink'))) return;
+      if(!has(reads,k)){ reads.push(k); saveSet('read',reads); }
+      a.classList.add('read');
+      location.href=a.getAttribute('data-href');
+    });
+    a.addEventListener('keydown',function(ev){ if(ev.key==='Enter' && !(ev.target.closest && ev.target.closest('.star'))){ location.href=a.getAttribute('data-href'); } });
   });
   document.querySelectorAll('.star').forEach(function(s){
     s.addEventListener('click',function(ev){
@@ -359,6 +386,34 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
   });
 
   var q=document.getElementById('q');
+  function score(e,kw){
+    var s=0;
+    if((e.t||'').toLowerCase().indexOf(kw)>=0) s+=3;
+    if((e.s||'').toLowerCase().indexOf(kw)>=0) s+=2;
+    if((e.tags||[]).some(function(t){ return t.toLowerCase().indexOf(kw)>=0; })) s+=1;
+    return s;
+  }
+  function layoutDate(){
+    var list=document.getElementById('list');
+    var dates=[]; DATA.forEach(function(e){ if(dates.indexOf(e.d)<0) dates.push(e.d); });
+    if(!sortDesc) dates.reverse();
+    dates.forEach(function(d){
+      var dn=dateNodes[d]; if(dn) list.appendChild(dn);
+      DATA.forEach(function(e){ if(e.d===d){ var n=nodeMap[e.t]; if(n) list.appendChild(n); } });
+    });
+    Object.keys(dateNodes).forEach(function(d){
+      var any=false; DATA.forEach(function(e){ if(e.d===d && visible[e.t]) any=true; });
+      dateNodes[d].style.display=any?'':'none';
+    });
+  }
+  function layoutSearch(kw){
+    var list=document.getElementById('list');
+    var scored=[];
+    DATA.forEach(function(e){ if(visible[e.t]) scored.push({n:nodeMap[e.t], s:score(e,kw)}); });
+    scored.sort(function(a,b){ return b.s-a.s; });
+    scored.forEach(function(x){ if(x.n) list.appendChild(x.n); });
+    Object.keys(dateNodes).forEach(function(d){ dateNodes[d].style.display='none'; });
+  }
   function apply(){
     var kw=(q.value||'').trim().toLowerCase();
     visible={};
@@ -375,11 +430,7 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
         var sEl=a.querySelector('.s'); if(sEl) sEl.innerHTML=hl(e.s,kw);
       }
     });
-    document.querySelectorAll('.date').forEach(function(d){
-      var g=d.getAttribute('data-date'); var any=false;
-      DATA.forEach(function(e){ if(e.d===g && visible[e.t]) any=true; });
-      d.style.display=any?'':'none';
-    });
+    if(kw){ layoutSearch(kw); } else { layoutDate(); }
     var hasAny=false; DATA.forEach(function(e){ if(visible[e.t]) hasAny=true; });
     document.getElementById('empty').style.display=hasAny?'none':'';
   }
@@ -424,14 +475,7 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
   document.getElementById('sortBtn').addEventListener('click',function(){
     sortDesc=!sortDesc;
     this.textContent=sortDesc?'排序：最新在前':'排序：最旧在前';
-    var list=document.getElementById('list');
-    var groups=[], cur=null;
-    [].slice.call(list.children).forEach(function(n){
-      if(n.classList.contains('date')){ cur={d:n,items:[]}; groups.push(cur); }
-      else if(cur) cur.items.push(n);
-    });
-    if(!sortDesc) groups.reverse();
-    groups.forEach(function(g){ list.appendChild(g.d); g.items.forEach(function(i){ list.appendChild(i); }); });
+    apply();
   });
   document.getElementById('resetBtn').addEventListener('click',function(){
     q.value=''; favOnly=false; unreadOnly=false;
@@ -545,6 +589,14 @@ def _extract_source(rest: str) -> str:
     return ""
 
 
+def _extract_source_url(rest: str) -> str:
+    m = re.search(r"参考来源.*?(https?://[^\s)\]]+)", rest, flags=re.S)
+    if m:
+        return m.group(1).rstrip(".,;")
+    m = re.search(r"https?://[^\s)\]]+", rest)
+    return m.group(0).rstrip(".,;") if m else ""
+
+
 def _extract_summary(rest: str) -> str:
     for line in rest.splitlines():
         s = line.strip()
@@ -600,14 +652,15 @@ def _rfc2822(date_str: str) -> str:
 def render_article_page(e: dict, site_title: str, older, newer, related) -> str:
     tags_html = "".join(f'<span class="tag">{_html.escape(t)}</span>' for t in e["tags"])
     toc_items = _extract_toc(e["body_html"])
+    toc_html = ""
+    toc_side_html = ""
     if len(toc_items) >= 2:
         lis = []
         for level, aid, text in toc_items:
             cls = ' class="l3"' if level == "3" else ""
             lis.append(f'<li{cls}><a href="#{aid}">{_html.escape(text)}</a></li>')
-        toc_html = f'<details class="toc" open><summary>目录</summary><ul>{"".join(lis)}</ul></details>'
-    else:
-        toc_html = ""
+        toc_html = f'<div class="toc-mobile"><details class="toc" open><summary>目录</summary><ul>{"".join(lis)}</ul></details></div>'
+        toc_side_html = f'<aside class="tocside"><div class="toc"><div class="toctitle">目录</div><ul>{"".join(lis)}</ul></div></aside>'
 
     meta = (
         f'<span class="badge">{_html.escape(e.get("source") or "来源")}</span>'
@@ -644,7 +697,8 @@ def render_article_page(e: dict, site_title: str, older, newer, related) -> str:
             .replace("{__SITE__}", _html.escape(site_title))
             .replace("{__META__}", meta)
             .replace("{__TAGS__}", tags_html)
-            .replace("{__TOC__}", toc_html)
+            .replace("{__TOCMOBILE__}", toc_html)
+            .replace("{__TOCSIDE__}", toc_side_html)
             .replace("{__BODY__}", e["body_html"])
             .replace("{__NAV__}", nav_html)
             .replace("{__RELATED__}", related_html)
@@ -665,8 +719,10 @@ def render_index(site_title: str, subtitle: str, entries: list) -> str:
             key = _html.escape(e["title"])
             tags_html = "".join(f'<span class="tag">{_html.escape(t)}</span>' for t in e["tags"])
             source = e.get("source") or "来源"
+            src_url = e.get("source_url") or ""
+            srclink = f'<a class="srclink" href="{_html.escape(src_url)}" target="_blank" rel="noopener">原文 ↗</a>' if src_url else ""
             parts.append(
-                f'<a class="item" data-key="{key}" href="{_html.escape(u)}">'
+                f'<div class="item" data-key="{key}" data-href="{_html.escape(u)}" tabindex="0" role="link">'
                 f'<div class="cover" style="background:{_cover_style(e["tags"])}"></div>'
                 f'<div class="body">'
                 f'<div class="t">{key}</div>'
@@ -674,9 +730,10 @@ def render_index(site_title: str, subtitle: str, entries: list) -> str:
                 + f'<div class="meta"><span class="badge">{_html.escape(source)}</span>'
                 f'<span>{_html.escape(e["date"])}</span><span>约 {e["read_minutes"]} 分钟</span><span>{e["word_count"]} 字</span>'
                 f'<span class="readmark">已读</span>'
-                f'<span class="star" data-key="{key}" title="收藏">☆</span></div>'
+                + srclink
+                + f'<span class="star" data-key="{key}" title="收藏">☆</span></div>'
                 f'<div class="tags">{tags_html}</div>'
-                f'</div></a>'
+                f'</div></div>'
             )
     body = "\n".join(parts) if parts else '<div class="empty">暂无文章，先运行一次生成</div>'
 
@@ -773,6 +830,7 @@ def build_site(cfg: dict):
             "title": title,
             "date": date_str,
             "source": _extract_source(rest),
+            "source_url": _extract_source_url(rest),
             "summary": summary,
             "slug": _safe_filename(title),
             "tags": _classify(title, summary),
