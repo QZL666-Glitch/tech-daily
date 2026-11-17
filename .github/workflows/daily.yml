@@ -1,0 +1,57 @@
+name: 每日科技日报
+
+on:
+  schedule:
+    # UTC 00:00 = 北京时间 08:00，每天自动跑一次
+    - cron: "0 0 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write   # 提交去重状态 / 文章 / 网站
+  pages: write      # 部署 GitHub Pages
+  id-token: write   # Pages 部署所需的 OIDC 认证
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装依赖
+        run: pip install -r requirements.txt
+
+      - name: 生成文章并重建网站
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python main.py
+
+      - name: 提交结果（去重状态 / 文章 / 网站）
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: 每日更新 $(date -u +%F)" || echo "无新增内容，跳过提交"
+          git push
+
+      - name: 配置 Pages
+        uses: actions/configure-pages@v5
+
+      - name: 上传网站
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: 部署到 Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

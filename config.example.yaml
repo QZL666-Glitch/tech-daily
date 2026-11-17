@@ -1,0 +1,72 @@
+# ============================================================
+#  公众号内容自动生成 —— 配置模板
+#  用法：复制本文件为 config.yaml，再填下面的关键信息。
+#  （config.yaml 已被 .gitignore 忽略，不会提交到 Git，安全）
+# ============================================================
+
+run:
+  # generate = 只生成文章到 output/，手动发布（个人号默认用这个）
+  # publish  = 生成后调用微信接口自动发布（需要认证企业公众号）
+  mode: "generate"
+  max_items: 6          # 每轮最多生成几篇
+  days_back: 7          # 只看最近 N 天的内容
+
+# ---------------- 大模型（默认 DeepSeek，OpenAI 兼容） ----------------
+llm:
+  base_url: "https://api.deepseek.com"
+  api_key: ""                    # 必填：你的 DeepSeek API Key
+  model: "deepseek-chat"         # deepseek-chat 便宜；deepseek-reasoner 推理更强但更贵更慢
+  temperature: 0.3               # 事实类写作建议 0.2~0.4
+  max_tokens: 4000
+  timeout: 120
+
+# ---------------- 内容来源 ----------------
+sources:
+  github:
+    enabled: true
+    token: ""                    # 可选：GitHub Token，提高限流
+    topics: ["stm32", "esp32", "embedded", "biomedical", "medical-device", "3d-printing", "wearable", "bioinformatics"]
+    per_topic: 5
+
+  gitee:                         # 国内可直接访问的代码平台
+    enabled: true
+    access_token: ""             # Gitee 搜索接口现需 token（gitee.com 个人设置→私人令牌，免费）
+    keywords: ["stm32", "esp32", "嵌入式", "3d打印", "生物医学"]
+    per_keyword: 5
+
+  arxiv:
+    enabled: true
+    categories: ["physics.med-ph", "q-bio.QM", "eess.SP", "eess.IV"]
+    max_results: 15
+
+  rss:
+    enabled: false               # 建议保持 false，改用 GitHub/Gitee/arXiv 更稳定
+    feeds:
+      - "https://sspai.com/feed"         # 少数派
+      - "https://36kr.com/feed"          # 36氪
+      # 注意：news.google.com / reddit / hackernews 在大陆需代理，请勿直接启用
+
+  reddit:                        # 大陆访问需代理，默认关闭
+    enabled: false
+    subreddits: ["embedded", "esp32", "3Dprinting", "BiomedicalEngineers"]
+    limit: 5
+
+  hn:                            # Hacker News，大陆访问需代理，默认关闭
+    enabled: false
+    keywords: ["stm32", "esp32", "embedded", "3d printing", "biomedical"]
+    limit: 5
+
+# ---------------- 微信公众号 ----------------
+wechat:
+  enabled: false                 # 个人订阅号无发布接口权限，保持 false
+  appid: ""
+  appsecret: ""
+  author: ""                     # 文章作者署名（留空则用默认名）
+  thumb_image: ""                # 自动发布时的封面图本地路径（900x383 左右）
+  need_open_comment: 0
+
+# ---------------- 本地定时（scheduler.py 使用） ----------------
+schedule:
+  enabled: true
+  hour: 8
+  minute: 0
