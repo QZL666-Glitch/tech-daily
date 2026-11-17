@@ -116,8 +116,28 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 .navlink:hover{border-color:var(--accent);}
 .navlink span{color:var(--muted);font-size:12px;}
 .navlink.next{text-align:right;}
+.archpanel{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;padding:10px 14px;}
+.archpanel summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--text);}
+.archlist{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.architem{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:8px;padding:4px 10px;font-size:12.5px;cursor:pointer;}
+.architem:hover{border-color:var(--accent);}
+.architem em{font-style:normal;opacity:.6;margin-left:3px;font-size:11px;}
+.helpwrap{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;}
+.helpwrap.show{display:flex;}
+.helpcard{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:14px;max-width:440px;width:100%;padding:20px 22px;}
+.helpcard h3{margin:0 0 12px;font-size:16px;}
+.helpline{display:flex;justify-content:space-between;gap:12px;font-size:13px;margin:7px 0;}
+.helpline>span:last-child{color:var(--muted);}
+.kbd{background:var(--chip);border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:1px 7px;font-size:12px;font-family:Consolas,Monaco,monospace;}
+.helpclose{display:block;margin:16px auto 0;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:7px 18px;cursor:pointer;font-size:13px;}
+.related{margin:18px 0 0;}
+.related h3{font-size:15px;margin:0 0 10px;}
+.relcard{display:block;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;color:var(--text);font-size:14px;}
+.relcard:hover{border-color:var(--accent);}
+.relcard .rm{color:var(--muted);font-size:12px;margin-left:8px;}
+.toc a.active{color:var(--accent);font-weight:700;}
 @media print{
-  .header,.hero,.search,.chips,.filters,.tools,.pagenav,.progressbar,.topbtn,.footer,.toc{display:none!important;}
+  .header,.hero,.search,.chips,.filters,.tools,.pagenav,.progressbar,.topbtn,.footer,.toc,.helpwrap,.related,.archpanel{display:none!important;}
   body{background:#fff;color:#000;}
   article .card{border:none;padding:0;}
   a{color:#000;}
@@ -170,7 +190,8 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
 <div class="tags">{__TAGS__}</div>
 {__TOC__}
 {__BODY__}
-</div>{__NAV__}</article>
+</div>{__NAV__}{__RELATED__}</article>
+<button class="topbtn" id="topBtn" title="回到顶部">↑</button>
 <div class="footer">由 AI 自动生成 · 仅供学习参考 · 快捷键 ←/→ 切换上/下一篇</div>
 <script>
 (function(){
@@ -210,6 +231,21 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
   function onScroll(){ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width=(m>0?(h.scrollTop/m*100):0)+'%'; }
   window.addEventListener('scroll',onScroll); onScroll();
 
+  var topBtn=document.getElementById('topBtn');
+  window.addEventListener('scroll',function(){ topBtn.style.display=(window.scrollY>400)?'block':'none'; });
+  topBtn.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+
+  var tocLinks=[].slice.call(document.querySelectorAll('.toc a'));
+  if(tocLinks.length){
+    var heads=[].slice.call(document.querySelectorAll('article h2[id], article h3[id]'));
+    function spy(){
+      var y=window.scrollY+90, cur=null;
+      heads.forEach(function(h){ if(h.offsetTop<=y) cur=h.id; });
+      tocLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href')==='#'+cur); });
+    }
+    window.addEventListener('scroll',spy); spy();
+  }
+
   function copyText(t, done){
     function fallback(){ var x=document.createElement('textarea'); x.value=t; document.body.appendChild(x); x.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(x); }
     if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done,function(){ fallback(); done(); }); } else { fallback(); done(); }
@@ -241,7 +277,7 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
 <body>
 <div class="header"><div class="header-inner">
 <a class="brand" href="index.html">{__TITLE__}</a>
-<div class="hbtns"><a class="rsslink" href="feed.xml">RSS 订阅</a><button class="themebtn" type="button" id="themeBtn">深色模式</button></div>
+<div class="hbtns"><a class="rsslink" href="feed.xml">RSS 订阅</a><button class="themebtn" type="button" id="themeBtn">深色模式</button><button class="themebtn" type="button" id="helpBtn" title="快捷键">?</button></div>
 </div></div>
 <div class="hero"><div class="hero-inner">
 <h1>{__TITLE__}</h1>
@@ -250,17 +286,31 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
 <button class="randbtn" type="button" id="randBtn">随机读一篇 →</button>
 </div></div>
 <div class="wrap">
+{__ARCHIVE__}
 <input class="search" id="q" placeholder="搜索标题 / 关键词（按 / 快速聚焦）">
 <div class="chips">{__CHIPS__}</div>
 <div class="filters">
 <button class="toggle" type="button" id="favOnlyBtn">☆ 只看收藏</button>
 <button class="toggle" type="button" id="unreadOnlyBtn">只看未读</button>
+<button class="toggle" type="button" id="sortBtn">排序：最新在前</button>
+<button class="toggle" type="button" id="resetBtn">重置</button>
 </div>
 <div id="list">{__BODY__}</div>
 <div class="empty" id="empty" style="display:none;">没有匹配的内容</div>
 </div>
 <button class="topbtn" id="topBtn" title="回到顶部">↑</button>
-<div class="footer">每天自动更新 · <a href="feed.xml">RSS 订阅</a> · 快捷键：/ 搜索 · R 随机一篇</div>
+<div class="footer">每天自动更新 · <a href="feed.xml">RSS 订阅</a> · 快捷键：/ 搜索 · R 随机 · D 主题 · ? 帮助</div>
+<div class="helpwrap" id="helpWrap">
+<div class="helpcard">
+<h3>快捷键 & 使用说明</h3>
+<div class="helpline"><span><span class="kbd">/</span> 或 <span class="kbd">Ctrl+K</span></span><span>聚焦搜索框</span></div>
+<div class="helpline"><span><span class="kbd">R</span> 随机</span><span>随机读一篇</span></div>
+<div class="helpline"><span><span class="kbd">D</span> 主题</span><span>切换深色 / 浅色</span></div>
+<div class="helpline"><span><span class="kbd">?</span> 帮助</span><span>打开本说明</span></div>
+<div class="helpline"><span>文章页 <span class="kbd">←</span> / <span class="kbd">→</span></span><span>切换上 / 下一篇</span></div>
+<button class="helpclose" id="helpClose">知道了</button>
+</div>
+</div>
 <script>
 (function(){
   function setTheme(d){ if(d) document.documentElement.setAttribute('data-theme','dark'); else document.documentElement.removeAttribute('data-theme'); }
@@ -358,6 +408,42 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
     if(ev.key==='/' && document.activeElement!==q){ ev.preventDefault(); q.focus(); }
     else if((ev.ctrlKey||ev.metaKey) && ev.key.toLowerCase()==='k'){ ev.preventDefault(); q.focus(); }
     else if(ev.key.toLowerCase()==='r' && document.activeElement!==q){ document.getElementById('randBtn').click(); }
+    else if(ev.key.toLowerCase()==='d' && document.activeElement!==q){ document.getElementById('themeBtn').click(); }
+    else if(ev.key==='?'){ ev.preventDefault(); showHelp(); }
+    else if(ev.key==='Escape'){ hideHelp(); }
+  });
+
+  var helpWrap=document.getElementById('helpWrap');
+  function showHelp(){ helpWrap.classList.add('show'); }
+  function hideHelp(){ helpWrap.classList.remove('show'); }
+  document.getElementById('helpBtn').addEventListener('click',showHelp);
+  document.getElementById('helpClose').addEventListener('click',hideHelp);
+  helpWrap.addEventListener('click',function(ev){ if(ev.target===helpWrap) hideHelp(); });
+
+  var sortDesc=true;
+  document.getElementById('sortBtn').addEventListener('click',function(){
+    sortDesc=!sortDesc;
+    this.textContent=sortDesc?'排序：最新在前':'排序：最旧在前';
+    var list=document.getElementById('list');
+    var groups=[], cur=null;
+    [].slice.call(list.children).forEach(function(n){
+      if(n.classList.contains('date')){ cur={d:n,items:[]}; groups.push(cur); }
+      else if(cur) cur.items.push(n);
+    });
+    if(!sortDesc) groups.reverse();
+    groups.forEach(function(g){ list.appendChild(g.d); g.items.forEach(function(i){ list.appendChild(i); }); });
+  });
+  document.getElementById('resetBtn').addEventListener('click',function(){
+    q.value=''; favOnly=false; unreadOnly=false;
+    document.getElementById('favOnlyBtn').classList.remove('active');
+    document.getElementById('unreadOnlyBtn').classList.remove('active');
+    setTag('全部');
+  });
+  document.querySelectorAll('.architem').forEach(function(b){
+    b.addEventListener('click',function(){
+      var d=document.querySelector('.date[data-date="'+b.getAttribute('data-date')+'"]');
+      if(d) d.scrollIntoView({behavior:'smooth',block:'start'});
+    });
   });
 
   document.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('active', c.getAttribute('data-tag')===activeTag); });
@@ -511,7 +597,7 @@ def _rfc2822(date_str: str) -> str:
         return date_str
 
 
-def render_article_page(e: dict, site_title: str, older, newer) -> str:
+def render_article_page(e: dict, site_title: str, older, newer, related) -> str:
     tags_html = "".join(f'<span class="tag">{_html.escape(t)}</span>' for t in e["tags"])
     toc_items = _extract_toc(e["body_html"])
     if len(toc_items) >= 2:
@@ -545,6 +631,14 @@ def render_article_page(e: dict, site_title: str, older, newer) -> str:
         nav.append(f'<a class="navlink next" href="{_html.escape(u)}">下一篇 →<br><span>{_html.escape(newer["title"])}</span></a>')
     nav_html = f'<div class="pagenav">{"".join(nav)}</div>' if nav else ""
 
+    related_html = ""
+    if related:
+        cards = []
+        for r in related:
+            u = "../../" + quote(r["url"], safe="/")
+            cards.append(f'<a class="relcard" href="{_html.escape(u)}">{_html.escape(r["title"])}<span class="rm">约 {r["read_minutes"]} 分钟</span></a>')
+        related_html = f'<div class="related"><h3>相关文章</h3>{"".join(cards)}</div>'
+
     return (ARTICLE_TEMPLATE
             .replace("{__TITLE__}", _html.escape(e["title"]))
             .replace("{__SITE__}", _html.escape(site_title))
@@ -553,6 +647,7 @@ def render_article_page(e: dict, site_title: str, older, newer) -> str:
             .replace("{__TOC__}", toc_html)
             .replace("{__BODY__}", e["body_html"])
             .replace("{__NAV__}", nav_html)
+            .replace("{__RELATED__}", related_html)
             .replace("{__CSS__}", CSS)
             .replace("{__FAVICON__}", FAVICON))
 
@@ -595,6 +690,13 @@ def render_index(site_title: str, subtitle: str, entries: list) -> str:
     chips += [f'<button class="chip" type="button" data-tag="{_html.escape(t)}">{_html.escape(t)}<em>{tag_counts[t]}</em></button>' for t in ordered_tags]
     chips_html = "".join(chips)
 
+    archive_items = []
+    for date_str, es in groups.items():
+        archive_items.append(
+            f'<button class="architem" type="button" data-date="{_html.escape(date_str)}">{_html.escape(date_str)}<em>{len(es)}</em></button>'
+        )
+    archive_html = f'<details class="archpanel"><summary>按日期归档（{len(groups)} 天）</summary><div class="archlist">{"".join(archive_items)}</div></details>' if groups else ""
+
     total = len(entries)
     latest = entries[0]["date"] if entries else ""
     today_count = sum(1 for e in entries if e["date"] == latest) if entries else 0
@@ -613,6 +715,7 @@ def render_index(site_title: str, subtitle: str, entries: list) -> str:
             .replace("{__TITLE__}", _html.escape(site_title))
             .replace("{__SUBTITLE__}", _html.escape(subtitle))
             .replace("{__HSTATS__}", hstat_html)
+            .replace("{__ARCHIVE__}", archive_html)
             .replace("{__CHIPS__}", chips_html)
             .replace("{__BODY__}", body)
             .replace("{__DATA__}", data_json)
@@ -687,10 +790,26 @@ def build_site(cfg: dict):
     for i, e in enumerate(entries):
         older = entries[i + 1] if i + 1 < len(entries) else None
         newer = entries[i - 1] if i > 0 else None
+        related = []
+        for o in entries:
+            if o is e:
+                continue
+            if set(o["tags"]) & set(e["tags"]):
+                related.append(o)
+            if len(related) >= 3:
+                break
+        if len(related) < 3:
+            for o in entries:
+                if o is e or o in related:
+                    continue
+                related.append(o)
+                if len(related) >= 3:
+                    break
+        related = related[:3]
         art_dir = site_dir / "articles" / e["date"]
         art_dir.mkdir(parents=True, exist_ok=True)
         (art_dir / f"{e['slug']}.html").write_text(
-            render_article_page(e, site_title, older, newer), encoding="utf-8")
+            render_article_page(e, site_title, older, newer, related), encoding="utf-8")
 
     (site_dir / "index.html").write_text(render_index(site_title, subtitle, entries), encoding="utf-8")
     (site_dir / "feed.xml").write_text(render_feed(site_title, subtitle, site_url, entries), encoding="utf-8")

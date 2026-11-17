@@ -107,8 +107,28 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 .navlink:hover{border-color:var(--accent);}
 .navlink span{color:var(--muted);font-size:12px;}
 .navlink.next{text-align:right;}
+.archpanel{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;padding:10px 14px;}
+.archpanel summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--text);}
+.archlist{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.architem{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:8px;padding:4px 10px;font-size:12.5px;cursor:pointer;}
+.architem:hover{border-color:var(--accent);}
+.architem em{font-style:normal;opacity:.6;margin-left:3px;font-size:11px;}
+.helpwrap{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;}
+.helpwrap.show{display:flex;}
+.helpcard{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:14px;max-width:440px;width:100%;padding:20px 22px;}
+.helpcard h3{margin:0 0 12px;font-size:16px;}
+.helpline{display:flex;justify-content:space-between;gap:12px;font-size:13px;margin:7px 0;}
+.helpline>span:last-child{color:var(--muted);}
+.kbd{background:var(--chip);border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:1px 7px;font-size:12px;font-family:Consolas,Monaco,monospace;}
+.helpclose{display:block;margin:16px auto 0;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:7px 18px;cursor:pointer;font-size:13px;}
+.related{margin:18px 0 0;}
+.related h3{font-size:15px;margin:0 0 10px;}
+.relcard{display:block;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;color:var(--text);font-size:14px;}
+.relcard:hover{border-color:var(--accent);}
+.relcard .rm{color:var(--muted);font-size:12px;margin-left:8px;}
+.toc a.active{color:var(--accent);font-weight:700;}
 @media print{
-  .header,.hero,.search,.chips,.filters,.tools,.pagenav,.progressbar,.topbtn,.footer,.toc{display:none!important;}
+  .header,.hero,.search,.chips,.filters,.tools,.pagenav,.progressbar,.topbtn,.footer,.toc,.helpwrap,.related,.archpanel{display:none!important;}
   body{background:#fff;color:#000;}
   article .card{border:none;padding:0;}
   a{color:#000;}
@@ -185,7 +205,8 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <hr>
 <p style="color:var(--muted);font-size:13px;">参考来源</p>
 <ul><li>BladeSEI: A Multi-Channel and Multi-Day Dataset for Robust Specific Emitter Identification of Radars：http://arxiv.org/abs/2611.18460v1</li></ul>
-</div><div class="pagenav"><a class="navlink prev" href="../../articles/2026-11-16/%E7%BB%99%E4%BD%B3%E8%83%BDR5%E6%94%B9%E5%9B%BA%E4%BB%B6%EF%BC%8C%E8%83%BD%E7%8E%A9%E5%87%BA%E4%BB%80%E4%B9%88%E8%8A%B1%E6%A0%B7.html">← 上一篇<br><span>给佳能R5改固件，能玩出什么花样</span></a><a class="navlink next" href="../../articles/2026-11-16/%E9%9F%A9%E8%AF%AD%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%9D%A5%E4%BA%86.html">下一篇 →<br><span>韩语生物医学大模型来了</span></a></div></article>
+</div><div class="pagenav"><a class="navlink prev" href="../../articles/2026-11-16/%E7%BB%99%E4%BD%B3%E8%83%BDR5%E6%94%B9%E5%9B%BA%E4%BB%B6%EF%BC%8C%E8%83%BD%E7%8E%A9%E5%87%BA%E4%BB%80%E4%B9%88%E8%8A%B1%E6%A0%B7.html">← 上一篇<br><span>给佳能R5改固件，能玩出什么花样</span></a><a class="navlink next" href="../../articles/2026-11-16/%E9%9F%A9%E8%AF%AD%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%9D%A5%E4%BA%86.html">下一篇 →<br><span>韩语生物医学大模型来了</span></a></div><div class="related"><h3>相关文章</h3><a class="relcard" href="../../articles/2026-11-16/6G%E5%A4%AA%E8%B5%AB%E5%85%B9%E9%80%9A%E4%BF%A1%EF%BC%8C%E6%8E%A5%E6%94%B6%E6%9C%BA%E5%AD%A6%E4%BC%9A%E2%80%9C%E8%87%AA%E6%88%91%E7%BA%A0%E9%94%99%E2%80%9D.html">6G太赫兹通信，接收机学会“自我纠错”<span class="rm">约 10 分钟</span></a><a class="relcard" href="../../articles/2026-11-17/%E8%AE%A9AI%E8%AF%BB%E6%87%82%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E6%9C%AF%E8%AF%AD.html">让AI读懂生物医学术语<span class="rm">约 9 分钟</span></a><a class="relcard" href="../../articles/2026-11-17/%E7%BB%99%E5%8C%BB%E5%AD%A6%E6%96%87%E7%8C%AE%E5%B7%A5%E5%85%B7%E9%80%A0%E4%B8%AA%E5%85%B1%E7%94%A8%E5%BA%95%E5%BA%A7.html">给医学文献工具造个共用底座<span class="rm">约 8 分钟</span></a></div></article>
+<button class="topbtn" id="topBtn" title="回到顶部">↑</button>
 <div class="footer">由 AI 自动生成 · 仅供学习参考 · 快捷键 ←/→ 切换上/下一篇</div>
 <script>
 (function(){
@@ -224,6 +245,21 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
   var bar=document.getElementById('bar');
   function onScroll(){ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width=(m>0?(h.scrollTop/m*100):0)+'%'; }
   window.addEventListener('scroll',onScroll); onScroll();
+
+  var topBtn=document.getElementById('topBtn');
+  window.addEventListener('scroll',function(){ topBtn.style.display=(window.scrollY>400)?'block':'none'; });
+  topBtn.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+
+  var tocLinks=[].slice.call(document.querySelectorAll('.toc a'));
+  if(tocLinks.length){
+    var heads=[].slice.call(document.querySelectorAll('article h2[id], article h3[id]'));
+    function spy(){
+      var y=window.scrollY+90, cur=null;
+      heads.forEach(function(h){ if(h.offsetTop<=y) cur=h.id; });
+      tocLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href')==='#'+cur); });
+    }
+    window.addEventListener('scroll',spy); spy();
+  }
 
   function copyText(t, done){
     function fallback(){ var x=document.createElement('textarea'); x.value=t; document.body.appendChild(x); x.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(x); }
