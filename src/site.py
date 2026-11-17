@@ -145,8 +145,26 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 .relcard:hover{border-color:var(--accent);}
 .relcard .rm{color:var(--muted);font-size:12px;margin-left:8px;}
 .toc a.active{color:var(--accent);font-weight:700;}
+.codewrap{position:relative;margin:0 0 14px;}
+.codewrap pre{margin:0;}
+.copycode{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#c9d1d9;border-radius:6px;padding:3px 9px;font-size:12px;cursor:pointer;}
+.copycode:hover{background:rgba(255,255,255,.2);}
+.continue{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:14px;}
+.cthead{font-size:12px;color:var(--muted);margin-bottom:6px;}
+.clink{font-size:15px;font-weight:600;color:var(--accent2);display:block;margin-bottom:6px;}
+.clink:hover{text-decoration:underline;}
+.crecent{font-size:12px;color:var(--muted);margin-top:6px;}
+.cmini{display:inline-block;margin:0 10px 4px 0;color:var(--muted);}
+.cmini:hover{color:var(--accent);text-decoration:underline;}
+[data-reader="on"] .header,[data-reader="on"] .footer,[data-reader="on"] .tocside,[data-reader="on"] .toc-mobile,[data-reader="on"] .related{display:none!important;}
+[data-reader="on"] .article-layout{padding-top:8px;}
+[data-reader="on"] .article-main{margin:0 auto;max-width:760px;}
+[data-reader="on"] article .card{border:none;background:transparent;padding:10px 0;}
+[data-font="serif"] article{font-family:Georgia,"Songti SC","STSong","SimSun",serif;}
+.reader-exit{position:fixed;top:14px;right:14px;z-index:60;display:none;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:13px;box-shadow:0 4px 12px rgba(0,0,0,.2);}
+[data-reader="on"] .reader-exit{display:block;}
 @media print{
-  .header,.hero,.search,.chips,.filters,.tools,.pagenav,.progressbar,.topbtn,.footer,.toc,.tocside,.toc-mobile,.helpwrap,.related,.archpanel{display:none!important;}
+  .header,.hero,.search,.chips,.filters,.tools,.pagenav,.progressbar,.topbtn,.footer,.toc,.tocside,.toc-mobile,.helpwrap,.related,.archpanel,.copycode,.continue,.reader-exit{display:none!important;}
   .article-layout{display:block;padding:0;}
   body{background:#fff;color:#000;}
   article .card{border:none;padding:0;}
@@ -186,13 +204,15 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="{__FAVICON__}">
 <title>{__TITLE__} · {__SITE__}</title>
+{__HEAD__}
 <style>{__CSS__}</style>
 </head>
-<body>
+<body data-url="{__URL__}" data-title="{__TITLE_ATTR__}" data-src="{__SRC__}">
+<button class="reader-exit" type="button" id="readerExit">✕ 退出阅读</button>
 <div class="progressbar" id="bar"></div>
 <div class="header"><div class="header-inner">
 <a href="../../index.html" style="color:#fff;font-weight:600;">← 返回目录</a>
-<button class="themebtn" type="button" id="themeBtn">深色模式</button>
+<div class="hbtns"><button class="themebtn" type="button" id="fontBtn">字体：无衬线</button><button class="themebtn" type="button" id="readerBtn">阅读模式</button><button class="themebtn" type="button" id="themeBtn">深色模式</button></div>
 </div></div>
 <article>
 <div class="article-layout">
@@ -211,7 +231,7 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
 </div>
 </article>
 <button class="topbtn" id="topBtn" title="回到顶部">↑</button>
-<div class="footer">由 AI 自动生成 · 仅供学习参考 · 快捷键 ←/→ 切换上/下一篇</div>
+<div class="footer">由 AI 自动生成 · 仅供学习参考 · 快捷键 ←/→ 或 j/k 上下篇 · f 收藏 · m 已读 · o 原文</div>
 <script>
 (function(){
   function setTheme(d){ if(d) document.documentElement.setAttribute('data-theme','dark'); else document.documentElement.removeAttribute('data-theme'); }
@@ -224,6 +244,20 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
     syncTheme();
   });
   syncTheme();
+
+  function applyReader(){ var on=document.documentElement.getAttribute('data-reader')==='on'; var b=document.getElementById('readerBtn'); if(b) b.textContent=on?'退出阅读':'阅读模式'; }
+  try{ if(localStorage.getItem('reader')==='on') document.documentElement.setAttribute('data-reader','on'); }catch(e){}
+  var rb=document.getElementById('readerBtn');
+  rb.addEventListener('click',function(){ var on=document.documentElement.getAttribute('data-reader')==='on'; if(on) document.documentElement.removeAttribute('data-reader'); else document.documentElement.setAttribute('data-reader','on'); try{localStorage.setItem('reader', on?'off':'on');}catch(e){} applyReader(); });
+  var re=document.getElementById('readerExit');
+  re.addEventListener('click',function(){ document.documentElement.removeAttribute('data-reader'); try{localStorage.setItem('reader','off');}catch(e){} applyReader(); });
+  applyReader();
+
+  function applyFont(){ var s=document.documentElement.getAttribute('data-font')==='serif'; var b=document.getElementById('fontBtn'); if(b) b.textContent=s?'字体：衬线':'字体：无衬线'; }
+  try{ if(localStorage.getItem('font')==='serif') document.documentElement.setAttribute('data-font','serif'); }catch(e){}
+  var fbtn=document.getElementById('fontBtn');
+  fbtn.addEventListener('click',function(){ var s=document.documentElement.getAttribute('data-font')==='serif'; if(s) document.documentElement.removeAttribute('data-font'); else document.documentElement.setAttribute('data-font','serif'); try{localStorage.setItem('font', s?'sans':'serif');}catch(e){} applyFont(); });
+  applyFont();
 
   function loadSet(k){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):[]; }catch(e){ return []; } }
   function saveSet(k,a){ try{ localStorage.setItem(k,JSON.stringify(a)); }catch(e){} }
@@ -245,6 +279,22 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
   applyFs();
   document.getElementById('inc').addEventListener('click',function(){ fs=Math.min(22,fs+1); applyFs(); });
   document.getElementById('dec').addEventListener('click',function(){ fs=Math.max(13,fs-1); applyFs(); });
+
+  var selfTitle=document.body.getAttribute('data-title');
+  var selfUrl=document.body.getAttribute('data-url');
+  var hist=loadSet('hist');
+  hist=hist.filter(function(x){ return x && x.t!==selfTitle; });
+  hist.unshift({t:selfTitle,u:selfUrl});
+  if(hist.length>20) hist=hist.slice(0,20);
+  saveSet('hist',hist);
+  try{ var pos=JSON.parse(localStorage.getItem('pos')||'{}'); if(pos[selfTitle]){ var he=document.documentElement; var ob=he.style.scrollBehavior; he.style.scrollBehavior='auto'; window.scrollTo(0,pos[selfTitle]); he.style.scrollBehavior=ob; } }catch(e){}
+  var posTimer;
+  window.addEventListener('scroll',function(){
+    clearTimeout(posTimer);
+    posTimer=setTimeout(function(){
+      try{ var p=JSON.parse(localStorage.getItem('pos')||'{}'); p[selfTitle]=window.scrollY; localStorage.setItem('pos',JSON.stringify(p)); }catch(e){}
+    },300);
+  });
 
   var bar=document.getElementById('bar');
   function onScroll(){ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width=(m>0?(h.scrollTop/m*100):0)+'%'; }
@@ -275,9 +325,27 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
     copyText(location.href, done);
   });
 
+  document.querySelectorAll('article pre').forEach(function(pre){
+    var wrap=document.createElement('div'); wrap.className='codewrap';
+    pre.parentNode.insertBefore(wrap,pre); wrap.appendChild(pre);
+    var btn=document.createElement('button'); btn.type='button'; btn.className='copycode'; btn.textContent='复制';
+    btn.addEventListener('click',function(){
+      copyText(pre.innerText, function(){ btn.textContent='已复制'; setTimeout(function(){ btn.textContent='复制'; },1500); });
+    });
+    wrap.appendChild(btn);
+  });
+
+  function goPrev(){ var p=document.querySelector('.navlink.prev'); if(p) location.href=p.getAttribute('href'); }
+  function goNext(){ var n=document.querySelector('.navlink.next'); if(n) location.href=n.getAttribute('href'); }
   document.addEventListener('keydown',function(ev){
-    if(ev.key==='ArrowLeft'){ var p=document.querySelector('.navlink.prev'); if(p){ location.href=p.getAttribute('href'); } }
-    else if(ev.key==='ArrowRight'){ var n=document.querySelector('.navlink.next'); if(n){ location.href=n.getAttribute('href'); } }
+    if(ev.target && (ev.target.tagName==='INPUT'||ev.target.tagName==='TEXTAREA')) return;
+    var k=ev.key;
+    if(k==='Escape'){ if(document.documentElement.getAttribute('data-reader')==='on'){ document.documentElement.removeAttribute('data-reader'); try{localStorage.setItem('reader','off');}catch(e){} applyReader(); } }
+    else if(k==='ArrowLeft'||k==='k'){ goPrev(); }
+    else if(k==='ArrowRight'||k==='j'){ goNext(); }
+    else if(k==='f'){ favBtn.click(); }
+    else if(k==='m'){ var i=reads.indexOf(key); if(i>=0) reads.splice(i,1); else reads.push(key); saveSet('read',reads); }
+    else if(k==='o'){ var s=document.body.getAttribute('data-src'); if(s) window.open(s,'_blank'); }
   });
 })();
 </script>
@@ -291,6 +359,7 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="{__FAVICON__}">
 <title>{__TITLE__}</title>
+{__HEAD__}
 <style>{__CSS__}</style>
 </head>
 <body>
@@ -306,7 +375,7 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
 </div></div>
 <div class="wrap">
 {__ARCHIVE__}
-<input class="search" id="q" placeholder="搜索标题 / 关键词（按 / 快速聚焦）">
+<input class="search" id="q" placeholder="搜索标题 / 关键词 / 正文（按 / 聚焦）">
 <div class="chips">{__CHIPS__}</div>
 <div class="filters">
 <button class="toggle" type="button" id="favOnlyBtn">☆ 只看收藏</button>
@@ -314,19 +383,21 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
 <button class="toggle" type="button" id="sortBtn">排序：最新在前</button>
 <button class="toggle" type="button" id="resetBtn">重置</button>
 </div>
+<div id="continueBox"></div>
 <div id="list">{__BODY__}</div>
 <div class="empty" id="empty" style="display:none;">没有匹配的内容</div>
 </div>
 <button class="topbtn" id="topBtn" title="回到顶部">↑</button>
-<div class="footer">每天自动更新 · <a href="feed.xml">RSS 订阅</a> · 快捷键：/ 搜索 · R 随机 · D 主题 · ? 帮助</div>
+<div class="footer">每天自动更新 · <a href="feed.xml">RSS 订阅</a> · 快捷键：/ 搜索 · F 收藏 · U 未读 · A 全部 · R 随机 · D 主题 · ? 帮助</div>
 <div class="helpwrap" id="helpWrap">
 <div class="helpcard">
 <h3>快捷键 & 使用说明</h3>
-<div class="helpline"><span><span class="kbd">/</span> 或 <span class="kbd">Ctrl+K</span></span><span>聚焦搜索框</span></div>
+<div class="helpline"><span><span class="kbd">/</span> 或 <span class="kbd">Ctrl+K</span></span><span>聚焦搜索（含正文）</span></div>
+<div class="helpline"><span><span class="kbd">F</span> 收藏 / <span class="kbd">U</span> 未读 / <span class="kbd">A</span> 全部</span><span>快速筛选</span></div>
 <div class="helpline"><span><span class="kbd">R</span> 随机</span><span>随机读一篇</span></div>
 <div class="helpline"><span><span class="kbd">D</span> 主题</span><span>切换深色 / 浅色</span></div>
 <div class="helpline"><span><span class="kbd">?</span> 帮助</span><span>打开本说明</span></div>
-<div class="helpline"><span>文章页 <span class="kbd">←</span> / <span class="kbd">→</span></span><span>切换上 / 下一篇</span></div>
+<div class="helpline"><span>文章页 <span class="kbd">j</span>/<span class="kbd">k</span> 上下篇 · <span class="kbd">f</span> 收藏 · <span class="kbd">m</span> 已读 · <span class="kbd">o</span> 原文</span><span>Vim 风快捷键</span></div>
 <button class="helpclose" id="helpClose">知道了</button>
 </div>
 </div>
@@ -355,6 +426,8 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
   function hl(t,kw){ var x=esc(t); if(!kw) return x; var re=new RegExp(escRe(kw),'gi'); return x.replace(re,function(m){ return '<mark>'+m+'</mark>'; }); }
 
   var DATA={__DATA__};
+  var bodyMap={};
+  try{ fetch('search.json').then(function(r){ return r.json(); }).then(function(list){ list.forEach(function(x){ bodyMap[x.t]=x.b; }); apply(); }).catch(function(){}); }catch(e){}
   var favs=loadSet('favs'), reads=loadSet('read');
   var nodeMap={};
   var favOnly=false, unreadOnly=false;
@@ -390,6 +463,7 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
     var s=0;
     if((e.t||'').toLowerCase().indexOf(kw)>=0) s+=3;
     if((e.s||'').toLowerCase().indexOf(kw)>=0) s+=2;
+    if((bodyMap[e.t]||'').toLowerCase().indexOf(kw)>=0) s+=1;
     if((e.tags||[]).some(function(t){ return t.toLowerCase().indexOf(kw)>=0; })) s+=1;
     return s;
   }
@@ -419,7 +493,7 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
     visible={};
     DATA.forEach(function(e){
       var tagHit=(activeTag==='全部')||(e.tags||[]).indexOf(activeTag)>=0;
-      var kwHit=!kw||(e.t||'').toLowerCase().indexOf(kw)>=0||(e.s||'').toLowerCase().indexOf(kw)>=0;
+      var kwHit=!kw||(e.t||'').toLowerCase().indexOf(kw)>=0||(e.s||'').toLowerCase().indexOf(kw)>=0||(bodyMap[e.t]||'').toLowerCase().indexOf(kw)>=0;
       var favHit=!favOnly||has(favs,e.t);
       var readHit=!unreadOnly||!has(reads,e.t);
       visible[e.t]=tagHit&&kwHit&&favHit&&readHit;
@@ -458,6 +532,9 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
   document.addEventListener('keydown',function(ev){
     if(ev.key==='/' && document.activeElement!==q){ ev.preventDefault(); q.focus(); }
     else if((ev.ctrlKey||ev.metaKey) && ev.key.toLowerCase()==='k'){ ev.preventDefault(); q.focus(); }
+    else if(ev.key.toLowerCase()==='f' && document.activeElement!==q){ document.getElementById('favOnlyBtn').click(); }
+    else if(ev.key.toLowerCase()==='u' && document.activeElement!==q){ document.getElementById('unreadOnlyBtn').click(); }
+    else if(ev.key.toLowerCase()==='a' && document.activeElement!==q){ setTag('全部'); }
     else if(ev.key.toLowerCase()==='r' && document.activeElement!==q){ document.getElementById('randBtn').click(); }
     else if(ev.key.toLowerCase()==='d' && document.activeElement!==q){ document.getElementById('themeBtn').click(); }
     else if(ev.key==='?'){ ev.preventDefault(); showHelp(); }
@@ -491,6 +568,22 @@ INDEX_TEMPLATE = r"""<!DOCTYPE html>
   });
 
   document.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('active', c.getAttribute('data-tag')===activeTag); });
+  function renderContinue(){
+    var box=document.getElementById('continueBox');
+    var hist=loadSet('hist');
+    if(!hist || !hist.length){ box.innerHTML=''; return; }
+    var c=hist[0];
+    var html='<div class="continue"><div class="cthead">继续阅读</div><a class="clink" href="'+esc(c.u)+'">'+esc(c.t)+'</a>';
+    var rest=hist.slice(1,4);
+    if(rest.length){
+      html+='<div class="crecent">最近读过：';
+      rest.forEach(function(x){ html+='<a class="cmini" href="'+esc(x.u)+'">'+esc(x.t)+'</a>'; });
+      html+='</div>';
+    }
+    html+='</div>';
+    box.innerHTML=html;
+  }
+  renderContinue();
   apply();
 })();
 </script>
@@ -597,6 +690,15 @@ def _extract_source_url(rest: str) -> str:
     return m.group(0).rstrip(".,;") if m else ""
 
 
+def _plain_text(rest: str) -> str:
+    t = re.sub(r"```.*?```", " ", rest, flags=re.S)
+    t = re.sub(r"`([^`]+)`", r"\1", t)
+    t = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", t)
+    t = re.sub(r"[#>*_\-]+", " ", t)
+    t = re.sub(r"\s+", " ", t)
+    return t.strip()
+
+
 def _extract_summary(rest: str) -> str:
     for line in rest.splitlines():
         s = line.strip()
@@ -649,7 +751,17 @@ def _rfc2822(date_str: str) -> str:
         return date_str
 
 
-def render_article_page(e: dict, site_title: str, older, newer, related) -> str:
+def render_article_page(e: dict, site_title: str, site_url: str, older, newer, related) -> str:
+    abs_url = site_url.rstrip("/") + "/" + quote(e["url"], safe="/")
+    head = (
+        f'<meta name="description" content="{_html.escape(e.get("summary") or site_title, quote=True)}">'
+        f'<meta property="og:title" content="{_html.escape(e["title"], quote=True)}">'
+        f'<meta property="og:description" content="{_html.escape(e.get("summary") or "", quote=True)}">'
+        f'<meta property="og:type" content="article">'
+        f'<meta property="og:url" content="{_html.escape(abs_url, quote=True)}">'
+        f'<meta property="og:image" content="{_html.escape(site_url.rstrip("/") + "/assets/hero.jpg", quote=True)}">'
+        f'<meta name="twitter:card" content="summary_large_image">'
+    )
     tags_html = "".join(f'<span class="tag">{_html.escape(t)}</span>' for t in e["tags"])
     toc_items = _extract_toc(e["body_html"])
     toc_html = ""
@@ -695,6 +807,10 @@ def render_article_page(e: dict, site_title: str, older, newer, related) -> str:
     return (ARTICLE_TEMPLATE
             .replace("{__TITLE__}", _html.escape(e["title"]))
             .replace("{__SITE__}", _html.escape(site_title))
+            .replace("{__HEAD__}", head)
+            .replace("{__URL__}", _html.escape(e["url"], quote=True))
+            .replace("{__TITLE_ATTR__}", _html.escape(e["title"], quote=True))
+            .replace("{__SRC__}", _html.escape(e.get("source_url") or "", quote=True))
             .replace("{__META__}", meta)
             .replace("{__TAGS__}", tags_html)
             .replace("{__TOCMOBILE__}", toc_html)
@@ -706,7 +822,7 @@ def render_article_page(e: dict, site_title: str, older, newer, related) -> str:
             .replace("{__FAVICON__}", FAVICON))
 
 
-def render_index(site_title: str, subtitle: str, entries: list) -> str:
+def render_index(site_title: str, subtitle: str, site_url: str, entries: list) -> str:
     groups = OrderedDict()
     for e in entries:
         groups.setdefault(e["date"], []).append(e)
@@ -768,9 +884,20 @@ def render_index(site_title: str, subtitle: str, entries: list) -> str:
              "s": e["summary"], "tags": e["tags"]} for e in entries]
     data_json = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c")
 
+    head = (
+        f'<meta name="description" content="{_html.escape(subtitle, quote=True)}">'
+        f'<meta property="og:title" content="{_html.escape(site_title, quote=True)}">'
+        f'<meta property="og:description" content="{_html.escape(subtitle, quote=True)}">'
+        f'<meta property="og:type" content="website">'
+        f'<meta property="og:url" content="{_html.escape(site_url, quote=True)}">'
+        f'<meta property="og:image" content="{_html.escape(site_url.rstrip("/") + "/assets/hero.jpg", quote=True)}">'
+        f'<meta name="twitter:card" content="summary_large_image">'
+    )
+
     return (INDEX_TEMPLATE
             .replace("{__TITLE__}", _html.escape(site_title))
             .replace("{__SUBTITLE__}", _html.escape(subtitle))
+            .replace("{__HEAD__}", head)
             .replace("{__HSTATS__}", hstat_html)
             .replace("{__ARCHIVE__}", archive_html)
             .replace("{__CHIPS__}", chips_html)
@@ -837,6 +964,7 @@ def build_site(cfg: dict):
             "read_minutes": _read_minutes(rest),
             "word_count": _word_count(rest),
             "body_html": md_to_html(rest),
+            "body_text": _plain_text(rest),
         })
 
     raw.sort(key=lambda e: (e["date"], e["title"]), reverse=True)
@@ -867,8 +995,10 @@ def build_site(cfg: dict):
         art_dir = site_dir / "articles" / e["date"]
         art_dir.mkdir(parents=True, exist_ok=True)
         (art_dir / f"{e['slug']}.html").write_text(
-            render_article_page(e, site_title, older, newer, related), encoding="utf-8")
+            render_article_page(e, site_title, site_url, older, newer, related), encoding="utf-8")
 
-    (site_dir / "index.html").write_text(render_index(site_title, subtitle, entries), encoding="utf-8")
+    (site_dir / "index.html").write_text(render_index(site_title, subtitle, site_url, entries), encoding="utf-8")
     (site_dir / "feed.xml").write_text(render_feed(site_title, subtitle, site_url, entries), encoding="utf-8")
+    search_data = [{"t": e["title"], "u": e["url"], "b": e["body_text"]} for e in entries]
+    (site_dir / "search.json").write_text(json.dumps(search_data, ensure_ascii=False), encoding="utf-8")
     return str(site_dir), len(entries)
