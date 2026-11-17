@@ -10,7 +10,7 @@
   --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
   --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
   --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
-  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;--fs:16px;
 }
 [data-theme="dark"]{
   --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
@@ -35,12 +35,16 @@ a{color:var(--accent);text-decoration:none;}
 .stat b{color:var(--text);}
 .search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
 .search:focus{border-color:var(--accent2);}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
 .chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
 .chip:hover{border-color:var(--accent);}
 .chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.toggle{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 11px;font-size:12.5px;cursor:pointer;}
+.toggle:hover{border-color:var(--accent);color:var(--text);}
+.toggle.active{background:var(--accent);border-color:var(--accent);color:#fff;}
 .date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s,opacity .15s;}
 .item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
 .item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
 .item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
@@ -48,17 +52,33 @@ a{color:var(--accent);text-decoration:none;}
 .badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
 .tags{display:flex;flex-wrap:wrap;gap:6px;}
 .tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.star{color:var(--muted);cursor:pointer;font-size:17px;line-height:1;margin-left:auto;user-select:none;}
+.star:hover{color:#f5a623;}
+.star.on{color:#f5a623;}
+.readmark{display:none;color:var(--muted);font-size:11px;border:1px solid var(--border);border-radius:6px;padding:0 6px;}
+.read .readmark{display:inline-block;}
+.read{opacity:.5;}
+.read:hover{opacity:.85;}
 .empty{color:var(--muted);text-align:center;padding:44px 0;}
 .footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
 .topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
 .progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
-article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;font-size:var(--fs,16px);}
 article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article h1{font-size:1.6em;line-height:1.4;margin:0 0 8px;}
 article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
 article .tags{margin-bottom:4px;}
-article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-article h3{font-size:16px;margin:20px 0 8px;}
+.tools{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.favbtn,.fsbtn,.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;}
+.favbtn.on{color:#f5a623;border-color:#f5a623;}
+.toc{background:var(--quote);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin:0 0 18px;}
+.toc summary{cursor:pointer;font-weight:600;color:var(--text);}
+.toc ul{margin:8px 0 0;padding-left:18px;}
+.toc li{margin:4px 0;font-size:14px;}
+.toc li.l3{margin-left:14px;font-size:13px;color:var(--muted);}
+.toc a{color:var(--accent2);}
+article h2{font-size:1.25em;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);scroll-margin-top:70px;}
+article h3{font-size:1.05em;margin:20px 0 8px;scroll-margin-top:70px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
@@ -67,7 +87,6 @@ article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;ove
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
 article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
 .pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
 .navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
 .navlink:hover{border-color:var(--accent);}
@@ -84,68 +103,102 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <div class="stats"><span class="stat">共 <b>10</b> 篇</span><span class="stat">最新 <b>2026-11-17</b></span><span class="stat">当日新增 <b>4</b> 篇</span><span class="stat">覆盖 <b>5</b> 个方向</span></div>
 <input class="search" id="q" placeholder="搜索文章标题 / 关键词…">
 <div class="chips"><button class="chip active" data-tag="全部">全部</button><button class="chip" data-tag="生物医学">生物医学</button><button class="chip" data-tag="嵌入式">嵌入式</button><button class="chip" data-tag="AI/大模型">AI/大模型</button><button class="chip" data-tag="通信/信号">通信/信号</button><button class="chip" data-tag="开源工具">开源工具</button></div>
+<div class="filters">
+<button class="toggle" id="favOnlyBtn">☆ 只看收藏</button>
+<button class="toggle" id="unreadOnlyBtn">只看未读</button>
+</div>
 <div id="list"><div class="date" data-date="2026-11-17">2026-11-17</div>
-<a class="item" data-url="articles/2026-11-17/%E8%AE%A9AI%E8%AF%BB%E6%87%82%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E6%9C%AF%E8%AF%AD.html" href="articles/2026-11-17/%E8%AE%A9AI%E8%AF%BB%E6%87%82%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E6%9C%AF%E8%AF%AD.html"><div class="t">让AI读懂生物医学术语</div><div class="s">在生物医学领域，同一个概念往往有十几种叫法：临床医生写“心肌梗死”，数据库里存的是“Myocardial Infarction”，而某个编码系统里可能只认一串标识符。这种术语碎片化…</div><div class="meta"><span class="badge">GitHub · 2026-11-11</span><span>2026-11-17</span><span>约 9 分钟</span></div><div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div></a>
-<a class="item" data-url="articles/2026-11-17/%E7%BB%99%E5%8C%BB%E5%AD%A6%E6%96%87%E7%8C%AE%E5%B7%A5%E5%85%B7%E9%80%A0%E4%B8%AA%E5%85%B1%E7%94%A8%E5%BA%95%E5%BA%A7.html" href="articles/2026-11-17/%E7%BB%99%E5%8C%BB%E5%AD%A6%E6%96%87%E7%8C%AE%E5%B7%A5%E5%85%B7%E9%80%A0%E4%B8%AA%E5%85%B1%E7%94%A8%E5%BA%95%E5%BA%A7.html"><div class="t">给医学文献工具造个共用底座</div><div class="s">做生物医学文献相关工具的人，大概都遇到过这样的麻烦：想接入大模型做摘要或问答，得自己封装一套调用层；想判断一篇论文质量高不高、透明度够不够，又得从头写规则；想抓全文、入库、去重，还…</div><div class="meta"><span class="badge">GitHub · 2026-11-12</span><span>2026-11-17</span><span>约 8 分钟</span></div><div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div></a>
-<a class="item" data-url="articles/2026-11-17/%E4%B8%80%E5%9D%97Arduino%E6%9D%BF%EF%BC%8C%E8%83%BD%E6%B5%8B%E5%93%AA%E4%BA%9B%E5%81%A5%E5%BA%B7%E6%8C%87%E6%A0%87%EF%BC%9F.html" href="articles/2026-11-17/%E4%B8%80%E5%9D%97Arduino%E6%9D%BF%EF%BC%8C%E8%83%BD%E6%B5%8B%E5%93%AA%E4%BA%9B%E5%81%A5%E5%BA%B7%E6%8C%87%E6%A0%87%EF%BC%9F.html"><div class="t">一块Arduino板，能测哪些健康指标？</div><div class="s">在GitHub上，一个名为“Embedded-Biomedical-Monitoring-System-for-Health-Biomarkers”的开源项目引起了不少嵌入式爱好者…</div><div class="meta"><span class="badge">GitHub · 2026-06-30</span><span>2026-11-17</span><span>约 9 分钟</span></div><div class="tags"><span class="tag">生物医学</span><span class="tag">嵌入式</span><span class="tag">开源工具</span></div></a>
-<a class="item" data-url="articles/2026-11-17/12%E6%98%9F%E7%9A%84%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE%EF%BC%8C%E8%AE%A9AI%E5%B8%AE%E4%BD%A0%E8%AF%BB%E5%8C%BB%E5%AD%A6%E8%AE%BA%E6%96%87.html" href="articles/2026-11-17/12%E6%98%9F%E7%9A%84%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE%EF%BC%8C%E8%AE%A9AI%E5%B8%AE%E4%BD%A0%E8%AF%BB%E5%8C%BB%E5%AD%A6%E8%AE%BA%E6%96%87.html"><div class="t">12星的开源项目，让AI帮你读医学论文</div><div class="s">做医学研究的人大概都有过这种体验：在 PubMed 上搜一个关键词，出来几百上千篇文献，光是筛标题就要花掉一整个下午。更麻烦的是，读完之后你还得判断这些结论到底靠不靠谱——样本量够…</div><div class="meta"><span class="badge">GitHub · 2026-11-11</span><span>2026-11-17</span><span>约 10 分钟</span></div><div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div></a>
+<a class="item" data-key="让AI读懂生物医学术语" href="articles/2026-11-17/%E8%AE%A9AI%E8%AF%BB%E6%87%82%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E6%9C%AF%E8%AF%AD.html"><div class="t">让AI读懂生物医学术语</div><div class="s">在生物医学领域，同一个概念往往有十几种叫法：临床医生写“心肌梗死”，数据库里存的是“Myocardial Infarction”，而某个编码系统里可能只认一串标识符。这种术语碎片化…</div><div class="meta"><span class="badge">GitHub · 2026-11-11</span><span>2026-11-17</span><span>约 9 分钟</span><span class="readmark">已读</span><span class="star" data-key="让AI读懂生物医学术语" title="收藏">☆</span></div><div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div></a>
+<a class="item" data-key="给医学文献工具造个共用底座" href="articles/2026-11-17/%E7%BB%99%E5%8C%BB%E5%AD%A6%E6%96%87%E7%8C%AE%E5%B7%A5%E5%85%B7%E9%80%A0%E4%B8%AA%E5%85%B1%E7%94%A8%E5%BA%95%E5%BA%A7.html"><div class="t">给医学文献工具造个共用底座</div><div class="s">做生物医学文献相关工具的人，大概都遇到过这样的麻烦：想接入大模型做摘要或问答，得自己封装一套调用层；想判断一篇论文质量高不高、透明度够不够，又得从头写规则；想抓全文、入库、去重，还…</div><div class="meta"><span class="badge">GitHub · 2026-11-12</span><span>2026-11-17</span><span>约 8 分钟</span><span class="readmark">已读</span><span class="star" data-key="给医学文献工具造个共用底座" title="收藏">☆</span></div><div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div></a>
+<a class="item" data-key="一块Arduino板，能测哪些健康指标？" href="articles/2026-11-17/%E4%B8%80%E5%9D%97Arduino%E6%9D%BF%EF%BC%8C%E8%83%BD%E6%B5%8B%E5%93%AA%E4%BA%9B%E5%81%A5%E5%BA%B7%E6%8C%87%E6%A0%87%EF%BC%9F.html"><div class="t">一块Arduino板，能测哪些健康指标？</div><div class="s">在GitHub上，一个名为“Embedded-Biomedical-Monitoring-System-for-Health-Biomarkers”的开源项目引起了不少嵌入式爱好者…</div><div class="meta"><span class="badge">GitHub · 2026-06-30</span><span>2026-11-17</span><span>约 9 分钟</span><span class="readmark">已读</span><span class="star" data-key="一块Arduino板，能测哪些健康指标？" title="收藏">☆</span></div><div class="tags"><span class="tag">生物医学</span><span class="tag">嵌入式</span><span class="tag">开源工具</span></div></a>
+<a class="item" data-key="12星的开源项目，让AI帮你读医学论文" href="articles/2026-11-17/12%E6%98%9F%E7%9A%84%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE%EF%BC%8C%E8%AE%A9AI%E5%B8%AE%E4%BD%A0%E8%AF%BB%E5%8C%BB%E5%AD%A6%E8%AE%BA%E6%96%87.html"><div class="t">12星的开源项目，让AI帮你读医学论文</div><div class="s">做医学研究的人大概都有过这种体验：在 PubMed 上搜一个关键词，出来几百上千篇文献，光是筛标题就要花掉一整个下午。更麻烦的是，读完之后你还得判断这些结论到底靠不靠谱——样本量够…</div><div class="meta"><span class="badge">GitHub · 2026-11-11</span><span>2026-11-17</span><span>约 10 分钟</span><span class="readmark">已读</span><span class="star" data-key="12星的开源项目，让AI帮你读医学论文" title="收藏">☆</span></div><div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div></a>
 <div class="date" data-date="2026-11-16">2026-11-16</div>
-<a class="item" data-url="articles/2026-11-16/%E9%9F%A9%E8%AF%AD%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%9D%A5%E4%BA%86.html" href="articles/2026-11-16/%E9%9F%A9%E8%AF%AD%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%9D%A5%E4%BA%86.html"><div class="t">韩语生物医学大模型来了</div><div class="s">生物医学领域的研究者常面临一个尴尬：最新的论文浩如烟海，但真正能&quot;读懂&quot;并回答专业问题的工具却不多，韩语语境下更是稀缺。GitHub 上出现了一个名为 KoBioMed-Llama…</div><div class="meta"><span class="badge">GitHub · 2026-11-11</span><span>2026-11-16</span><span>约 8 分钟</span></div><div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div></a>
-<a class="item" data-url="articles/2026-11-16/%E9%9B%B7%E8%BE%BE%E2%80%9C%E6%8C%87%E7%BA%B9%E2%80%9D%E8%AF%86%E5%88%AB%EF%BC%8C%E6%9C%89%E4%BA%86%E6%96%B0%E6%95%B0%E6%8D%AE%E9%9B%86.html" href="articles/2026-11-16/%E9%9B%B7%E8%BE%BE%E2%80%9C%E6%8C%87%E7%BA%B9%E2%80%9D%E8%AF%86%E5%88%AB%EF%BC%8C%E6%9C%89%E4%BA%86%E6%96%B0%E6%95%B0%E6%8D%AE%E9%9B%86.html"><div class="t">雷达“指纹”识别，有了新数据集</div><div class="s">在电磁频谱日益拥挤的今天，如何从一堆雷达信号中分辨出“这一部”和“那一部”，是电子侦察与频谱管理中的核心难题。特定辐射源识别（SEI，Specific Emitter Identi…</div><div class="meta"><span class="badge">arXiv · 2026-11-13</span><span>2026-11-16</span><span>约 10 分钟</span></div><div class="tags"><span class="tag">通信/信号</span></div></a>
-<a class="item" data-url="articles/2026-11-16/%E7%BB%99%E4%BD%B3%E8%83%BDR5%E6%94%B9%E5%9B%BA%E4%BB%B6%EF%BC%8C%E8%83%BD%E7%8E%A9%E5%87%BA%E4%BB%80%E4%B9%88%E8%8A%B1%E6%A0%B7.html" href="articles/2026-11-16/%E7%BB%99%E4%BD%B3%E8%83%BDR5%E6%94%B9%E5%9B%BA%E4%BB%B6%EF%BC%8C%E8%83%BD%E7%8E%A9%E5%87%BA%E4%BB%80%E4%B9%88%E8%8A%B1%E6%A0%B7.html"><div class="t">给佳能R5改固件，能玩出什么花样</div><div class="s">在摄影圈，佳能EOS R5是一台口碑不错的全画幅无反相机。而GitHub上出现了一个名为canon-r5-mod的开源项目，尝试对这台相机的官方固件2.2.1版本做实验性修改，目标…</div><div class="meta"><span class="badge">GitHub · 2026-11-16</span><span>2026-11-16</span><span>约 9 分钟</span></div><div class="tags"><span class="tag">嵌入式</span><span class="tag">开源工具</span></div></a>
-<a class="item" data-url="articles/2026-11-16/%E5%9B%9B%E4%B8%AA%E5%8F%8D%E4%BD%9C%E7%94%A8%E8%BD%AE%EF%BC%8C%E8%AE%A9%E7%8B%AC%E8%BD%AE%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%AB%99%E7%A8%B3.html" href="articles/2026-11-16/%E5%9B%9B%E4%B8%AA%E5%8F%8D%E4%BD%9C%E7%94%A8%E8%BD%AE%EF%BC%8C%E8%AE%A9%E7%8B%AC%E8%BD%AE%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%AB%99%E7%A8%B3.html"><div class="t">四个反作用轮，让独轮机器人站稳</div><div class="s">独轮机器人天生不稳定：只有一个接地点，前后左右都容易倒。常见的做法是装一个又大又重的反作用轮，靠它加速旋转产生的反力矩把车身&quot;掰&quot;回来。但单个轮子只能对付一个方向的倾斜，侧向怎么办…</div><div class="meta"><span class="badge">GitHub · 2026-11-16</span><span>2026-11-16</span><span>约 11 分钟</span></div><div class="tags"><span class="tag">嵌入式</span></div></a>
-<a class="item" data-url="articles/2026-11-16/AI%E8%AF%BB%E8%84%91%E7%94%B5%E6%B3%A2%E5%88%A4%E7%9D%A1%E7%9C%A0%EF%BC%8C%E4%B8%BA%E4%BD%95%E5%8C%BB%E7%94%9F%E4%B8%8D%E6%95%A2%E4%BF%A1%EF%BC%9F.html" href="articles/2026-11-16/AI%E8%AF%BB%E8%84%91%E7%94%B5%E6%B3%A2%E5%88%A4%E7%9D%A1%E7%9C%A0%EF%BC%8C%E4%B8%BA%E4%BD%95%E5%8C%BB%E7%94%9F%E4%B8%8D%E6%95%A2%E4%BF%A1%EF%BC%9F.html"><div class="t">AI读脑电波判睡眠，为何医生不敢信？</div><div class="s">自动睡眠分期早已不是新鲜事——用算法分析脑电图、判断你处于浅睡、深睡还是快速眼动期，在实验室基准测试中准确率相当可观。但一个尴尬的现实是：临床 adoption（采用）依然有限。原…</div><div class="meta"><span class="badge">arXiv · 2026-11-13</span><span>2026-11-16</span><span>约 9 分钟</span></div><div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span></div></a>
-<a class="item" data-url="articles/2026-11-16/6G%E5%A4%AA%E8%B5%AB%E5%85%B9%E9%80%9A%E4%BF%A1%EF%BC%8C%E6%8E%A5%E6%94%B6%E6%9C%BA%E5%AD%A6%E4%BC%9A%E2%80%9C%E8%87%AA%E6%88%91%E7%BA%A0%E9%94%99%E2%80%9D.html" href="articles/2026-11-16/6G%E5%A4%AA%E8%B5%AB%E5%85%B9%E9%80%9A%E4%BF%A1%EF%BC%8C%E6%8E%A5%E6%94%B6%E6%9C%BA%E5%AD%A6%E4%BC%9A%E2%80%9C%E8%87%AA%E6%88%91%E7%BA%A0%E9%94%99%E2%80%9D.html"><div class="t">6G太赫兹通信，接收机学会“自我纠错”</div><div class="s">6G研究里，太赫兹频段（0.1～0.3 THz，俗称“亚太赫兹”）被视为实现超高速率的关键。但频率越高，麻烦越大：信号在传输中会经历频率选择性衰落，同时振荡器还会引入相位噪声——简…</div><div class="meta"><span class="badge">arXiv · 2026-11-13</span><span>2026-11-16</span><span>约 10 分钟</span></div><div class="tags"><span class="tag">通信/信号</span></div></a></div>
+<a class="item" data-key="韩语生物医学大模型来了" href="articles/2026-11-16/%E9%9F%A9%E8%AF%AD%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%9D%A5%E4%BA%86.html"><div class="t">韩语生物医学大模型来了</div><div class="s">生物医学领域的研究者常面临一个尴尬：最新的论文浩如烟海，但真正能&quot;读懂&quot;并回答专业问题的工具却不多，韩语语境下更是稀缺。GitHub 上出现了一个名为 KoBioMed-Llama…</div><div class="meta"><span class="badge">GitHub · 2026-11-11</span><span>2026-11-16</span><span>约 8 分钟</span><span class="readmark">已读</span><span class="star" data-key="韩语生物医学大模型来了" title="收藏">☆</span></div><div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div></a>
+<a class="item" data-key="雷达“指纹”识别，有了新数据集" href="articles/2026-11-16/%E9%9B%B7%E8%BE%BE%E2%80%9C%E6%8C%87%E7%BA%B9%E2%80%9D%E8%AF%86%E5%88%AB%EF%BC%8C%E6%9C%89%E4%BA%86%E6%96%B0%E6%95%B0%E6%8D%AE%E9%9B%86.html"><div class="t">雷达“指纹”识别，有了新数据集</div><div class="s">在电磁频谱日益拥挤的今天，如何从一堆雷达信号中分辨出“这一部”和“那一部”，是电子侦察与频谱管理中的核心难题。特定辐射源识别（SEI，Specific Emitter Identi…</div><div class="meta"><span class="badge">arXiv · 2026-11-13</span><span>2026-11-16</span><span>约 10 分钟</span><span class="readmark">已读</span><span class="star" data-key="雷达“指纹”识别，有了新数据集" title="收藏">☆</span></div><div class="tags"><span class="tag">通信/信号</span></div></a>
+<a class="item" data-key="给佳能R5改固件，能玩出什么花样" href="articles/2026-11-16/%E7%BB%99%E4%BD%B3%E8%83%BDR5%E6%94%B9%E5%9B%BA%E4%BB%B6%EF%BC%8C%E8%83%BD%E7%8E%A9%E5%87%BA%E4%BB%80%E4%B9%88%E8%8A%B1%E6%A0%B7.html"><div class="t">给佳能R5改固件，能玩出什么花样</div><div class="s">在摄影圈，佳能EOS R5是一台口碑不错的全画幅无反相机。而GitHub上出现了一个名为canon-r5-mod的开源项目，尝试对这台相机的官方固件2.2.1版本做实验性修改，目标…</div><div class="meta"><span class="badge">GitHub · 2026-11-16</span><span>2026-11-16</span><span>约 9 分钟</span><span class="readmark">已读</span><span class="star" data-key="给佳能R5改固件，能玩出什么花样" title="收藏">☆</span></div><div class="tags"><span class="tag">嵌入式</span><span class="tag">开源工具</span></div></a>
+<a class="item" data-key="四个反作用轮，让独轮机器人站稳" href="articles/2026-11-16/%E5%9B%9B%E4%B8%AA%E5%8F%8D%E4%BD%9C%E7%94%A8%E8%BD%AE%EF%BC%8C%E8%AE%A9%E7%8B%AC%E8%BD%AE%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%AB%99%E7%A8%B3.html"><div class="t">四个反作用轮，让独轮机器人站稳</div><div class="s">独轮机器人天生不稳定：只有一个接地点，前后左右都容易倒。常见的做法是装一个又大又重的反作用轮，靠它加速旋转产生的反力矩把车身&quot;掰&quot;回来。但单个轮子只能对付一个方向的倾斜，侧向怎么办…</div><div class="meta"><span class="badge">GitHub · 2026-11-16</span><span>2026-11-16</span><span>约 11 分钟</span><span class="readmark">已读</span><span class="star" data-key="四个反作用轮，让独轮机器人站稳" title="收藏">☆</span></div><div class="tags"><span class="tag">嵌入式</span></div></a>
+<a class="item" data-key="AI读脑电波判睡眠，为何医生不敢信？" href="articles/2026-11-16/AI%E8%AF%BB%E8%84%91%E7%94%B5%E6%B3%A2%E5%88%A4%E7%9D%A1%E7%9C%A0%EF%BC%8C%E4%B8%BA%E4%BD%95%E5%8C%BB%E7%94%9F%E4%B8%8D%E6%95%A2%E4%BF%A1%EF%BC%9F.html"><div class="t">AI读脑电波判睡眠，为何医生不敢信？</div><div class="s">自动睡眠分期早已不是新鲜事——用算法分析脑电图、判断你处于浅睡、深睡还是快速眼动期，在实验室基准测试中准确率相当可观。但一个尴尬的现实是：临床 adoption（采用）依然有限。原…</div><div class="meta"><span class="badge">arXiv · 2026-11-13</span><span>2026-11-16</span><span>约 9 分钟</span><span class="readmark">已读</span><span class="star" data-key="AI读脑电波判睡眠，为何医生不敢信？" title="收藏">☆</span></div><div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span></div></a>
+<a class="item" data-key="6G太赫兹通信，接收机学会“自我纠错”" href="articles/2026-11-16/6G%E5%A4%AA%E8%B5%AB%E5%85%B9%E9%80%9A%E4%BF%A1%EF%BC%8C%E6%8E%A5%E6%94%B6%E6%9C%BA%E5%AD%A6%E4%BC%9A%E2%80%9C%E8%87%AA%E6%88%91%E7%BA%A0%E9%94%99%E2%80%9D.html"><div class="t">6G太赫兹通信，接收机学会“自我纠错”</div><div class="s">6G研究里，太赫兹频段（0.1～0.3 THz，俗称“亚太赫兹”）被视为实现超高速率的关键。但频率越高，麻烦越大：信号在传输中会经历频率选择性衰落，同时振荡器还会引入相位噪声——简…</div><div class="meta"><span class="badge">arXiv · 2026-11-13</span><span>2026-11-16</span><span>约 10 分钟</span><span class="readmark">已读</span><span class="star" data-key="6G太赫兹通信，接收机学会“自我纠错”" title="收藏">☆</span></div><div class="tags"><span class="tag">通信/信号</span></div></a></div>
 <div class="empty" id="empty" style="display:none;">没有匹配的内容</div>
 </div>
 <button class="topbtn" id="topBtn" title="回到顶部">↑</button>
 <div class="footer">每天自动更新 · 由 AI 生成，仅供学习参考</div>
 <script>
-(function(){{
-  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
-  var tb = document.getElementById('themeBtn');
-  function syncTheme(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
-  if(tb) tb.addEventListener('click', function(){{
-    var d = document.documentElement.getAttribute('data-theme')==='dark';
-    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
-    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
+(function(){
+  try{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }catch(e){}
+  var tb=document.getElementById('themeBtn');
+  function syncTheme(){ var d=document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent=d?'浅色模式':'深色模式'; }
+  if(tb) tb.addEventListener('click',function(){
+    var d=document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){ document.documentElement.removeAttribute('data-theme'); try{localStorage.setItem('theme','light');}catch(e){} }
+    else { document.documentElement.setAttribute('data-theme','dark'); try{localStorage.setItem('theme','dark');}catch(e){} }
     syncTheme();
-  }});
+  });
   syncTheme();
-  var topBtn = document.getElementById('topBtn');
-  window.addEventListener('scroll', function(){{ topBtn.style.display = (window.scrollY>400) ? 'block' : 'none'; }});
-  topBtn.addEventListener('click', function(){{ window.scrollTo({{top:0,behavior:'smooth'}}); }});
 
-  var DATA = [{"t": "让AI读懂生物医学术语", "d": "2026-11-17", "u": "articles/2026-11-17/%E8%AE%A9AI%E8%AF%BB%E6%87%82%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E6%9C%AF%E8%AF%AD.html", "s": "在生物医学领域，同一个概念往往有十几种叫法：临床医生写“心肌梗死”，数据库里存的是“Myocardial Infarction”，而某个编码系统里可能只认一串标识符。这种术语碎片化…", "tags": ["生物医学", "AI/大模型", "开源工具"]}, {"t": "给医学文献工具造个共用底座", "d": "2026-11-17", "u": "articles/2026-11-17/%E7%BB%99%E5%8C%BB%E5%AD%A6%E6%96%87%E7%8C%AE%E5%B7%A5%E5%85%B7%E9%80%A0%E4%B8%AA%E5%85%B1%E7%94%A8%E5%BA%95%E5%BA%A7.html", "s": "做生物医学文献相关工具的人，大概都遇到过这样的麻烦：想接入大模型做摘要或问答，得自己封装一套调用层；想判断一篇论文质量高不高、透明度够不够，又得从头写规则；想抓全文、入库、去重，还…", "tags": ["生物医学", "AI/大模型", "开源工具"]}, {"t": "一块Arduino板，能测哪些健康指标？", "d": "2026-11-17", "u": "articles/2026-11-17/%E4%B8%80%E5%9D%97Arduino%E6%9D%BF%EF%BC%8C%E8%83%BD%E6%B5%8B%E5%93%AA%E4%BA%9B%E5%81%A5%E5%BA%B7%E6%8C%87%E6%A0%87%EF%BC%9F.html", "s": "在GitHub上，一个名为“Embedded-Biomedical-Monitoring-System-for-Health-Biomarkers”的开源项目引起了不少嵌入式爱好者…", "tags": ["生物医学", "嵌入式", "开源工具"]}, {"t": "12星的开源项目，让AI帮你读医学论文", "d": "2026-11-17", "u": "articles/2026-11-17/12%E6%98%9F%E7%9A%84%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE%EF%BC%8C%E8%AE%A9AI%E5%B8%AE%E4%BD%A0%E8%AF%BB%E5%8C%BB%E5%AD%A6%E8%AE%BA%E6%96%87.html", "s": "做医学研究的人大概都有过这种体验：在 PubMed 上搜一个关键词，出来几百上千篇文献，光是筛标题就要花掉一整个下午。更麻烦的是，读完之后你还得判断这些结论到底靠不靠谱——样本量够…", "tags": ["生物医学", "AI/大模型", "开源工具"]}, {"t": "韩语生物医学大模型来了", "d": "2026-11-16", "u": "articles/2026-11-16/%E9%9F%A9%E8%AF%AD%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%9D%A5%E4%BA%86.html", "s": "生物医学领域的研究者常面临一个尴尬：最新的论文浩如烟海，但真正能\"读懂\"并回答专业问题的工具却不多，韩语语境下更是稀缺。GitHub 上出现了一个名为 KoBioMed-Llama…", "tags": ["生物医学", "AI/大模型", "开源工具"]}, {"t": "雷达“指纹”识别，有了新数据集", "d": "2026-11-16", "u": "articles/2026-11-16/%E9%9B%B7%E8%BE%BE%E2%80%9C%E6%8C%87%E7%BA%B9%E2%80%9D%E8%AF%86%E5%88%AB%EF%BC%8C%E6%9C%89%E4%BA%86%E6%96%B0%E6%95%B0%E6%8D%AE%E9%9B%86.html", "s": "在电磁频谱日益拥挤的今天，如何从一堆雷达信号中分辨出“这一部”和“那一部”，是电子侦察与频谱管理中的核心难题。特定辐射源识别（SEI，Specific Emitter Identi…", "tags": ["通信/信号"]}, {"t": "给佳能R5改固件，能玩出什么花样", "d": "2026-11-16", "u": "articles/2026-11-16/%E7%BB%99%E4%BD%B3%E8%83%BDR5%E6%94%B9%E5%9B%BA%E4%BB%B6%EF%BC%8C%E8%83%BD%E7%8E%A9%E5%87%BA%E4%BB%80%E4%B9%88%E8%8A%B1%E6%A0%B7.html", "s": "在摄影圈，佳能EOS R5是一台口碑不错的全画幅无反相机。而GitHub上出现了一个名为canon-r5-mod的开源项目，尝试对这台相机的官方固件2.2.1版本做实验性修改，目标…", "tags": ["嵌入式", "开源工具"]}, {"t": "四个反作用轮，让独轮机器人站稳", "d": "2026-11-16", "u": "articles/2026-11-16/%E5%9B%9B%E4%B8%AA%E5%8F%8D%E4%BD%9C%E7%94%A8%E8%BD%AE%EF%BC%8C%E8%AE%A9%E7%8B%AC%E8%BD%AE%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%AB%99%E7%A8%B3.html", "s": "独轮机器人天生不稳定：只有一个接地点，前后左右都容易倒。常见的做法是装一个又大又重的反作用轮，靠它加速旋转产生的反力矩把车身\"掰\"回来。但单个轮子只能对付一个方向的倾斜，侧向怎么办…", "tags": ["嵌入式"]}, {"t": "AI读脑电波判睡眠，为何医生不敢信？", "d": "2026-11-16", "u": "articles/2026-11-16/AI%E8%AF%BB%E8%84%91%E7%94%B5%E6%B3%A2%E5%88%A4%E7%9D%A1%E7%9C%A0%EF%BC%8C%E4%B8%BA%E4%BD%95%E5%8C%BB%E7%94%9F%E4%B8%8D%E6%95%A2%E4%BF%A1%EF%BC%9F.html", "s": "自动睡眠分期早已不是新鲜事——用算法分析脑电图、判断你处于浅睡、深睡还是快速眼动期，在实验室基准测试中准确率相当可观。但一个尴尬的现实是：临床 adoption（采用）依然有限。原…", "tags": ["生物医学", "AI/大模型"]}, {"t": "6G太赫兹通信，接收机学会“自我纠错”", "d": "2026-11-16", "u": "articles/2026-11-16/6G%E5%A4%AA%E8%B5%AB%E5%85%B9%E9%80%9A%E4%BF%A1%EF%BC%8C%E6%8E%A5%E6%94%B6%E6%9C%BA%E5%AD%A6%E4%BC%9A%E2%80%9C%E8%87%AA%E6%88%91%E7%BA%A0%E9%94%99%E2%80%9D.html", "s": "6G研究里，太赫兹频段（0.1～0.3 THz，俗称“亚太赫兹”）被视为实现超高速率的关键。但频率越高，麻烦越大：信号在传输中会经历频率选择性衰落，同时振荡器还会引入相位噪声——简…", "tags": ["通信/信号"]}];
-  var q = document.getElementById('q');
-  var activeTag = '全部';
-  var visible = {{}};
-  function apply(){{
-    var kw = (q.value||'').trim().toLowerCase();
-    visible = {{}};
-    DATA.forEach(function(e){{
-      var tagHit = (activeTag==='全部') || (e.tags||[]).indexOf(activeTag)>=0;
-      var kwHit = !kw || (e.t||'').toLowerCase().indexOf(kw)>=0 || (e.s||'').toLowerCase().indexOf(kw)>=0;
-      visible[e.u] = tagHit && kwHit;
-      var a = document.querySelector('.item[data-url="'+e.u+'"]');
-      if(a) a.style.display = visible[e.u] ? '' : 'none';
-    }});
-    document.querySelectorAll('.date').forEach(function(d){{
-      var g = d.getAttribute('data-date'); var any = false;
-      DATA.forEach(function(e){{ if(e.d===g && visible[e.u]) any = true; }});
-      d.style.display = any ? '' : 'none';
-    }});
-    var has = false; DATA.forEach(function(e){{ if(visible[e.u]) has = true; }});
-    document.getElementById('empty').style.display = has ? 'none' : '';
-  }}
-  q.addEventListener('input', apply);
-  document.querySelectorAll('.chip').forEach(function(c){{
-    c.addEventListener('click', function(){{
-      document.querySelectorAll('.chip').forEach(function(x){{ x.classList.remove('active'); }});
-      c.classList.add('active'); activeTag = c.getAttribute('data-tag'); apply();
-    }});
-  }});
-}})();
+  var topBtn=document.getElementById('topBtn');
+  window.addEventListener('scroll',function(){ topBtn.style.display=(window.scrollY>400)?'block':'none'; });
+  topBtn.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+
+  function loadSet(k){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):[]; }catch(e){ return []; } }
+  function saveSet(k,a){ try{ localStorage.setItem(k,JSON.stringify(a)); }catch(e){} }
+  function has(a,x){ return a.indexOf(x)>=0; }
+
+  var DATA=[{"t": "让AI读懂生物医学术语", "d": "2026-11-17", "u": "articles/2026-11-17/%E8%AE%A9AI%E8%AF%BB%E6%87%82%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E6%9C%AF%E8%AF%AD.html", "s": "在生物医学领域，同一个概念往往有十几种叫法：临床医生写“心肌梗死”，数据库里存的是“Myocardial Infarction”，而某个编码系统里可能只认一串标识符。这种术语碎片化…", "tags": ["生物医学", "AI/大模型", "开源工具"]}, {"t": "给医学文献工具造个共用底座", "d": "2026-11-17", "u": "articles/2026-11-17/%E7%BB%99%E5%8C%BB%E5%AD%A6%E6%96%87%E7%8C%AE%E5%B7%A5%E5%85%B7%E9%80%A0%E4%B8%AA%E5%85%B1%E7%94%A8%E5%BA%95%E5%BA%A7.html", "s": "做生物医学文献相关工具的人，大概都遇到过这样的麻烦：想接入大模型做摘要或问答，得自己封装一套调用层；想判断一篇论文质量高不高、透明度够不够，又得从头写规则；想抓全文、入库、去重，还…", "tags": ["生物医学", "AI/大模型", "开源工具"]}, {"t": "一块Arduino板，能测哪些健康指标？", "d": "2026-11-17", "u": "articles/2026-11-17/%E4%B8%80%E5%9D%97Arduino%E6%9D%BF%EF%BC%8C%E8%83%BD%E6%B5%8B%E5%93%AA%E4%BA%9B%E5%81%A5%E5%BA%B7%E6%8C%87%E6%A0%87%EF%BC%9F.html", "s": "在GitHub上，一个名为“Embedded-Biomedical-Monitoring-System-for-Health-Biomarkers”的开源项目引起了不少嵌入式爱好者…", "tags": ["生物医学", "嵌入式", "开源工具"]}, {"t": "12星的开源项目，让AI帮你读医学论文", "d": "2026-11-17", "u": "articles/2026-11-17/12%E6%98%9F%E7%9A%84%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE%EF%BC%8C%E8%AE%A9AI%E5%B8%AE%E4%BD%A0%E8%AF%BB%E5%8C%BB%E5%AD%A6%E8%AE%BA%E6%96%87.html", "s": "做医学研究的人大概都有过这种体验：在 PubMed 上搜一个关键词，出来几百上千篇文献，光是筛标题就要花掉一整个下午。更麻烦的是，读完之后你还得判断这些结论到底靠不靠谱——样本量够…", "tags": ["生物医学", "AI/大模型", "开源工具"]}, {"t": "韩语生物医学大模型来了", "d": "2026-11-16", "u": "articles/2026-11-16/%E9%9F%A9%E8%AF%AD%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%9D%A5%E4%BA%86.html", "s": "生物医学领域的研究者常面临一个尴尬：最新的论文浩如烟海，但真正能\"读懂\"并回答专业问题的工具却不多，韩语语境下更是稀缺。GitHub 上出现了一个名为 KoBioMed-Llama…", "tags": ["生物医学", "AI/大模型", "开源工具"]}, {"t": "雷达“指纹”识别，有了新数据集", "d": "2026-11-16", "u": "articles/2026-11-16/%E9%9B%B7%E8%BE%BE%E2%80%9C%E6%8C%87%E7%BA%B9%E2%80%9D%E8%AF%86%E5%88%AB%EF%BC%8C%E6%9C%89%E4%BA%86%E6%96%B0%E6%95%B0%E6%8D%AE%E9%9B%86.html", "s": "在电磁频谱日益拥挤的今天，如何从一堆雷达信号中分辨出“这一部”和“那一部”，是电子侦察与频谱管理中的核心难题。特定辐射源识别（SEI，Specific Emitter Identi…", "tags": ["通信/信号"]}, {"t": "给佳能R5改固件，能玩出什么花样", "d": "2026-11-16", "u": "articles/2026-11-16/%E7%BB%99%E4%BD%B3%E8%83%BDR5%E6%94%B9%E5%9B%BA%E4%BB%B6%EF%BC%8C%E8%83%BD%E7%8E%A9%E5%87%BA%E4%BB%80%E4%B9%88%E8%8A%B1%E6%A0%B7.html", "s": "在摄影圈，佳能EOS R5是一台口碑不错的全画幅无反相机。而GitHub上出现了一个名为canon-r5-mod的开源项目，尝试对这台相机的官方固件2.2.1版本做实验性修改，目标…", "tags": ["嵌入式", "开源工具"]}, {"t": "四个反作用轮，让独轮机器人站稳", "d": "2026-11-16", "u": "articles/2026-11-16/%E5%9B%9B%E4%B8%AA%E5%8F%8D%E4%BD%9C%E7%94%A8%E8%BD%AE%EF%BC%8C%E8%AE%A9%E7%8B%AC%E8%BD%AE%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%AB%99%E7%A8%B3.html", "s": "独轮机器人天生不稳定：只有一个接地点，前后左右都容易倒。常见的做法是装一个又大又重的反作用轮，靠它加速旋转产生的反力矩把车身\"掰\"回来。但单个轮子只能对付一个方向的倾斜，侧向怎么办…", "tags": ["嵌入式"]}, {"t": "AI读脑电波判睡眠，为何医生不敢信？", "d": "2026-11-16", "u": "articles/2026-11-16/AI%E8%AF%BB%E8%84%91%E7%94%B5%E6%B3%A2%E5%88%A4%E7%9D%A1%E7%9C%A0%EF%BC%8C%E4%B8%BA%E4%BD%95%E5%8C%BB%E7%94%9F%E4%B8%8D%E6%95%A2%E4%BF%A1%EF%BC%9F.html", "s": "自动睡眠分期早已不是新鲜事——用算法分析脑电图、判断你处于浅睡、深睡还是快速眼动期，在实验室基准测试中准确率相当可观。但一个尴尬的现实是：临床 adoption（采用）依然有限。原…", "tags": ["生物医学", "AI/大模型"]}, {"t": "6G太赫兹通信，接收机学会“自我纠错”", "d": "2026-11-16", "u": "articles/2026-11-16/6G%E5%A4%AA%E8%B5%AB%E5%85%B9%E9%80%9A%E4%BF%A1%EF%BC%8C%E6%8E%A5%E6%94%B6%E6%9C%BA%E5%AD%A6%E4%BC%9A%E2%80%9C%E8%87%AA%E6%88%91%E7%BA%A0%E9%94%99%E2%80%9D.html", "s": "6G研究里，太赫兹频段（0.1～0.3 THz，俗称“亚太赫兹”）被视为实现超高速率的关键。但频率越高，麻烦越大：信号在传输中会经历频率选择性衰落，同时振荡器还会引入相位噪声——简…", "tags": ["通信/信号"]}];
+  var favs=loadSet('favs'), reads=loadSet('read');
+  var nodeMap={};
+  var favOnly=false, unreadOnly=false, activeTag='全部';
+  var visible={};
+
+  document.querySelectorAll('.item').forEach(function(a){
+    var k=a.getAttribute('data-key'); nodeMap[k]=a;
+    if(has(reads,k)) a.classList.add('read');
+    var s=a.querySelector('.star'); if(s && has(favs,k)) s.classList.add('on');
+    a.addEventListener('click',function(){ if(!has(reads,k)){ reads.push(k); saveSet('read',reads); } a.classList.add('read'); });
+  });
+  document.querySelectorAll('.star').forEach(function(s){
+    s.addEventListener('click',function(ev){
+      ev.preventDefault(); ev.stopPropagation();
+      var k=s.getAttribute('data-key'); var i=favs.indexOf(k);
+      if(i>=0) favs.splice(i,1); else favs.push(k);
+      saveSet('favs',favs); s.classList.toggle('on',has(favs,k)); apply();
+    });
+  });
+
+  var q=document.getElementById('q');
+  function apply(){
+    var kw=(q.value||'').trim().toLowerCase();
+    visible={};
+    DATA.forEach(function(e){
+      var tagHit=(activeTag==='全部')||(e.tags||[]).indexOf(activeTag)>=0;
+      var kwHit=!kw||(e.t||'').toLowerCase().indexOf(kw)>=0||(e.s||'').toLowerCase().indexOf(kw)>=0;
+      var favHit=!favOnly||has(favs,e.t);
+      var readHit=!unreadOnly||!has(reads,e.t);
+      visible[e.t]=tagHit&&kwHit&&favHit&&readHit;
+      var a=nodeMap[e.t]; if(a) a.style.display=visible[e.t]?'':'none';
+    });
+    document.querySelectorAll('.date').forEach(function(d){
+      var g=d.getAttribute('data-date'); var any=false;
+      DATA.forEach(function(e){ if(e.d===g && visible[e.t]) any=true; });
+      d.style.display=any?'':'none';
+    });
+    var hasAny=false; DATA.forEach(function(e){ if(visible[e.t]) hasAny=true; });
+    document.getElementById('empty').style.display=hasAny?'none':'';
+  }
+  q.addEventListener('input',apply);
+  document.querySelectorAll('.chip').forEach(function(c){
+    c.addEventListener('click',function(){
+      document.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('active'); });
+      c.classList.add('active'); activeTag=c.getAttribute('data-tag'); apply();
+    });
+  });
+  document.getElementById('favOnlyBtn').addEventListener('click',function(){
+    favOnly=!favOnly; this.classList.toggle('active',favOnly); apply();
+  });
+  document.getElementById('unreadOnlyBtn').addEventListener('click',function(){
+    unreadOnly=!unreadOnly; this.classList.toggle('active',unreadOnly); apply();
+  });
+})();
 </script>
 </body>
 </html>

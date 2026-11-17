@@ -1,8 +1,8 @@
 """本地 / 公网「个人日报网站」生成器。
 
-把 output/ 下的 Markdown 文章渲染成一个可浏览、可搜索、可分类的静态网站：
-- docs/index.html              首页（归档 + 实时搜索 + 分类标签 + 深色模式 + 统计）
-- docs/articles/日期/xxx.html  每篇文章独立页面（阅读进度 + 上一篇/下一篇 + 复制链接）
+把 output/ 下的 Markdown 文章渲染成一个可浏览、可搜索、可分类、可收藏的静态网站：
+- docs/index.html              首页（归档 + 实时搜索 + 分类标签 + 收藏/已读 + 深色模式 + 统计）
+- docs/articles/日期/xxx.html  每篇文章独立页面（目录 TOC + 阅读进度 + 字号调节 + 收藏 + 复制链接 + 上下篇）
 """
 import html as _html
 import json
@@ -17,7 +17,7 @@ CSS = """
   --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
   --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
   --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
-  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;--fs:16px;
 }
 [data-theme="dark"]{
   --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
@@ -42,12 +42,16 @@ a{color:var(--accent);text-decoration:none;}
 .stat b{color:var(--text);}
 .search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
 .search:focus{border-color:var(--accent2);}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
 .chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
 .chip:hover{border-color:var(--accent);}
 .chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.toggle{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 11px;font-size:12.5px;cursor:pointer;}
+.toggle:hover{border-color:var(--accent);color:var(--text);}
+.toggle.active{background:var(--accent);border-color:var(--accent);color:#fff;}
 .date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s,opacity .15s;}
 .item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
 .item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
 .item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
@@ -55,17 +59,33 @@ a{color:var(--accent);text-decoration:none;}
 .badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
 .tags{display:flex;flex-wrap:wrap;gap:6px;}
 .tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.star{color:var(--muted);cursor:pointer;font-size:17px;line-height:1;margin-left:auto;user-select:none;}
+.star:hover{color:#f5a623;}
+.star.on{color:#f5a623;}
+.readmark{display:none;color:var(--muted);font-size:11px;border:1px solid var(--border);border-radius:6px;padding:0 6px;}
+.read .readmark{display:inline-block;}
+.read{opacity:.5;}
+.read:hover{opacity:.85;}
 .empty{color:var(--muted);text-align:center;padding:44px 0;}
 .footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
 .topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
 .progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
-article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;font-size:var(--fs,16px);}
 article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article h1{font-size:1.6em;line-height:1.4;margin:0 0 8px;}
 article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
 article .tags{margin-bottom:4px;}
-article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-article h3{font-size:16px;margin:20px 0 8px;}
+.tools{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.favbtn,.fsbtn,.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;}
+.favbtn.on{color:#f5a623;border-color:#f5a623;}
+.toc{background:var(--quote);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin:0 0 18px;}
+.toc summary{cursor:pointer;font-weight:600;color:var(--text);}
+.toc ul{margin:8px 0 0;padding-left:18px;}
+.toc li{margin:4px 0;font-size:14px;}
+.toc li.l3{margin-left:14px;font-size:13px;color:var(--muted);}
+.toc a{color:var(--accent2);}
+article h2{font-size:1.25em;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);scroll-margin-top:70px;}
+article h3{font-size:1.05em;margin:20px 0 8px;scroll-margin-top:70px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
@@ -74,7 +94,6 @@ article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;ove
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
 article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
 .pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
 .navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
 .navlink:hover{border-color:var(--accent);}
@@ -111,34 +130,58 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
 </div></div>
 <article><div class="card">
 <h1>{__TITLE__}</h1>
-<div class="meta">{__META__}<button class="copybtn" id="copyBtn">复制链接</button></div>
+<div class="meta">{__META__}</div>
 <div class="tags">{__TAGS__}</div>
+{__TOC__}
 {__BODY__}
 </div>{__NAV__}</article>
 <div class="footer">由 AI 自动生成 · 仅供学习参考</div>
 <script>
 (function(){
-  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
-  var tb = document.getElementById('themeBtn');
-  function sync(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
-  if(tb) tb.addEventListener('click', function(){{
-    var d = document.documentElement.getAttribute('data-theme')==='dark';
-    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
-    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
-    sync();
-  }});
-  sync();
-  var bar = document.getElementById('bar');
-  function onScroll(){{ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width = (m>0 ? (h.scrollTop/m*100) : 0) + '%'; }}
-  window.addEventListener('scroll', onScroll); onScroll();
-  var cb = document.getElementById('copyBtn');
-  function fallbackCopy(){{ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{{document.execCommand('copy');}}catch(e){{}} document.body.removeChild(t); }}
-  if(cb) cb.addEventListener('click', function(){{
-    var done = function(){{ cb.textContent='已复制'; setTimeout(function(){{cb.textContent='复制链接';}},1500); }};
-    if (navigator.clipboard && navigator.clipboard.writeText){{ navigator.clipboard.writeText(location.href).then(done, function(){{fallbackCopy();done();}}); }}
-    else {{ fallbackCopy(); done(); }}
-  }});
-}})();
+  try{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }catch(e){}
+  var tb=document.getElementById('themeBtn');
+  function syncTheme(){ var d=document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent=d?'浅色模式':'深色模式'; }
+  if(tb) tb.addEventListener('click',function(){
+    var d=document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){ document.documentElement.removeAttribute('data-theme'); try{localStorage.setItem('theme','light');}catch(e){} }
+    else { document.documentElement.setAttribute('data-theme','dark'); try{localStorage.setItem('theme','dark');}catch(e){} }
+    syncTheme();
+  });
+  syncTheme();
+
+  function loadSet(k){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):[]; }catch(e){ return []; } }
+  function saveSet(k,a){ try{ localStorage.setItem(k,JSON.stringify(a)); }catch(e){} }
+  function has(a,x){ return a.indexOf(x)>=0; }
+
+  var favBtn=document.getElementById('favBtn');
+  var key=favBtn.getAttribute('data-key');
+  var favs=loadSet('favs'); var reads=loadSet('read');
+  if(!has(reads,key)){ reads.push(key); saveSet('read',reads); }
+  function syncFav(){ var on=has(favs,key); favBtn.textContent=on?'★ 已收藏':'☆ 收藏'; favBtn.classList.toggle('on',on); }
+  favBtn.addEventListener('click',function(){
+    var i=favs.indexOf(key); if(i>=0) favs.splice(i,1); else favs.push(key);
+    saveSet('favs',favs); syncFav();
+  });
+  syncFav();
+
+  var fs=16; try{ var sv=localStorage.getItem('fs'); if(sv) fs=parseInt(sv)||16; }catch(e){}
+  function applyFs(){ document.documentElement.style.setProperty('--fs',fs+'px'); try{localStorage.setItem('fs',fs);}catch(e){} }
+  applyFs();
+  document.getElementById('inc').addEventListener('click',function(){ fs=Math.min(22,fs+1); applyFs(); });
+  document.getElementById('dec').addEventListener('click',function(){ fs=Math.max(13,fs-1); applyFs(); });
+
+  var bar=document.getElementById('bar');
+  function onScroll(){ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width=(m>0?(h.scrollTop/m*100):0)+'%'; }
+  window.addEventListener('scroll',onScroll); onScroll();
+
+  var cb=document.getElementById('copyBtn');
+  function fallbackCopy(){ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(t); }
+  cb.addEventListener('click',function(){
+    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='复制链接'; },1500); };
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(location.href).then(done,function(){ fallbackCopy(); done(); }); }
+    else { fallbackCopy(); done(); }
+  });
+})();
 </script>
 </body>
 </html>"""
@@ -160,57 +203,91 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 <div class="stats">{__STATS__}</div>
 <input class="search" id="q" placeholder="搜索文章标题 / 关键词…">
 <div class="chips">{__CHIPS__}</div>
+<div class="filters">
+<button class="toggle" id="favOnlyBtn">☆ 只看收藏</button>
+<button class="toggle" id="unreadOnlyBtn">只看未读</button>
+</div>
 <div id="list">{__BODY__}</div>
 <div class="empty" id="empty" style="display:none;">没有匹配的内容</div>
 </div>
 <button class="topbtn" id="topBtn" title="回到顶部">↑</button>
 <div class="footer">每天自动更新 · 由 AI 生成，仅供学习参考</div>
 <script>
-(function(){{
-  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
-  var tb = document.getElementById('themeBtn');
-  function syncTheme(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
-  if(tb) tb.addEventListener('click', function(){{
-    var d = document.documentElement.getAttribute('data-theme')==='dark';
-    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
-    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
+(function(){
+  try{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }catch(e){}
+  var tb=document.getElementById('themeBtn');
+  function syncTheme(){ var d=document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent=d?'浅色模式':'深色模式'; }
+  if(tb) tb.addEventListener('click',function(){
+    var d=document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){ document.documentElement.removeAttribute('data-theme'); try{localStorage.setItem('theme','light');}catch(e){} }
+    else { document.documentElement.setAttribute('data-theme','dark'); try{localStorage.setItem('theme','dark');}catch(e){} }
     syncTheme();
-  }});
+  });
   syncTheme();
-  var topBtn = document.getElementById('topBtn');
-  window.addEventListener('scroll', function(){{ topBtn.style.display = (window.scrollY>400) ? 'block' : 'none'; }});
-  topBtn.addEventListener('click', function(){{ window.scrollTo({{top:0,behavior:'smooth'}}); }});
 
-  var DATA = {__DATA__};
-  var q = document.getElementById('q');
-  var activeTag = '全部';
-  var visible = {{}};
-  function apply(){{
-    var kw = (q.value||'').trim().toLowerCase();
-    visible = {{}};
-    DATA.forEach(function(e){{
-      var tagHit = (activeTag==='全部') || (e.tags||[]).indexOf(activeTag)>=0;
-      var kwHit = !kw || (e.t||'').toLowerCase().indexOf(kw)>=0 || (e.s||'').toLowerCase().indexOf(kw)>=0;
-      visible[e.u] = tagHit && kwHit;
-      var a = document.querySelector('.item[data-url="'+e.u+'"]');
-      if(a) a.style.display = visible[e.u] ? '' : 'none';
-    }});
-    document.querySelectorAll('.date').forEach(function(d){{
-      var g = d.getAttribute('data-date'); var any = false;
-      DATA.forEach(function(e){{ if(e.d===g && visible[e.u]) any = true; }});
-      d.style.display = any ? '' : 'none';
-    }});
-    var has = false; DATA.forEach(function(e){{ if(visible[e.u]) has = true; }});
-    document.getElementById('empty').style.display = has ? 'none' : '';
-  }}
-  q.addEventListener('input', apply);
-  document.querySelectorAll('.chip').forEach(function(c){{
-    c.addEventListener('click', function(){{
-      document.querySelectorAll('.chip').forEach(function(x){{ x.classList.remove('active'); }});
-      c.classList.add('active'); activeTag = c.getAttribute('data-tag'); apply();
-    }});
-  }});
-}})();
+  var topBtn=document.getElementById('topBtn');
+  window.addEventListener('scroll',function(){ topBtn.style.display=(window.scrollY>400)?'block':'none'; });
+  topBtn.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+
+  function loadSet(k){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):[]; }catch(e){ return []; } }
+  function saveSet(k,a){ try{ localStorage.setItem(k,JSON.stringify(a)); }catch(e){} }
+  function has(a,x){ return a.indexOf(x)>=0; }
+
+  var DATA={__DATA__};
+  var favs=loadSet('favs'), reads=loadSet('read');
+  var nodeMap={};
+  var favOnly=false, unreadOnly=false, activeTag='全部';
+  var visible={};
+
+  document.querySelectorAll('.item').forEach(function(a){
+    var k=a.getAttribute('data-key'); nodeMap[k]=a;
+    if(has(reads,k)) a.classList.add('read');
+    var s=a.querySelector('.star'); if(s && has(favs,k)) s.classList.add('on');
+    a.addEventListener('click',function(){ if(!has(reads,k)){ reads.push(k); saveSet('read',reads); } a.classList.add('read'); });
+  });
+  document.querySelectorAll('.star').forEach(function(s){
+    s.addEventListener('click',function(ev){
+      ev.preventDefault(); ev.stopPropagation();
+      var k=s.getAttribute('data-key'); var i=favs.indexOf(k);
+      if(i>=0) favs.splice(i,1); else favs.push(k);
+      saveSet('favs',favs); s.classList.toggle('on',has(favs,k)); apply();
+    });
+  });
+
+  var q=document.getElementById('q');
+  function apply(){
+    var kw=(q.value||'').trim().toLowerCase();
+    visible={};
+    DATA.forEach(function(e){
+      var tagHit=(activeTag==='全部')||(e.tags||[]).indexOf(activeTag)>=0;
+      var kwHit=!kw||(e.t||'').toLowerCase().indexOf(kw)>=0||(e.s||'').toLowerCase().indexOf(kw)>=0;
+      var favHit=!favOnly||has(favs,e.t);
+      var readHit=!unreadOnly||!has(reads,e.t);
+      visible[e.t]=tagHit&&kwHit&&favHit&&readHit;
+      var a=nodeMap[e.t]; if(a) a.style.display=visible[e.t]?'':'none';
+    });
+    document.querySelectorAll('.date').forEach(function(d){
+      var g=d.getAttribute('data-date'); var any=false;
+      DATA.forEach(function(e){ if(e.d===g && visible[e.t]) any=true; });
+      d.style.display=any?'':'none';
+    });
+    var hasAny=false; DATA.forEach(function(e){ if(visible[e.t]) hasAny=true; });
+    document.getElementById('empty').style.display=hasAny?'none':'';
+  }
+  q.addEventListener('input',apply);
+  document.querySelectorAll('.chip').forEach(function(c){
+    c.addEventListener('click',function(){
+      document.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('active'); });
+      c.classList.add('active'); activeTag=c.getAttribute('data-tag'); apply();
+    });
+  });
+  document.getElementById('favOnlyBtn').addEventListener('click',function(){
+    favOnly=!favOnly; this.classList.toggle('active',favOnly); apply();
+  });
+  document.getElementById('unreadOnlyBtn').addEventListener('click',function(){
+    unreadOnly=!unreadOnly; this.classList.toggle('active',unreadOnly); apply();
+  });
+})();
 </script>
 </body>
 </html>"""
@@ -229,6 +306,7 @@ def md_to_html(md: str) -> str:
     out = []
     in_code = False
     code_buf = []
+    h_counter = 0
     for line in md.splitlines():
         s = line.strip()
         if s.startswith("```"):
@@ -244,12 +322,13 @@ def md_to_html(md: str) -> str:
             continue
         if not s:
             continue
+        h_counter += 1
         if s.startswith("### "):
-            out.append(f"<h3>{_inline(s[4:])}</h3>")
+            out.append(f'<h3 id="h-{h_counter}">{_inline(s[4:])}</h3>')
         elif s.startswith("## "):
-            out.append(f"<h2>{_inline(s[3:])}</h2>")
+            out.append(f'<h2 id="h-{h_counter}">{_inline(s[3:])}</h2>')
         elif s.startswith("# "):
-            out.append(f"<h2>{_inline(s[2:])}</h2>")
+            out.append(f'<h2 id="h-{h_counter}">{_inline(s[2:])}</h2>')
         elif s.startswith("> "):
             out.append(f"<blockquote>{_inline(s[2:])}</blockquote>")
         elif s.startswith("- ") or s.startswith("* "):
@@ -266,6 +345,17 @@ def md_to_html(md: str) -> str:
     if in_code and code_buf:
         out.append("<pre><code>" + _html.escape("\n".join(code_buf)) + "</code></pre>")
     return "\n".join(out)
+
+
+def _extract_toc(body_html: str):
+    items = []
+    for m in re.finditer(r'<h([23]) id="(h-\d+)">(.*?)</h\1>', body_html, flags=re.S):
+        level, aid, text = m.group(1), m.group(2), m.group(3)
+        text = re.sub(r"<[^>]+>", "", text)
+        text = _html.unescape(text).strip()
+        if text:
+            items.append((level, aid, text))
+    return items
 
 
 def _safe_filename(title: str) -> str:
@@ -323,11 +413,28 @@ def _read_minutes(rest: str) -> int:
 
 def render_article_page(e: dict, site_title: str, older, newer) -> str:
     tags_html = "".join(f'<span class="tag">{_html.escape(t)}</span>' for t in e["tags"])
+    toc_items = _extract_toc(e["body_html"])
+    if len(toc_items) >= 2:
+        lis = []
+        for level, aid, text in toc_items:
+            cls = ' class="l3"' if level == "3" else ""
+            lis.append(f'<li{cls}><a href="#{aid}">{_html.escape(text)}</a></li>')
+        toc_html = f'<details class="toc" open><summary>目录</summary><ul>{"".join(lis)}</ul></details>'
+    else:
+        toc_html = ""
+
     meta = (
         f'<span class="badge">{_html.escape(e.get("source") or "来源")}</span>'
         f'<span>{_html.escape(e["date"])}</span>'
         f'<span>约 {e["read_minutes"]} 分钟</span>'
+        f'<span class="tools">'
+        f'<button class="favbtn" id="favBtn" data-key="{_html.escape(e["title"])}" title="收藏">☆ 收藏</button>'
+        f'<button class="fsbtn" id="dec" title="缩小字号">A−</button>'
+        f'<button class="fsbtn" id="inc" title="放大字号">A＋</button>'
+        f'<button class="copybtn" id="copyBtn">复制链接</button>'
+        f'</span>'
     )
+
     nav = []
     if older:
         u = quote(older["url"], safe="/")
@@ -336,11 +443,13 @@ def render_article_page(e: dict, site_title: str, older, newer) -> str:
         u = quote(newer["url"], safe="/")
         nav.append(f'<a class="navlink next" href="{_html.escape(u)}">下一篇 →<br><span>{_html.escape(newer["title"])}</span></a>')
     nav_html = f'<div class="pagenav">{"".join(nav)}</div>' if nav else ""
+
     return (ARTICLE_TEMPLATE
             .replace("{__TITLE__}", _html.escape(e["title"]))
             .replace("{__SITE__}", _html.escape(site_title))
             .replace("{__META__}", meta)
             .replace("{__TAGS__}", tags_html)
+            .replace("{__TOC__}", toc_html)
             .replace("{__BODY__}", e["body_html"])
             .replace("{__NAV__}", nav_html)
             .replace("{__CSS__}", CSS))
@@ -356,14 +465,17 @@ def render_index(site_title: str, subtitle: str, entries: list) -> str:
         parts.append(f'<div class="date" data-date="{_html.escape(date_str)}">{_html.escape(date_str)}</div>')
         for e in es:
             u = quote(e["url"], safe="/")
+            key = _html.escape(e["title"])
             tags_html = "".join(f'<span class="tag">{_html.escape(t)}</span>' for t in e["tags"])
             source = e.get("source") or "来源"
             parts.append(
-                f'<a class="item" data-url="{_html.escape(u)}" href="{_html.escape(u)}">'
-                f'<div class="t">{_html.escape(e["title"])}</div>'
+                f'<a class="item" data-key="{key}" href="{_html.escape(u)}">'
+                f'<div class="t">{key}</div>'
                 + (f'<div class="s">{_html.escape(e["summary"])}</div>' if e["summary"] else "")
                 + f'<div class="meta"><span class="badge">{_html.escape(source)}</span>'
-                f'<span>{_html.escape(e["date"])}</span><span>约 {e["read_minutes"]} 分钟</span></div>'
+                f'<span>{_html.escape(e["date"])}</span><span>约 {e["read_minutes"]} 分钟</span>'
+                f'<span class="readmark">已读</span>'
+                f'<span class="star" data-key="{key}" title="收藏">☆</span></div>'
                 f'<div class="tags">{tags_html}</div>'
                 f'</a>'
             )

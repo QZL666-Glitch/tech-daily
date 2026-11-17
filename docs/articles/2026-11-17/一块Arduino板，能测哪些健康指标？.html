@@ -10,7 +10,7 @@
   --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
   --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
   --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
-  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;--fs:16px;
 }
 [data-theme="dark"]{
   --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
@@ -35,12 +35,16 @@ a{color:var(--accent);text-decoration:none;}
 .stat b{color:var(--text);}
 .search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
 .search:focus{border-color:var(--accent2);}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
 .chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
 .chip:hover{border-color:var(--accent);}
 .chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.toggle{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 11px;font-size:12.5px;cursor:pointer;}
+.toggle:hover{border-color:var(--accent);color:var(--text);}
+.toggle.active{background:var(--accent);border-color:var(--accent);color:#fff;}
 .date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s,opacity .15s;}
 .item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
 .item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
 .item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
@@ -48,17 +52,33 @@ a{color:var(--accent);text-decoration:none;}
 .badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
 .tags{display:flex;flex-wrap:wrap;gap:6px;}
 .tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.star{color:var(--muted);cursor:pointer;font-size:17px;line-height:1;margin-left:auto;user-select:none;}
+.star:hover{color:#f5a623;}
+.star.on{color:#f5a623;}
+.readmark{display:none;color:var(--muted);font-size:11px;border:1px solid var(--border);border-radius:6px;padding:0 6px;}
+.read .readmark{display:inline-block;}
+.read{opacity:.5;}
+.read:hover{opacity:.85;}
 .empty{color:var(--muted);text-align:center;padding:44px 0;}
 .footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
 .topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
 .progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
-article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;font-size:var(--fs,16px);}
 article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article h1{font-size:1.6em;line-height:1.4;margin:0 0 8px;}
 article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
 article .tags{margin-bottom:4px;}
-article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-article h3{font-size:16px;margin:20px 0 8px;}
+.tools{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.favbtn,.fsbtn,.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;}
+.favbtn.on{color:#f5a623;border-color:#f5a623;}
+.toc{background:var(--quote);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin:0 0 18px;}
+.toc summary{cursor:pointer;font-weight:600;color:var(--text);}
+.toc ul{margin:8px 0 0;padding-left:18px;}
+.toc li{margin:4px 0;font-size:14px;}
+.toc li.l3{margin-left:14px;font-size:13px;color:var(--muted);}
+.toc a{color:var(--accent2);}
+article h2{font-size:1.25em;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);scroll-margin-top:70px;}
+article h3{font-size:1.05em;margin:20px 0 8px;scroll-margin-top:70px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
@@ -67,7 +87,6 @@ article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;ove
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
 article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
 .pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
 .navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
 .navlink:hover{border-color:var(--accent);}
@@ -83,24 +102,25 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 </div></div>
 <article><div class="card">
 <h1>一块Arduino板，能测哪些健康指标？</h1>
-<div class="meta"><span class="badge">GitHub · 2026-06-30</span><span>2026-11-17</span><span>约 9 分钟</span><button class="copybtn" id="copyBtn">复制链接</button></div>
+<div class="meta"><span class="badge">GitHub · 2026-06-30</span><span>2026-11-17</span><span>约 9 分钟</span><span class="tools"><button class="favbtn" id="favBtn" data-key="一块Arduino板，能测哪些健康指标？" title="收藏">☆ 收藏</button><button class="fsbtn" id="dec" title="缩小字号">A−</button><button class="fsbtn" id="inc" title="放大字号">A＋</button><button class="copybtn" id="copyBtn">复制链接</button></span></div>
 <div class="tags"><span class="tag">生物医学</span><span class="tag">嵌入式</span><span class="tag">开源工具</span></div>
+<details class="toc" open><summary>目录</summary><ul><li><a href="#h-2">引言</a></li><li><a href="#h-4">它到底是什么</a></li><li><a href="#h-7">技术路线为什么合理</a></li><li><a href="#h-10">值得关注的地方与边界</a></li><li><a href="#h-13">小结</a></li><li><a href="#h-16">AI 解读与知识总结</a></li><li><a href="#h-26">小白常见问题</a></li></ul></details>
 <p style="color:var(--muted);font-size:13px;">来源：GitHub · 2026-06-30</p>
-<h2>引言</h2>
+<h2 id="h-2">引言</h2>
 <p>在GitHub上，一个名为“Embedded-Biomedical-Monitoring-System-for-Health-Biomarkers”的开源项目引起了不少嵌入式爱好者的注意。项目作者xAsmodeus用C++在Arduino Uno上搭建了一套健康生物标志物监测系统，并在Wokwi仿真平台上完成了验证。它算不上什么颠覆性产品，但恰好踩中了两个趋势的交汇点：一是开源硬件门槛持续走低，二是人们对“把健康数据握在自己手里”的兴趣越来越浓。对于想入门生物医学工程的学生、想练手的嵌入式开发者，这类项目提供了一个成本极低、逻辑完整的起点。</p>
-<h2>它到底是什么</h2>
+<h2 id="h-4">它到底是什么</h2>
 <p>从项目标签看，关键词很直白：Arduino Uno、生物医学、嵌入式系统、健康监测。简单说，这是一个用微控制器采集人体生理信号、并对“生物标志物”进行检测的嵌入式项目。所谓生物标志物，白话讲就是能反映身体状况的可测量指标，比如心率、体温这类信号。项目在Wokwi上运行——Wokwi是一个在线硬件仿真平台，不需要真实焊接电路，就能在浏览器里跑Arduino代码、连虚拟传感器。这意味着复现门槛被压到了很低：一台电脑、一个浏览器，就能把整套逻辑跑起来看效果。</p>
 <p>需要说明的是，素材中并未披露具体采集哪几项指标、使用何种传感器型号，因此这里不做推测。可以确认的是，项目定位是“检查一个人的健康生物标志物”，语言为C++，硬件平台为Arduino Uno。</p>
-<h2>技术路线为什么合理</h2>
+<h2 id="h-7">技术路线为什么合理</h2>
 <p>用Arduino Uno做生理信号监测，是一个典型的“够用就好”的选择。Uno基于8位AVR微控制器，主频和内存都不算高，但它自带多路模拟输入，正好适合读取传感器输出的连续电压信号——生理信号本质上就是随时间变化的电压波形。C++在Arduino生态里是标准语言，配合成熟的库函数，采集、滤波、判断阈值这条链路可以写得很紧凑。</p>
 <p>Wokwi的加入则解决了硬件项目最头疼的“起步成本”问题。真实做生物医学监测，传感器、面包板、连线一样不能少，接错一根线就可能读数全乱。仿真平台让开发者先把代码逻辑跑通，再决定要不要投入硬件，这对教学场景尤其友好。从工程角度看，这个项目的价值不在于精度多高，而在于把“信号采集—处理—输出”的完整闭环用最小成本演示了一遍。</p>
-<h2>值得关注的地方与边界</h2>
+<h2 id="h-10">值得关注的地方与边界</h2>
 <p>这类项目的意义，更多在“可复现的学习样本”而非“可穿戴医疗设备”。开源硬件社区里，健康监测是热门题材，但真正能跑通、有仿真验证、代码结构清晰的项目并不多。⭐1的收藏量说明它还很小众，但也意味着后来者可以顺着代码读下去，理解一个生物医学嵌入式系统的基本骨架。</p>
 <p>同时要保留清醒：Arduino Uno级别的平台，受限于采样率、分辨率和模拟前端质量，做趋势观察和教学演示没问题，但离临床级测量有相当距离。素材中没有给出精度、校准方法或验证数据，因此任何关于“测量准确性”的结论都缺乏依据。把它当作学习入口，而不是健康决策工具，是更稳妥的态度。</p>
-<h2>小结</h2>
+<h2 id="h-13">小结</h2>
 <p>这个项目的看点很朴素：一个C++写的Arduino健康监测系统，在Wokwi上可仿真复现，覆盖了生物医学嵌入式开发的核心流程。它适合作为课程设计、自学练手或开源硬件入门的参考样本。如果你正想找一个“能跑起来”的起点，顺着这个仓库读代码、在仿真里改参数，会比空看教程更有收获。至于它能测多准、能走多远，取决于你后续接上什么传感器、做多少校准——那正是留给开发者的部分。</p>
 <hr>
-<h2>AI 解读与知识总结</h2>
+<h2 id="h-16">AI 解读与知识总结</h2>
 <ul><li><strong>解决的问题</strong>：本文介绍一个开源项目，用 Arduino Uno + C++ 搭建“健康生物标志物监测系统”，并在 Wokwi 在线仿真平台上验证。它解决的不是“做出医疗设备”，而是给初学者一个<strong>低成本、可复现、逻辑完整</strong>的生物医学嵌入式入门样本：不用买传感器、不用焊电路，浏览器里就能跑通“采集—处理—输出”闭环。</li></ul>
 <ul><li><strong>关键技术</strong>：① Arduino Uno 的<strong>多路模拟输入</strong>，用来读取传感器输出的连续电压信号（生理信号本质是随时间变化的电压波形）；② <strong>C++ + Arduino 库</strong>完成采集、滤波、阈值判断；③ <strong>Wokwi 仿真</strong>替代真实硬件，先把代码逻辑跑通再决定是否投入硬件。</li></ul>
 <ul><li><strong>为什么重要</strong>：它把生物医学嵌入式开发的核心流程压缩成最小可运行演示，对课程设计、自学练手、开源硬件入门都友好；同时文章明确划出边界——这是学习入口，不是健康决策工具。</li></ul>
@@ -110,7 +130,7 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <ul><li>仿真平台 → 在浏览器里虚拟出电路和传感器，代码照跑，但不用买零件。</li></ul>
 <ul><li>模拟前端 → 传感器和单片机之间的“信号调理电路”，质量好坏直接影响读数（推断：文章只提到它限制精度，未展开细节）。</li></ul>
 <ul><li><strong>需要说明的边界</strong>：文章<strong>未说明</strong>具体采集哪几项指标、传感器型号、采样率、分辨率、校准方法与验证数据；因此“能测多准”在文中没有依据。⭐1 收藏量说明项目很小众，属于“可复现学习样本”而非成熟产品。</li></ul>
-<h2>小白常见问题</h2>
+<h2 id="h-26">小白常见问题</h2>
 <p style="color:var(--muted);font-size:13px;">1. 这个项目到底能测哪些健康指标？</p>
 <p>文中没有披露具体指标和传感器型号，只确认定位是“检查健康生物标志物”，并举例心率、体温这类信号。所以不能据此认定它一定能测某几项。想确认请直接看仓库代码与接线说明，以官方最新说明为准。</p>
 <p style="color:var(--muted);font-size:13px;">2. 没有硬件，真的能玩吗？</p>
@@ -140,27 +160,50 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <div class="footer">由 AI 自动生成 · 仅供学习参考</div>
 <script>
 (function(){
-  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
-  var tb = document.getElementById('themeBtn');
-  function sync(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
-  if(tb) tb.addEventListener('click', function(){{
-    var d = document.documentElement.getAttribute('data-theme')==='dark';
-    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
-    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
-    sync();
-  }});
-  sync();
-  var bar = document.getElementById('bar');
-  function onScroll(){{ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width = (m>0 ? (h.scrollTop/m*100) : 0) + '%'; }}
-  window.addEventListener('scroll', onScroll); onScroll();
-  var cb = document.getElementById('copyBtn');
-  function fallbackCopy(){{ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{{document.execCommand('copy');}}catch(e){{}} document.body.removeChild(t); }}
-  if(cb) cb.addEventListener('click', function(){{
-    var done = function(){{ cb.textContent='已复制'; setTimeout(function(){{cb.textContent='复制链接';}},1500); }};
-    if (navigator.clipboard && navigator.clipboard.writeText){{ navigator.clipboard.writeText(location.href).then(done, function(){{fallbackCopy();done();}}); }}
-    else {{ fallbackCopy(); done(); }}
-  }});
-}})();
+  try{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }catch(e){}
+  var tb=document.getElementById('themeBtn');
+  function syncTheme(){ var d=document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent=d?'浅色模式':'深色模式'; }
+  if(tb) tb.addEventListener('click',function(){
+    var d=document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){ document.documentElement.removeAttribute('data-theme'); try{localStorage.setItem('theme','light');}catch(e){} }
+    else { document.documentElement.setAttribute('data-theme','dark'); try{localStorage.setItem('theme','dark');}catch(e){} }
+    syncTheme();
+  });
+  syncTheme();
+
+  function loadSet(k){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):[]; }catch(e){ return []; } }
+  function saveSet(k,a){ try{ localStorage.setItem(k,JSON.stringify(a)); }catch(e){} }
+  function has(a,x){ return a.indexOf(x)>=0; }
+
+  var favBtn=document.getElementById('favBtn');
+  var key=favBtn.getAttribute('data-key');
+  var favs=loadSet('favs'); var reads=loadSet('read');
+  if(!has(reads,key)){ reads.push(key); saveSet('read',reads); }
+  function syncFav(){ var on=has(favs,key); favBtn.textContent=on?'★ 已收藏':'☆ 收藏'; favBtn.classList.toggle('on',on); }
+  favBtn.addEventListener('click',function(){
+    var i=favs.indexOf(key); if(i>=0) favs.splice(i,1); else favs.push(key);
+    saveSet('favs',favs); syncFav();
+  });
+  syncFav();
+
+  var fs=16; try{ var sv=localStorage.getItem('fs'); if(sv) fs=parseInt(sv)||16; }catch(e){}
+  function applyFs(){ document.documentElement.style.setProperty('--fs',fs+'px'); try{localStorage.setItem('fs',fs);}catch(e){} }
+  applyFs();
+  document.getElementById('inc').addEventListener('click',function(){ fs=Math.min(22,fs+1); applyFs(); });
+  document.getElementById('dec').addEventListener('click',function(){ fs=Math.max(13,fs-1); applyFs(); });
+
+  var bar=document.getElementById('bar');
+  function onScroll(){ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width=(m>0?(h.scrollTop/m*100):0)+'%'; }
+  window.addEventListener('scroll',onScroll); onScroll();
+
+  var cb=document.getElementById('copyBtn');
+  function fallbackCopy(){ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(t); }
+  cb.addEventListener('click',function(){
+    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='复制链接'; },1500); };
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(location.href).then(done,function(){ fallbackCopy(); done(); }); }
+    else { fallbackCopy(); done(); }
+  });
+})();
 </script>
 </body>
 </html>

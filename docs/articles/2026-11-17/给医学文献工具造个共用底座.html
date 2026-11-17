@@ -10,7 +10,7 @@
   --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
   --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
   --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
-  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;--fs:16px;
 }
 [data-theme="dark"]{
   --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
@@ -35,12 +35,16 @@ a{color:var(--accent);text-decoration:none;}
 .stat b{color:var(--text);}
 .search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
 .search:focus{border-color:var(--accent2);}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
 .chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
 .chip:hover{border-color:var(--accent);}
 .chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.toggle{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 11px;font-size:12.5px;cursor:pointer;}
+.toggle:hover{border-color:var(--accent);color:var(--text);}
+.toggle.active{background:var(--accent);border-color:var(--accent);color:#fff;}
 .date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s,opacity .15s;}
 .item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
 .item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
 .item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
@@ -48,17 +52,33 @@ a{color:var(--accent);text-decoration:none;}
 .badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
 .tags{display:flex;flex-wrap:wrap;gap:6px;}
 .tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.star{color:var(--muted);cursor:pointer;font-size:17px;line-height:1;margin-left:auto;user-select:none;}
+.star:hover{color:#f5a623;}
+.star.on{color:#f5a623;}
+.readmark{display:none;color:var(--muted);font-size:11px;border:1px solid var(--border);border-radius:6px;padding:0 6px;}
+.read .readmark{display:inline-block;}
+.read{opacity:.5;}
+.read:hover{opacity:.85;}
 .empty{color:var(--muted);text-align:center;padding:44px 0;}
 .footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
 .topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
 .progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
-article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;font-size:var(--fs,16px);}
 article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article h1{font-size:1.6em;line-height:1.4;margin:0 0 8px;}
 article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
 article .tags{margin-bottom:4px;}
-article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-article h3{font-size:16px;margin:20px 0 8px;}
+.tools{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.favbtn,.fsbtn,.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;}
+.favbtn.on{color:#f5a623;border-color:#f5a623;}
+.toc{background:var(--quote);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin:0 0 18px;}
+.toc summary{cursor:pointer;font-weight:600;color:var(--text);}
+.toc ul{margin:8px 0 0;padding-left:18px;}
+.toc li{margin:4px 0;font-size:14px;}
+.toc li.l3{margin-left:14px;font-size:13px;color:var(--muted);}
+.toc a{color:var(--accent2);}
+article h2{font-size:1.25em;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);scroll-margin-top:70px;}
+article h3{font-size:1.05em;margin:20px 0 8px;scroll-margin-top:70px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
@@ -67,7 +87,6 @@ article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;ove
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
 article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
 .pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
 .navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
 .navlink:hover{border-color:var(--accent);}
@@ -83,22 +102,23 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 </div></div>
 <article><div class="card">
 <h1>给医学文献工具造个共用底座</h1>
-<div class="meta"><span class="badge">GitHub · 2026-11-12</span><span>2026-11-17</span><span>约 8 分钟</span><button class="copybtn" id="copyBtn">复制链接</button></div>
+<div class="meta"><span class="badge">GitHub · 2026-11-12</span><span>2026-11-17</span><span>约 8 分钟</span><span class="tools"><button class="favbtn" id="favBtn" data-key="给医学文献工具造个共用底座" title="收藏">☆ 收藏</button><button class="fsbtn" id="dec" title="缩小字号">A−</button><button class="fsbtn" id="inc" title="放大字号">A＋</button><button class="copybtn" id="copyBtn">复制链接</button></span></div>
 <div class="tags"><span class="tag">生物医学</span><span class="tag">AI/大模型</span><span class="tag">开源工具</span></div>
+<details class="toc" open><summary>目录</summary><ul><li><a href="#h-2">引言</a></li><li><a href="#h-4">它到底提供什么</a></li><li><a href="#h-7">为什么选 Python + Rust 双实现</a></li><li><a href="#h-9">适用场景与当前定位</a></li><li><a href="#h-11">小结</a></li><li><a href="#h-14">AI 解读与知识总结</a></li><li><a href="#h-23">小白常见问题</a></li></ul></details>
 <p style="color:var(--muted);font-size:13px;">来源：GitHub · 2026-11-12</p>
-<h2>引言</h2>
+<h2 id="h-2">引言</h2>
 <p>做生物医学文献相关工具的人，大概都遇到过这样的麻烦：想接入大模型做摘要或问答，得自己封装一套调用层；想判断一篇论文质量高不高、透明度够不够，又得从头写规则；想抓全文、入库、去重，还得再搭一套管道。GitHub 上的 hherb/bmlib 就是冲着这个痛点来的——一个面向生物医学文献工具的共享库，同时提供 Python 和 Rust 版本，把大模型抽象、质量评估、透明度分析、全文检索、出版物入库和数据库工具打包在一起。项目目前星标数不高（2 颗），语言以 Python 为主，主题标签覆盖 biomedical、pubmed、europepmc、medrxiv 等。它值得关注的地方不在于“又一个文献爬虫”，而在于试图把散落在各处的重复劳动收敛成一个可复用的底座。</p>
-<h2>它到底提供什么</h2>
+<h2 id="h-4">它到底提供什么</h2>
 <p>按项目自述，bmlib 的能力可以分成几块。第一块是 LLM 抽象层：把不同大模型的调用方式统一起来，上层工具不用为每家模型写一套适配代码。第二块是质量评估与透明度分析：针对生物医学文献，提供判断研究质量、分析报告透明度的能力。第三块是全文检索与出版物入库：对接 PubMed、Europe PMC、medRxiv 这类来源，把文献抓下来、整理进库。第四块是数据库工具：处理入库、查询这类底层杂活。</p>
 <p>用一句白话解释“LLM 抽象”：就像给不同品牌的充电器配一个通用插口，换模型时不用改上层代码。而“透明度分析”指的是检查一篇论文有没有把方法、数据、利益冲突等关键信息讲清楚。</p>
-<h2>为什么选 Python + Rust 双实现</h2>
+<h2 id="h-7">为什么选 Python + Rust 双实现</h2>
 <p>项目同时提供 Python 和 Rust 库，这个组合有现实考量。Python 在生物医学与数据科学圈是事实上的通用语言，研究者写脚本、做实验、调模型都顺手；Rust 则在性能和内存安全上有优势，适合处理大批量文献解析、全文索引这类吃资源的环节。两者共享同一套设计，意味着同一套逻辑可以在原型阶段用 Python 快速验证，在需要吞吐量时切到 Rust。对工具开发者来说，这比“只有 Python 版、性能不够再重写”要省事。</p>
-<h2>适用场景与当前定位</h2>
+<h2 id="h-9">适用场景与当前定位</h2>
 <p>从主题标签看，bmlib 面向的是生物医学文献的自动化处理链路：从 PubMed、Europe PMC、medRxiv 获取出版物，做全文检索，再叠加 LLM 能力和质量/透明度评估。适合做文献综述辅助工具、科研诚信检查工具、医学问答系统后端等。需要说明的是，项目星标仅 2 颗，属于早期项目，成熟度和社区支持都有限，引用其能力时应以仓库实际代码为准，不宜假设它已经覆盖所有边界情况。</p>
-<h2>小结</h2>
+<h2 id="h-11">小结</h2>
 <p>bmlib 的思路是把生物医学文献工具里反复出现的几件事——模型调用、质量与透明度评估、全文获取、入库管理——做成共享库，并用 Python 与 Rust 双实现兼顾开发效率与运行性能。它目前还很小众，但这种“先造底座、再搭应用”的做法，对想快速起一个医学文献工具原型的人来说，是个值得看一眼的起点。是否采用，建议先读仓库代码，确认它覆盖的功能与你的需求对得上。</p>
 <hr>
-<h2>AI 解读与知识总结</h2>
+<h2 id="h-14">AI 解读与知识总结</h2>
 <ul><li><strong>解决的问题</strong>：生物医学文献工具开发中，大模型调用、质量评估、透明度分析、全文抓取、入库去重等环节常被反复重写。bmlib 试图把这些重复劳动收敛为一个共享库，让上层工具直接复用。</li></ul>
 <ul><li><strong>关键技术/能力</strong>：统一 LLM 抽象层、文献质量评估与报告透明度分析、对接 PubMed/Europe PMC/medRxiv 的全文检索与出版物入库、数据库工具；同时提供 Python 与 Rust 双实现。</li></ul>
 <ul><li><strong>为什么重要</strong>：Python 便于快速原型和生物医学数据科学工作流，Rust 适合大批量解析与索引等性能敏感环节；同一套设计双语言实现，可减少“先 Python 验证、性能不够再重写”的成本。</li></ul>
@@ -107,7 +127,7 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <ul><li>LLM 抽象 → 给不同品牌充电器配一个通用插口，换模型时上层代码不用改。</li></ul>
 <ul><li>透明度分析 → 检查论文有没有把方法、数据、利益冲突等关键信息讲清楚。</li></ul>
 <ul><li>双实现 → 同一套逻辑有两种语言版本，原型用 Python，追求吞吐量时切 Rust。</li></ul>
-<h2>小白常见问题</h2>
+<h2 id="h-23">小白常见问题</h2>
 <p style="color:var(--muted);font-size:13px;">1. bmlib 是做什么的？</p>
 <p>它是一个面向生物医学文献工具的共享库，把大模型调用、质量评估、透明度分析、全文检索、出版物入库和数据库工具打包在一起，目标是让开发者不用每个环节都从头造轮子。文章称其同时提供 Python 和 Rust 版本，但具体 API 和功能边界需以仓库代码为准。</p>
 <p style="color:var(--muted);font-size:13px;">2. 它和普通文献爬虫有什么区别？</p>
@@ -137,27 +157,50 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <div class="footer">由 AI 自动生成 · 仅供学习参考</div>
 <script>
 (function(){
-  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
-  var tb = document.getElementById('themeBtn');
-  function sync(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
-  if(tb) tb.addEventListener('click', function(){{
-    var d = document.documentElement.getAttribute('data-theme')==='dark';
-    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
-    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
-    sync();
-  }});
-  sync();
-  var bar = document.getElementById('bar');
-  function onScroll(){{ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width = (m>0 ? (h.scrollTop/m*100) : 0) + '%'; }}
-  window.addEventListener('scroll', onScroll); onScroll();
-  var cb = document.getElementById('copyBtn');
-  function fallbackCopy(){{ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{{document.execCommand('copy');}}catch(e){{}} document.body.removeChild(t); }}
-  if(cb) cb.addEventListener('click', function(){{
-    var done = function(){{ cb.textContent='已复制'; setTimeout(function(){{cb.textContent='复制链接';}},1500); }};
-    if (navigator.clipboard && navigator.clipboard.writeText){{ navigator.clipboard.writeText(location.href).then(done, function(){{fallbackCopy();done();}}); }}
-    else {{ fallbackCopy(); done(); }}
-  }});
-}})();
+  try{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }catch(e){}
+  var tb=document.getElementById('themeBtn');
+  function syncTheme(){ var d=document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent=d?'浅色模式':'深色模式'; }
+  if(tb) tb.addEventListener('click',function(){
+    var d=document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){ document.documentElement.removeAttribute('data-theme'); try{localStorage.setItem('theme','light');}catch(e){} }
+    else { document.documentElement.setAttribute('data-theme','dark'); try{localStorage.setItem('theme','dark');}catch(e){} }
+    syncTheme();
+  });
+  syncTheme();
+
+  function loadSet(k){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):[]; }catch(e){ return []; } }
+  function saveSet(k,a){ try{ localStorage.setItem(k,JSON.stringify(a)); }catch(e){} }
+  function has(a,x){ return a.indexOf(x)>=0; }
+
+  var favBtn=document.getElementById('favBtn');
+  var key=favBtn.getAttribute('data-key');
+  var favs=loadSet('favs'); var reads=loadSet('read');
+  if(!has(reads,key)){ reads.push(key); saveSet('read',reads); }
+  function syncFav(){ var on=has(favs,key); favBtn.textContent=on?'★ 已收藏':'☆ 收藏'; favBtn.classList.toggle('on',on); }
+  favBtn.addEventListener('click',function(){
+    var i=favs.indexOf(key); if(i>=0) favs.splice(i,1); else favs.push(key);
+    saveSet('favs',favs); syncFav();
+  });
+  syncFav();
+
+  var fs=16; try{ var sv=localStorage.getItem('fs'); if(sv) fs=parseInt(sv)||16; }catch(e){}
+  function applyFs(){ document.documentElement.style.setProperty('--fs',fs+'px'); try{localStorage.setItem('fs',fs);}catch(e){} }
+  applyFs();
+  document.getElementById('inc').addEventListener('click',function(){ fs=Math.min(22,fs+1); applyFs(); });
+  document.getElementById('dec').addEventListener('click',function(){ fs=Math.max(13,fs-1); applyFs(); });
+
+  var bar=document.getElementById('bar');
+  function onScroll(){ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width=(m>0?(h.scrollTop/m*100):0)+'%'; }
+  window.addEventListener('scroll',onScroll); onScroll();
+
+  var cb=document.getElementById('copyBtn');
+  function fallbackCopy(){ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(t); }
+  cb.addEventListener('click',function(){
+    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='复制链接'; },1500); };
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(location.href).then(done,function(){ fallbackCopy(); done(); }); }
+    else { fallbackCopy(); done(); }
+  });
+})();
 </script>
 </body>
 </html>

@@ -10,7 +10,7 @@
   --accent:#0a7d3f;--accent2:#1f6feb;--border:#e5e7eb;
   --header:#0d1117;--headerfg:#ffffff;--headersub:#9aa4b2;
   --chip:#eef0f3;--chipfg:#374151;--chipactive:#0a7d3f;--chipactivefg:#ffffff;
-  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;
+  --quote:#f0f9f4;--codebg:#f0f0f0;--codefg:#c7254e;--fs:16px;
 }
 [data-theme="dark"]{
   --bg:#0d1117;--card:#161b22;--text:#e6edf3;--muted:#8b949e;
@@ -35,12 +35,16 @@ a{color:var(--accent);text-decoration:none;}
 .stat b{color:var(--text);}
 .search{width:100%;padding:11px 14px;font-size:15px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;outline:none;background:var(--card);color:var(--text);}
 .search:focus{border-color:var(--accent2);}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
 .chip{background:var(--chip);color:var(--chipfg);border:1px solid transparent;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer;}
 .chip:hover{border-color:var(--accent);}
 .chip.active{background:var(--chipactive);color:var(--chipactivefg);}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.toggle{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 11px;font-size:12.5px;cursor:pointer;}
+.toggle:hover{border-color:var(--accent);color:var(--text);}
+.toggle.active{background:var(--accent);border-color:var(--accent);color:#fff;}
 .date{font-size:14px;font-weight:700;color:var(--text);margin:22px 0 10px;padding-left:10px;border-left:4px solid var(--accent);}
-.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s;}
+.item{display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:inherit;transition:border-color .15s,box-shadow .15s,opacity .15s;}
 .item:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06);}
 .item .t{font-size:16px;font-weight:600;margin-bottom:5px;}
 .item .s{font-size:13.5px;color:var(--muted);margin-bottom:9px;}
@@ -48,17 +52,33 @@ a{color:var(--accent);text-decoration:none;}
 .badge{background:var(--accent);color:#fff;padding:1px 8px;border-radius:6px;font-size:11px;}
 .tags{display:flex;flex-wrap:wrap;gap:6px;}
 .tag{background:var(--chip);color:var(--chipfg);padding:1px 8px;border-radius:6px;font-size:11px;}
+.star{color:var(--muted);cursor:pointer;font-size:17px;line-height:1;margin-left:auto;user-select:none;}
+.star:hover{color:#f5a623;}
+.star.on{color:#f5a623;}
+.readmark{display:none;color:var(--muted);font-size:11px;border:1px solid var(--border);border-radius:6px;padding:0 6px;}
+.read .readmark{display:inline-block;}
+.read{opacity:.5;}
+.read:hover{opacity:.85;}
 .empty{color:var(--muted);text-align:center;padding:44px 0;}
 .footer{max-width:820px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px;text-align:center;}
 .topbtn{position:fixed;right:18px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.18);display:none;z-index:30;}
 .progressbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0;z-index:50;}
-article{max-width:820px;margin:0 auto;padding:20px 16px 56px;}
+article{max-width:820px;margin:0 auto;padding:20px 16px 56px;font-size:var(--fs,16px);}
 article .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 24px;}
-article h1{font-size:24px;line-height:1.4;margin:0 0 8px;}
+article h1{font-size:1.6em;line-height:1.4;margin:0 0 8px;}
 article .meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin-bottom:12px;padding-bottom:14px;border-bottom:1px solid var(--border);}
 article .tags{margin-bottom:4px;}
-article h2{font-size:19px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-article h3{font-size:16px;margin:20px 0 8px;}
+.tools{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.favbtn,.fsbtn,.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;}
+.favbtn.on{color:#f5a623;border-color:#f5a623;}
+.toc{background:var(--quote);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin:0 0 18px;}
+.toc summary{cursor:pointer;font-weight:600;color:var(--text);}
+.toc ul{margin:8px 0 0;padding-left:18px;}
+.toc li{margin:4px 0;font-size:14px;}
+.toc li.l3{margin-left:14px;font-size:13px;color:var(--muted);}
+.toc a{color:var(--accent2);}
+article h2{font-size:1.25em;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);scroll-margin-top:70px;}
+article h3{font-size:1.05em;margin:20px 0 8px;scroll-margin-top:70px;}
 article p{margin:0 0 14px;}
 article ul,article ol{margin:0 0 14px;padding-left:22px;}
 article li{margin:6px 0;}
@@ -67,7 +87,6 @@ article pre{background:#0d1117;color:#e6edf3;padding:14px;border-radius:10px;ove
 article code{font-family:Consolas,Monaco,monospace;font-size:0.92em;}
 article :not(pre)>code{background:var(--codebg);color:var(--codefg);padding:1px 6px;border-radius:4px;}
 article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
-.copybtn{background:var(--chip);color:var(--chipfg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;margin-left:auto;}
 .pagenav{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;}
 .navlink{flex:1 1 200px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:13px;line-height:1.45;}
 .navlink:hover{border-color:var(--accent);}
@@ -83,26 +102,27 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 </div></div>
 <article><div class="card">
 <h1>雷达“指纹”识别，有了新数据集</h1>
-<div class="meta"><span class="badge">arXiv · 2026-11-13</span><span>2026-11-16</span><span>约 10 分钟</span><button class="copybtn" id="copyBtn">复制链接</button></div>
+<div class="meta"><span class="badge">arXiv · 2026-11-13</span><span>2026-11-16</span><span>约 10 分钟</span><span class="tools"><button class="favbtn" id="favBtn" data-key="雷达“指纹”识别，有了新数据集" title="收藏">☆ 收藏</button><button class="fsbtn" id="dec" title="缩小字号">A−</button><button class="fsbtn" id="inc" title="放大字号">A＋</button><button class="copybtn" id="copyBtn">复制链接</button></span></div>
 <div class="tags"><span class="tag">通信/信号</span></div>
+<details class="toc" open><summary>目录</summary><ul><li><a href="#h-2">引言</a></li><li><a href="#h-4">这个数据集是什么</a></li><li><a href="#h-8">为什么“多通道、多天”很关键</a></li><li><a href="#h-11">初步结果说明了什么</a></li><li><a href="#h-15">小结</a></li><li><a href="#h-18">AI 解读与知识总结</a></li><li><a href="#h-34">小白常见问题</a></li></ul></details>
 <p style="color:var(--muted);font-size:13px;">来源：arXiv · 2026-11-13</p>
-<h2>引言</h2>
+<h2 id="h-2">引言</h2>
 <p>在电磁频谱日益拥挤的今天，如何从一堆雷达信号中分辨出“这一部”和“那一部”，是电子侦察与频谱管理中的核心难题。特定辐射源识别（SEI，Specific Emitter Identification）就是干这件事的：它不依赖信号里携带的信息内容，而是利用发射机硬件本身难以复制的细微差异——相当于给每台设备提取一枚“硬件指纹”。然而，指纹识别的算法要真正可用，必须扛得住换接收通道、换时间、换温度这些现实变量。arXiv 上最新公开的 BladeSEI 数据集，正是冲着这个“鲁棒性”问题来的。</p>
-<h2>这个数据集是什么</h2>
+<h2 id="h-4">这个数据集是什么</h2>
 <p>BladeSEI 是一套通过空中接收方式采集的雷达脉冲数据集，采集对象是 12 台软件定义无线电（SDR，即用软件来定义发射/接收行为的可编程射频设备）。它的特别之处在于“多通道 + 多天”的设计：脉冲被一台多通道接收机的四个同步模数转换（ADC）通道同时捕获，并跨越两天、共三个采集时段完成记录。</p>
 <p>三个时段各有讲究：第一个是基线采集；第二个在次日做完全相同的重复；第三个则对发射设备进行热调节，人为改变其工作温度。这样的安排，让研究者可以分别考察“换通道”“换时间”“换温度”对识别性能的影响。</p>
 <p>每个发射源包含两种波形：一种是 50 微秒的线性调频脉冲，带宽 40 MHz；另一种是 10 微秒的无调制脉冲。两种波形覆盖了不同信号形态，便于对比算法在不同条件下的表现。</p>
-<h2>为什么“多通道、多天”很关键</h2>
+<h2 id="h-8">为什么“多通道、多天”很关键</h2>
 <p>过去的 SEI 研究常有一个隐忧：算法在训练集上表现漂亮，但换一个接收机通道、隔一天再测，准确率就可能明显下滑。原因不难理解——指纹特征本身极其微弱，接收链路自身的差异、器件随时间的漂移、温度变化带来的电路特性偏移，都可能淹没真正的设备特征。</p>
 <p>BladeSEI 把通道、日期、温度三个变量显式地拆开采集，等于给研究者提供了一套“压力测试台”：你可以用通道 A 的数据训练，用通道 B 的数据测试；也可以用基线时段训练，用热调节时段测试。摘要中明确指出，该数据集的目的就是支撑能够跨接收通道、跨采集时段泛化的鲁棒 SEI 技术研究。</p>
-<h2>初步结果说明了什么</h2>
+<h2 id="h-11">初步结果说明了什么</h2>
 <p>论文给出了基于主成分分析（PCA，一种常用的降维方法）、Inception 和 ResNet（两类深度神经网络）分类器的初步实验。需要强调的是，这些结果是在“单一 ADC 通道、单一采集时段”内训练和测试的，属于最理想的条件。</p>
 <p>结果显示：在高信噪比下，这些 BladeRF 发射设备可以被有效区分。其中 ResNet 在 25 dB 信噪比下，对两种波形都取得了高于 0.98 的宏平均 F1 分数（一种综合衡量分类准确性的指标）。而随着信噪比降到 0 dB，性能退化到接近随机猜测的水平。</p>
 <p>这组数字传递了两个信息：一是设备指纹在信号质量好时确实可分；二是噪声仍是硬约束。至于跨通道、跨天、跨温度条件下的表现如何，正是这个数据集留给后续研究去回答的问题。</p>
-<h2>小结</h2>
+<h2 id="h-15">小结</h2>
 <p>BladeSEI 的价值不在于刷新某个识别准确率纪录，而在于把“鲁棒性”这个工程落地绕不开的问题，变成了可复现、可对比的实验条件。12 台 SDR、两种波形、四通道同步采集、两天三时段（含热调节），这套组合为雷达辐射源指纹识别研究提供了一个更贴近真实部署场景的基准。对于关注电子侦察、频谱监测与射频指纹方向的读者，这是一个值得跟进的数据资源。</p>
 <hr>
-<h2>AI 解读与知识总结</h2>
+<h2 id="h-18">AI 解读与知识总结</h2>
 <ul><li><strong>解决的问题</strong>：雷达“指纹”识别（SEI）算法常在理想条件下表现很好，但换接收通道、隔天再测、温度变化后就可能失效。BladeSEI 数据集把“通道、时间、温度”三个现实变量显式拆开采集，为鲁棒性研究提供可复现的“压力测试台”。</li></ul>
 <ul><li><strong>关键技术/设计</strong>：12 台 SDR 发射源、两种波形（50 µs 线性调频/40 MHz 带宽；10 µs 无调制脉冲）、一台多通道接收机的 4 个同步 ADC 通道同时捕获、跨两天共 3 个采集时段（基线、次日重复、热调节）。</li></ul>
 <ul><li><strong>初步结果</strong>：在单一 ADC 通道、单一采集时段的理想条件下，高信噪比时设备可有效区分；ResNet 在 25 dB 信噪比下对两种波形宏平均 F1 均高于 0.98；0 dB 时退化到接近随机猜测。</li></ul>
@@ -118,7 +138,7 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <ul><li>“跨通道/跨天/跨温度表现如何”文中明确说“留给后续研究”，即<strong>文中未给出结论</strong>。</li></ul>
 <ul><li>数据集是否公开下载地址、具体采集距离/场景、SDR 具体型号参数等，<strong>文中未说明</strong>。</li></ul>
 <ul><li>“BladeSEI 能显著推动鲁棒 SEI 落地”属于合理推断（推断），文中只说明其设计目的与实验条件。</li></ul>
-<h2>小白常见问题</h2>
+<h2 id="h-34">小白常见问题</h2>
 <p style="color:var(--muted);font-size:13px;">1. 什么是雷达“指纹”识别？</p>
 <p>就是通过发射机硬件本身的细微差异来分辨“这是哪一台设备”，而不是靠信号里携带的信息内容。就像每个人写字有笔迹，每台射频设备的电路也有难以复制的微小特征。SEI 就是提取并利用这种特征的技术。</p>
 <p style="color:var(--muted);font-size:13px;">2. 这个数据集和普通雷达信号数据集有什么不同？</p>
@@ -148,27 +168,50 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 <div class="footer">由 AI 自动生成 · 仅供学习参考</div>
 <script>
 (function(){
-  try{{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }}catch(e){{}}
-  var tb = document.getElementById('themeBtn');
-  function sync(){{ var d = document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent = d ? '浅色模式' : '深色模式'; }}
-  if(tb) tb.addEventListener('click', function(){{
-    var d = document.documentElement.getAttribute('data-theme')==='dark';
-    if(d){{ document.documentElement.removeAttribute('data-theme'); try{{localStorage.setItem('theme','light');}}catch(e){{}} }}
-    else {{ document.documentElement.setAttribute('data-theme','dark'); try{{localStorage.setItem('theme','dark');}}catch(e){{}} }}
-    sync();
-  }});
-  sync();
-  var bar = document.getElementById('bar');
-  function onScroll(){{ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width = (m>0 ? (h.scrollTop/m*100) : 0) + '%'; }}
-  window.addEventListener('scroll', onScroll); onScroll();
-  var cb = document.getElementById('copyBtn');
-  function fallbackCopy(){{ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{{document.execCommand('copy');}}catch(e){{}} document.body.removeChild(t); }}
-  if(cb) cb.addEventListener('click', function(){{
-    var done = function(){{ cb.textContent='已复制'; setTimeout(function(){{cb.textContent='复制链接';}},1500); }};
-    if (navigator.clipboard && navigator.clipboard.writeText){{ navigator.clipboard.writeText(location.href).then(done, function(){{fallbackCopy();done();}}); }}
-    else {{ fallbackCopy(); done(); }}
-  }});
-}})();
+  try{ if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark'); }catch(e){}
+  var tb=document.getElementById('themeBtn');
+  function syncTheme(){ var d=document.documentElement.getAttribute('data-theme')==='dark'; if(tb) tb.textContent=d?'浅色模式':'深色模式'; }
+  if(tb) tb.addEventListener('click',function(){
+    var d=document.documentElement.getAttribute('data-theme')==='dark';
+    if(d){ document.documentElement.removeAttribute('data-theme'); try{localStorage.setItem('theme','light');}catch(e){} }
+    else { document.documentElement.setAttribute('data-theme','dark'); try{localStorage.setItem('theme','dark');}catch(e){} }
+    syncTheme();
+  });
+  syncTheme();
+
+  function loadSet(k){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):[]; }catch(e){ return []; } }
+  function saveSet(k,a){ try{ localStorage.setItem(k,JSON.stringify(a)); }catch(e){} }
+  function has(a,x){ return a.indexOf(x)>=0; }
+
+  var favBtn=document.getElementById('favBtn');
+  var key=favBtn.getAttribute('data-key');
+  var favs=loadSet('favs'); var reads=loadSet('read');
+  if(!has(reads,key)){ reads.push(key); saveSet('read',reads); }
+  function syncFav(){ var on=has(favs,key); favBtn.textContent=on?'★ 已收藏':'☆ 收藏'; favBtn.classList.toggle('on',on); }
+  favBtn.addEventListener('click',function(){
+    var i=favs.indexOf(key); if(i>=0) favs.splice(i,1); else favs.push(key);
+    saveSet('favs',favs); syncFav();
+  });
+  syncFav();
+
+  var fs=16; try{ var sv=localStorage.getItem('fs'); if(sv) fs=parseInt(sv)||16; }catch(e){}
+  function applyFs(){ document.documentElement.style.setProperty('--fs',fs+'px'); try{localStorage.setItem('fs',fs);}catch(e){} }
+  applyFs();
+  document.getElementById('inc').addEventListener('click',function(){ fs=Math.min(22,fs+1); applyFs(); });
+  document.getElementById('dec').addEventListener('click',function(){ fs=Math.max(13,fs-1); applyFs(); });
+
+  var bar=document.getElementById('bar');
+  function onScroll(){ var h=document.documentElement; var m=h.scrollHeight-h.clientHeight; bar.style.width=(m>0?(h.scrollTop/m*100):0)+'%'; }
+  window.addEventListener('scroll',onScroll); onScroll();
+
+  var cb=document.getElementById('copyBtn');
+  function fallbackCopy(){ var t=document.createElement('textarea'); t.value=location.href; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(t); }
+  cb.addEventListener('click',function(){
+    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='复制链接'; },1500); };
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(location.href).then(done,function(){ fallbackCopy(); done(); }); }
+    else { fallbackCopy(); done(); }
+  });
+})();
 </script>
 </body>
 </html>
