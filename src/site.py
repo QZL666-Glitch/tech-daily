@@ -216,9 +216,8 @@ ARTICLE_TEMPLATE = """<!DOCTYPE html>
   }
   var cb=document.getElementById('copyBtn');
   cb.addEventListener('click',function(){
-    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='分享链接'; },1500); };
-    if(navigator.share){ navigator.share({title:document.title,url:location.href}).then(function(){},function(){ copyText(location.href, done); }); }
-    else { copyText(location.href, done); }
+    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='复制链接'; },1500); };
+    copyText(location.href, done);
   });
 
   document.addEventListener('keydown',function(ev){
@@ -533,7 +532,7 @@ def render_article_page(e: dict, site_title: str, older, newer) -> str:
         f'<button class="favbtn" type="button" id="favBtn" data-key="{_html.escape(e["title"])}" title="收藏">☆ 收藏</button>'
         f'<button class="fsbtn" type="button" id="dec" title="缩小字号">A−</button>'
         f'<button class="fsbtn" type="button" id="inc" title="放大字号">A＋</button>'
-        f'<button class="copybtn" type="button" id="copyBtn">分享链接</button>'
+        f'<button class="copybtn" type="button" id="copyBtn">复制链接</button>'
         f'</span>'
     )
 

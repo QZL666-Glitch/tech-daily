@@ -123,7 +123,7 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 </div></div>
 <article><div class="card">
 <h1>一块Arduino板，能测哪些健康指标？</h1>
-<div class="meta"><span class="badge">GitHub</span><span>2026-11-17</span><span>约 9 分钟</span><span>2685 字</span><span class="tools"><button class="favbtn" type="button" id="favBtn" data-key="一块Arduino板，能测哪些健康指标？" title="收藏">☆ 收藏</button><button class="fsbtn" type="button" id="dec" title="缩小字号">A−</button><button class="fsbtn" type="button" id="inc" title="放大字号">A＋</button><button class="copybtn" type="button" id="copyBtn">分享链接</button></span></div>
+<div class="meta"><span class="badge">GitHub</span><span>2026-11-17</span><span>约 9 分钟</span><span>2685 字</span><span class="tools"><button class="favbtn" type="button" id="favBtn" data-key="一块Arduino板，能测哪些健康指标？" title="收藏">☆ 收藏</button><button class="fsbtn" type="button" id="dec" title="缩小字号">A−</button><button class="fsbtn" type="button" id="inc" title="放大字号">A＋</button><button class="copybtn" type="button" id="copyBtn">复制链接</button></span></div>
 <div class="tags"><span class="tag">生物医学</span><span class="tag">嵌入式</span><span class="tag">开源工具</span></div>
 <details class="toc" open><summary>目录</summary><ul><li><a href="#h-2">引言</a></li><li><a href="#h-4">它到底是什么</a></li><li><a href="#h-7">技术路线为什么合理</a></li><li><a href="#h-10">值得关注的地方与边界</a></li><li><a href="#h-13">小结</a></li><li><a href="#h-16">AI 解读与知识总结</a></li><li><a href="#h-26">小白常见问题</a></li></ul></details>
 <p style="color:var(--muted);font-size:13px;">来源：GitHub · 2026-06-30</p>
@@ -223,9 +223,8 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
   }
   var cb=document.getElementById('copyBtn');
   cb.addEventListener('click',function(){
-    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='分享链接'; },1500); };
-    if(navigator.share){ navigator.share({title:document.title,url:location.href}).then(function(){},function(){ copyText(location.href, done); }); }
-    else { copyText(location.href, done); }
+    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='复制链接'; },1500); };
+    copyText(location.href, done);
   });
 
   document.addEventListener('keydown',function(ev){

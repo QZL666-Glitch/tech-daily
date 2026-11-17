@@ -123,7 +123,7 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
 </div></div>
 <article><div class="card">
 <h1>四个反作用轮，让独轮机器人站稳</h1>
-<div class="meta"><span class="badge">GitHub</span><span>2026-11-16</span><span>约 11 分钟</span><span>2997 字</span><span class="tools"><button class="favbtn" type="button" id="favBtn" data-key="四个反作用轮，让独轮机器人站稳" title="收藏">☆ 收藏</button><button class="fsbtn" type="button" id="dec" title="缩小字号">A−</button><button class="fsbtn" type="button" id="inc" title="放大字号">A＋</button><button class="copybtn" type="button" id="copyBtn">分享链接</button></span></div>
+<div class="meta"><span class="badge">GitHub</span><span>2026-11-16</span><span>约 11 分钟</span><span>2997 字</span><span class="tools"><button class="favbtn" type="button" id="favBtn" data-key="四个反作用轮，让独轮机器人站稳" title="收藏">☆ 收藏</button><button class="fsbtn" type="button" id="dec" title="缩小字号">A−</button><button class="fsbtn" type="button" id="inc" title="放大字号">A＋</button><button class="copybtn" type="button" id="copyBtn">复制链接</button></span></div>
 <div class="tags"><span class="tag">嵌入式</span></div>
 <details class="toc" open><summary>目录</summary><ul><li><a href="#h-2">引言</a></li><li><a href="#h-4">四个轮子，为什么是 45°</a></li><li><a href="#h-7">从 Python 生成 CAD 到两轴测试台</a></li><li><a href="#h-10">数字孪生：Simscape 与 Webots 双线并行</a></li><li><a href="#h-13">ESP32 固件与硬件在环</a></li><li><a href="#h-16">小结</a></li><li><a href="#h-19">AI 解读与知识总结</a></li><li><a href="#h-31">小白常见问题</a></li></ul></details>
 <p style="color:var(--muted);font-size:13px;">来源：GitHub · 2026-11-16</p>
@@ -228,9 +228,8 @@ article hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
   }
   var cb=document.getElementById('copyBtn');
   cb.addEventListener('click',function(){
-    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='分享链接'; },1500); };
-    if(navigator.share){ navigator.share({title:document.title,url:location.href}).then(function(){},function(){ copyText(location.href, done); }); }
-    else { copyText(location.href, done); }
+    var done=function(){ cb.textContent='已复制'; setTimeout(function(){ cb.textContent='复制链接'; },1500); };
+    copyText(location.href, done);
   });
 
   document.addEventListener('keydown',function(ev){
