@@ -2,8 +2,9 @@ name: 每日科技日报
 
 on:
   schedule:
-    # UTC 00:00 = 北京时间 08:00，每天自动跑一次
-    - cron: "0 0 * * *"
+    # UTC 00:30 = 北京时间 08:30，每天自动跑一次
+    # 避开整点高峰，降低 GitHub 定时调度被延迟/丢弃的概率
+    - cron: "30 0 * * *"
   workflow_dispatch: {}
 
 permissions:
